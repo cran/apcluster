@@ -1,0 +1,14 @@
+importFrom("methods")
+
+importFrom("graphics",
+           "lines",
+           "plot",
+           "legend",
+           "points")
+
+export("apcluster", "apclusterDemo", "apclusterK",
+       "negDistMat", "expSimMat", "linSimMat", "linKernel",
+       "preferenceRange", "sparseToFull")
+
+exportClasses("APResult")
+exportMethods("show", "plot")
