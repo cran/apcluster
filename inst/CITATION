@@ -1,0 +1,40 @@
+citHeader("To cite package 'apcluster' in publications use:")
+
+desc <- packageDescription("apcluster")
+year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", desc$Date)
+vers <- paste("R package version", desc$Version)
+url  <- desc$URL
+
+citEntry(entry="Manual",
+         title="An R package for affinity propagation clustering",
+         author=personList(as.person("Ulrich Bodenhofer"),
+                           as.person("Andreas Kothmeier")),
+         year=year,
+         note=vers,
+         organization=paste("Institute of Bioinformatics",
+                            "Johannes Kepler University", sep=", "),
+         address="Linz, Austria",
+         url=url,
+         textVersion =
+             paste("Ulrich Bodenhofer and Andreas Kothmeier (",
+                   year, "). An R package for affinity propagation ",
+                   "clustering. ", vers,
+                   ". Institute of Bioinformatics, ",
+                   "Johannes Kepler University, Linz, Austria.",
+                   sep=""))
+
+citEntry(entry="Article",
+         title="Clustering by passing messages between data points",
+         author=personList(as.person("Brendan J. Frey"),
+                           as.person("Delbert Dueck")),
+         journal="Science",
+         volume="315",
+         pages="972--977",
+         year="2007",
+         textVersion =
+             paste("Brendan J. Frey and Delbert Dueck (2007).",
+                   "Clustering by passing messages between data",
+                   "points. Science 315:972-977."))
+
+citFooter("To obtain the references in BibTex format, enter",
+          "'toBibtex(citation(\"apcluster\"))'")
