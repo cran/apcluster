@@ -1,0 +1,14 @@
+Change history of package apcluster:
+====================================
+
+Version 1.0.2:
+- replacement of computation of responsibilities and availabilities in
+  apcluster() by pure matrix operations; traditional implementation according
+  to Frey and Dueck still available as function apclusterLM();
+- improved support for named objects
+- new function for computing label vectors
+- re-organization of package source files and help pages
+
+Version 1.0.1:
+- first public release
+

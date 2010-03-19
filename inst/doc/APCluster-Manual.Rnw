@@ -146,7 +146,7 @@ and save it to your harddisk.
 to install the package.
 \end{enumerate}
 
-\subsection{Compatibility Issues}
+\subsection{Compatibility issues}
 
 Both the Windows and the Linux/UNIX/MacOS version of the package
 have been built under \R\ 2.10.1, but have been tested with earlier
@@ -383,6 +383,12 @@ Our package offers a few more methods to obtain similarity matrices.
 The choice of the right one (and, consequently, the objective function the
 algorithm optimizes), still has to be made by the user.
 
+All functions described in this section assume the input data matrix to be
+organized such that each row corresponds to one sample and each column
+corresponds to one feature (in line with the standard function \verb+dist+).
+If a vector is supplied instead of a matrix, each single entry is interpreted as
+a (one-dimensional) sample.
+
 \subsection{The function \texttt{negDistMat}}
 
 The function \verb+negDistMat+, in line with Frey and Dueck, allows to compute
@@ -549,19 +555,106 @@ Normalized linear kernel (we exclude $(0,0)$):
 linKernel(ex[2:5,], normalize=TRUE)
 @
 
-\section{Known Issues / Future Extensions}
+\section{Miscellaneous}
 
+\subsection{Clustering named objects}\label{ssec:names}
+
+The function \verb+apcluster+ and all functions for computing distance matrices
+are implemented to recognize names of data objects and to correctly pass them 
+through computations. The mechanism is best described with a simple example:
+<<>>=
+x <- c(1, 2, 3, 7, 8, 9)
+names(x) <- c("a", "b", "c", "d", "e", "f")
+sim <- negDistMat(x, r=2)
+@ 
+So we see that the \verb+names+ attribute must be used if a vector of
+named one-dimensional samples is to be clustered. If the data are not
+one-dimensional (a matrix instead), object names must be stored in the row
+names of the data matrix.
+
+All functions for computing similarity matrices recognize the object names. The
+resulting similarity matrix has the list of names both as row and column names.
+<<>>=
+sim
+colnames(sim)
+@ 
+The function \verb+apcluster+ and all related functions use column names
+of similarity matrices to determine object names. If object names are available,
+clustering results are by default shown by names.
+<<>>=
+apres<-apcluster(sim)
+apres
+apres@exemplars
+apres@clusters
+@ 
+
+\subsection{Computing a label vector from a clustering result}\label{ssec:labels}
+
+For later classification or comparisons with other clustering methods, it
+may be useful to compute a label vector from a clustering result. Our package
+provides an instance of the generic function \verb+labels+ for this task. As
+obvious from the following example, the argument \verb+type+ can be used to
+determine how to compute the label vector.
+<<>>=
+apres@exemplars
+labels(apres, type="names")
+labels(apres, type="exemplars")
+labels(apres, type="enum")
+@
+The first choice, \verb+"names"+ (default), uses names of exemplars as labels
+(if names are available, otherwise an error message is displayed). The second
+choice, \verb+"exemplars"+, uses indices of exemplars (enumerated as in the
+original data set). The third choice, \verb+"enum"+, uses indices of clusters
+(consecutively numbered as stored in the slot \verb+clusters+; analogous
+to the \verb+clusters+ field of the list returned by the standard function
+\verb+kmeans+).
+
+\subsection{Performance issues}\label{ssec:perf}
+
+Starting with version 1.0.2, the function \verb+apcluster+ uses pure matrix
+operations for computing responsibilities and availabilities in the affinity
+propagation main loop. While this normally leads to significant performance
+improvements, it also results in an increased consumption of memory for
+storing intermediate results. For large data sets of several thousands of
+samples and more, this may lead to swapping.\footnote{depending on available
+main memory, operating system, and R version} If this occurs, users are
+recommended to use the function \verb+apclusterLM+ (``LM'' $=$ \underline{L}ess
+\underline{M}emory) instead. This function works exactly as \verb+apcluster+,
+but uses loops for computing responsibilities and availabilities, only
+requiring $\mathcal{O}(l)$ intermediate storage. In most cases, however,
+\verb+apcluster+ will be significantly faster.
+
+Further notes:
 \begin{itemize}
-\item We currently have no implementation that exploits sparsity of similarity
+\item Even though \verb+apcluster+ uses only vector operations, our R
+implementation is slower than Frey's and Dueck's Matlab code.\footnotemark[1]
+\item Do not use \verb+details=TRUE+ for larger data sets ($l>1000$)!
+\end{itemize}
+
+\section{Future Extensions}
+
+We currently have no implementation that exploits sparsity of similarity
 matrices. The implementation of {\em sparse AP} and {\em leveraged AP} which
 are available as Matlab code from the AP Web page\footnotemark[1] is left
 for future extensions of the package. Presently, we only offer a function
 \verb+sparseToFull+ that converts similarity matrices from sparse format into
 a full $l\times l$ matrix.
-\item We are aware that our \R\ implementation is often slower than Frey's and
-Dueck's Matlab code.\footnotemark[1] We have no sufficiently convincing
-explanation for this at the moment.
-\end{itemize}
+
+\section{Change Log}
+
+\begin{description}
+\item[Version 1.0.2:] \hfill
+  \begin{itemize}
+  \item replacement of computation of responsibilities
+  and availabilities in function \verb+apcluster()+ by pure matrix operations
+  (see \ref{ssec:perf} above); traditional implementation \`a la
+  Frey and Dueck still available as function \verb+apclusterLM+;
+  \item improved support for named objects (see \ref{ssec:names})
+  \item new function for computing label vectors (see \ref{ssec:labels})
+  \item re-organization of package source files and help pages
+  \end{itemize}
+\item[Version 1.0.1:] first official release, released March 2, 2010
+\end{description}
 
 \section{How to Cite This Package}
 

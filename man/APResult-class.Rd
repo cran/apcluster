@@ -58,11 +58,13 @@ are taken from Frey's and Dueck's original Matlab package:
 \section{Methods}{
   \describe{
     \item{plot}{\code{signature(x = "APResult")}: see
-       \code{\link{APResult-methods}}}
+       \code{\link{plot-methods}}}
     \item{plot}{\code{signature(x = "APResult", y = "matrix")}: see
-       \code{\link{APResult-methods}}}
+       \code{\link{plot-methods}}}
     \item{show}{\code{signature(object = "APResult")}: see
-       \code{\link{APResult-methods}}}}
+       \code{\link{show-methods}}}
+    \item{labels}{\code{signature(object = "APResult")}: see
+       \code{\link{labels-methods}}}}
 }
 \author{Ulrich Bodenhofer & Andreas Kothmeier
 \email{apcluster@bioinf.jku.at}}
@@ -71,7 +73,8 @@ are taken from Frey's and Dueck's original Matlab package:
 Frey, B. J. and Dueck, D. (2007) Clustering by passing messages
 between data points. \emph{Science} \bold{315}, 972-976.
 }
-\seealso{\link{APResult-methods}, \link{apcluster}}
+\seealso{\code{\link{apcluster}}, \code{\link{show-methods}},
+  \code{\link{plot-methods}}, \code{\link{labels-methods}}}
 \examples{
 ## create two Gaussian clouds
 cl1 <- cbind(rnorm(100,0.2,0.05),rnorm(100,0.8,0.06))

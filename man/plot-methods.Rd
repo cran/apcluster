@@ -1,14 +1,14 @@
-\name{APResult-methods}
-\alias{APResult-methods}
+\name{plot-methods}
+\docType{methods}
+\alias{plot}
+\alias{plot-methods}
 \alias{plot,APResult,missing-method}
 \alias{plot,APResult,matrix-method}
-\alias{show,APResult-method}
-\title{Functions for APResult class}
+\title{Plot APResult objects}
 \description{
-  S4 methods for \code{\linkS4class{APResult}} class
+  Plotting functions for S4 class \code{\linkS4class{APResult}}
 }
 \usage{
-\S4method{show}{APResult}(object)
 \S4method{plot}{APResult,missing}(x,
              type=c("netsim", "dpsim", "expref"),
              xlab="# Iterations",
@@ -17,8 +17,6 @@
               connect=TRUE, xlab="", ylab="", ...)
 }
 \arguments{
-  \item{object}{An \code{\linkS4class{APResult}} object created by
-                affinity propagation clustering}
   \item{x}{an \code{\linkS4class{APResult}} object created by
            affinity propagation clustering}
   \item{y}{a matrix with the original data (must be 2D to work)}
@@ -38,14 +36,6 @@
              internally to display the graphics window}
 }
 \details{
-  \code{show} displays the most important information stored in
-  \code{object},
-  namely number of data samples, number of iterations, input
-  preference, final objective
-  function values, exemplars, and clusters. For accessing more
-  detailed information, it is necessary to directly the corresponding
-  slots (see  \linkS4class{APResult}).
-
   Provided that \code{\link{apcluster}} was called with
   \code{details=TRUE}, \code{plot} without a \code{y} argument
   displays graphs of performance
@@ -57,7 +47,7 @@
   i.e. if \code{y} has 2 columns.
 }
 \value{
-  \code{show} and both variants of \code{plot} return an
+  both variants of \code{plot} return an
   invisible \code{NULL}
 }
 \author{Ulrich Bodenhofer & Andreas Kothmeier
@@ -67,7 +57,7 @@
 Frey, B. J. and Dueck, D. (2007) Clustering by passing messages
 between data points. \emph{Science} \bold{315}, 972-976.
 }
-\seealso{\link{APResult-methods}}
+\seealso{\code{\link{APResult-class}}, \code{\link{apcluster}}}
 \examples{
 ## create two Gaussian clouds
 cl1 <- cbind(rnorm(100,0.2,0.05),rnorm(100,0.8,0.06))
@@ -79,9 +69,6 @@ sim <- negDistMat(x, r=2)
 
 ## run affinity propagation
 apres <- apcluster(sim, details=TRUE)
-
-## show details of clustering results
-show(apres)
 
 ## plot information about clustering run
 plot(apres)

@@ -1,4 +1,4 @@
-apcluster <- function(s, p=NA, q=NA, maxits=1000, convits=100,
+apclusterLM <- function(s, p=NA, q=NA, maxits=1000, convits=100,
                       lam=0.9, details=FALSE, nonoise=FALSE, seed=NA)
 {
     if (!is.na(seed)) set.seed(seed)
@@ -101,9 +101,6 @@ apcluster <- function(s, p=NA, q=NA, maxits=1000, convits=100,
     dS  <- diag(s)
     A   <- matrix(0, N, N)
     R   <- matrix(0, N, N)
-    AS  <- matrix(0, N, N)
-    Rp  <- matrix(0, N, N)
-    old <- matrix(0, N, N)
     t   <- 1
 
     if (details)
@@ -121,36 +118,42 @@ apcluster <- function(s, p=NA, q=NA, maxits=1000, convits=100,
         i <- i + 1;
 
         # Compute responsibilities
-        old <- R
 
-        AS <- A + s
-        I  <- apply(AS, 1, which.max)
-        Y  <- AS[1:N + (I - 1) * N]
-        AS[1:N + (I - 1) * N] <- -Inf
+        for (ii in 1:N)
+        {
+            old <- R[ii,]
 
-        Y2  <- apply(AS, 1, max)
+            AS <- A[ii,] + s[ii,]
+            I <- which.max(AS) # get greatest element
+            Y <- AS[I]
+            AS[I] <- -Inf
 
-        R <- s - Y
-        R[1:N + (I - 1) * N] <- s[1:N + (I - 1) * N] - Y2
+            Y2 <- max(AS); # get second-greatest element
 
-        R <- (1 - lam) * R + lam * old
-         
-        R[R > .Machine$double.xmax] <- .Machine$double.xmax
+            R[ii,] <- s[ii,] - Y # make update
+            R[ii,I] <- s[ii, I] - Y2
+
+            R[ii,] <- (1 - lam) * R[ii,] + lam * old # damping
+
+            # truncate too large values
+            R[ii,R[ii,] > .Machine$double.xmax] <- .Machine$double.xmax
+        }
 
         # Compute availabilities
-        old <- A
-        Rp <- (R + abs(R)) / 2
 
-        diag(Rp) <- diag(R)
-        auxsum <- colSums(Rp)
+        for (jj in 1:N)
+        {
+            old <- A[,jj]
+            Rp <- (R[,jj] + abs(R[,jj])) / 2
+            Rp[jj] <- R[jj,jj]
 
-        A <- t(auxsum - t(Rp)) # auxsum - Rp columnwise
-        dA <- diag(A)
-
-        A <- (A - abs(A)) / 2
-        diag(A) <- dA
-
-        A <- (1 - lam) * A + lam * old
+            auxsum <- sum(Rp)
+            A[,jj] <- auxsum - Rp
+            dA <- A[jj,jj]
+            A[,jj] <- (A[,jj] - abs(A[,jj])) / 2
+            A[jj,jj] <- dA
+            A[,jj] <- (1-lam) * A[,jj] + lam * old # Damping
+        }
 
         # determine clusters and check for convergence
         E <- as.numeric((diag(A) + diag(R)) > 0)
@@ -285,13 +288,4 @@ apcluster <- function(s, p=NA, q=NA, maxits=1000, convits=100,
     }
 
     apresultObj
-}
-
-
-# Linear index from multiple subscripts.
-#   sub2ind is used to determine the equivalent single index
-#   corresponding to a given set of subscript values.
-sub2ind <- function(N, I, J)
-{
-    I + (N * (J - 1))
 }

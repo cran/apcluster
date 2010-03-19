@@ -1,11 +1,14 @@
 \name{apcluster}
 \alias{apcluster}
+\alias{apclusterLM}
 \title{Affinity Propagation}
 \description{
    Runs affinity propagation clustering for a given similarity matrix
 }
 \usage{
 apcluster(s, p=NA, q=NA, maxits=1000, convits=100, lam=0.9,
+          details=FALSE, nonoise=FALSE, seed=NA)
+apclusterLM(s, p=NA, q=NA, maxits=1000, convits=100, lam=0.9,
           details=FALSE, nonoise=FALSE, seed=NA)
 }
 \arguments{
@@ -46,9 +49,19 @@ are each represented by a cluster center data point (the exemplar).
 The method is iterative and searches for clusters so as to maximize 
 an objective function, called net similarity.
 
-Apart from minor adaptations and optimizations, the implementation is
+Apart from minor adaptations and optimizations, the
+implementation of the function \code{apclusterLM} is 
 largely analogous to Frey's and Dueck's Matlab code
-(see \url{http://www.psi.toronto.edu/affinitypropagation/}).
+(see \url{http://www.psi.toronto.edu/affinitypropagation/}). The
+function \code{apcluster} uses the same ideas, but replaces the loops
+in the computations of responsibilities and availabilities by pure
+matrix operations. For moderate data sets, the variant \code{apcluster}
+is approximately 60\% faster than \code{apclusterLM}. For large
+data sets (several thousands of data samples), the use of
+\code{apclusterLM} (LM = Less Memory) may be advantageous, since this
+function requires less temporal storage (LM = Less Memory). For at most
+5000 samples, we recommend to use \code{apcluster} (on up-to-date
+systems that are not too tight with memory).
 
 The new argument \code{q} allows for better controlling the number of
 clusters without knowing the distribution of similarity
@@ -68,8 +81,9 @@ the function \code{\link{apclusterK}} is available.
 Frey, B. J. and Dueck, D. (2007) Clustering by passing messages
 between data points. \emph{Science} \bold{315}, 972-976.
 }
-\seealso{\code{\link{APResult-class}}, \code{\link{APResult-methods}},
-         \code{\link{preferenceRange}}, \code{\link{apclusterK}}}
+\seealso{\code{\link{APResult-class}}, \code{\link{show-methods}},
+  \code{\link{plot-methods}}, \code{\link{labels-methods}},
+  \code{\link{preferenceRange}}, \code{\link{apclusterK}}}
 \examples{
 ## create two Gaussian clouds
 cl1 <- cbind(rnorm(100,0.2,0.05),rnorm(100,0.8,0.06))

@@ -11,8 +11,8 @@ progress and clustering results (limited to 2D data sets).
 \tabular{ll}{
 Package: \tab apcluster\cr
 Type: \tab Package\cr
-Version: \tab 1.0.1\cr
-Date: \tab 2010-03-02\cr
+Version: \tab 1.0.2\cr
+Date: \tab 2010-03-19\cr
 License: \tab GPL (>= 2)\cr
 LazyLoad: \tab yes\cr
 }
