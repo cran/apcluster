@@ -60,5 +60,7 @@ linKernel <- function(x, normalize=FALSE)
         mat <- mat * (di %o% di)
     }
 
+    if (length(dim(x)) == 0) rownames(mat) <- colnames(mat)
+    
     mat
 }

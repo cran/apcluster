@@ -1,79 +1,3 @@
-# S4 class definition for the result object
-setClass("APResult",
-    representation = representation
-    (
-        l         = "numeric",
-        it        = "numeric",
-        p         = "numeric",
-        netsim    = "numeric",
-        dpsim     = "numeric",
-        expref    = "numeric",
-        exemplars = "numeric",
-        clusters  = "list",
-        idx       = "numeric",
-        netsimAll = "numeric",
-        dpsimAll  = "numeric",
-        exprefAll = "numeric",
-        idxAll    = "matrix"
-    ),
-    prototype = prototype
-    (
-        l         = 0,
-        it        = 0,
-        p         = 0,
-        netsim    = NaN,
-        dpsim     = NaN,
-        expref    = NaN,
-        exemplars = c(),
-        clusters  = list(),
-        idx       = c(),
-        netsimAll = NaN,
-        dpsimAll  = NaN,
-        exprefAll = NaN,
-        idxAll    = matrix(NA,1,1)
-    )
-)
-
-# Display clustering results
-setMethod("show", signature(object="APResult"),
-    function(object)
-    {
-        cat("\nAPResult object\n")
-
-        if (!is.finite(object@l) || !is.finite(object@it))
-        {
-            stop("Object is not result of an affinity propagation run.",
-                 "It is pointless to create APResult objects yourself.")
-        }
-
-        cat("\nNumber of samples    = ", object@l, "\n")
-        cat("Number of iterations = ", object@it, "\n")
-        cat("Input preference     = ", object@p, "\n")
-        cat("Sum of similarities  = ", object@dpsim, "\n")
-        cat("Sum of preferences   = ", object@expref, "\n")
-        cat("Net similarity       = ", object@netsim, "\n")
-        cat("Number of exemplars  = ", length(object@exemplars), "\n\n")
-
-        if (length(object@exemplars) > 0)
-        {
-            cat("Exemplars:\n")
-            cat(object@exemplars, fill=TRUE, labels="  ")
-            cat("Clusters:\n")
-
-            for (i in 1:length(object@exemplars))
-            {
-                cat("   Cluster ", i, ", exemplar ", object@exemplars[i], ":\n",
-                    sep="")
-                cat(object@clusters[[i]], fill=TRUE, labels="     ")
-            }
-        }
-        else
-        {
-            cat("No clusters identified.\n")
-        }
-    }
-)
-
 # Plot graph(s) with objective values (works only if details were switched on)
 setMethod("plot", signature(x="APResult", y="missing"),
     function(x, type=c("netsim", "dpsim", "expref"),
@@ -223,3 +147,4 @@ setMethod("plot", signature(x="APResult", y="matrix"),
         }
     }
 )
+

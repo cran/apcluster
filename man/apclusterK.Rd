@@ -53,7 +53,7 @@ Frey, B. J. and Dueck, D. (2007) Clustering by passing messages
 between data points. \emph{Science} \bold{315}, 972-976.
 }
 \seealso{\code{\link{apcluster}}, \code{\link{preferenceRange}},
-         \code{\link{APResult-class}}, \code{\link{APResult-methods}}}
+         \code{\link{APResult-class}}}
 \examples{
 ## create three Gaussian clouds
 cl1 <- cbind(rnorm(70, 0.2, 0.05), rnorm(70, 0.8, 0.06))

@@ -40,7 +40,7 @@ apclusterK <- function(s, K, prc=10, bimaxit=20, exact=FALSE,
         s <- s + (.Machine$double.eps * s + .Machine$double.xmin * 100) *
                  randomMat
     }
-    
+
     # try to guess better lower bound  before starting with bisection
     ex <- -3
     dn <- FALSE
@@ -83,14 +83,13 @@ apclusterK <- function(s, K, prc=10, bimaxit=20, exact=FALSE,
         
         tmppref <- (lopref + hipref) / 2
         
-        cat("Trying p = ", tmppref, " (bisection step no. ", ntries, ")\n",
-            sep="")
+        message("Trying p = ", tmppref, " (bisection step no. ", ntries, ")\n")
 
         apresultObj <- apcluster(s, p=tmppref, nonoise=TRUE, ...)
 
         tmpk <- length(apresultObj@exemplars)
 
-        cat("   Number of clusters:", tmpk, "\n");
+        message("   Number of clusters:", tmpk, "\n");
 
         if (K > tmpk)
         {
@@ -104,7 +103,13 @@ apclusterK <- function(s, K, prc=10, bimaxit=20, exact=FALSE,
         }
     }
 
-    cat("\nNumber of clusters:", tmpk, " for p = ", tmppref, "\n")
+    message("\nNumber of clusters: ", tmpk, " for p = ", tmppref, "\n")
+
+    if ((abs(tmpk - K) * 100 / K) > prc)
+    {
+        warning("Number of clusters not in desired range. Increase bimaxit",
+                " to improve accuracy of bisection.")
+    }
 
     apresultObj
 }

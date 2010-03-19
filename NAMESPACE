@@ -6,9 +6,9 @@ importFrom("graphics",
            "legend",
            "points")
 
-export("apcluster", "apclusterDemo", "apclusterK",
+export("apcluster", "apclusterLM", "apclusterDemo", "apclusterK",
        "negDistMat", "expSimMat", "linSimMat", "linKernel",
        "preferenceRange", "sparseToFull")
 
 exportClasses("APResult")
-exportMethods("show", "plot")
+exportMethods("show", "plot", "labels")
