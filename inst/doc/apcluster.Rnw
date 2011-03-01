@@ -168,7 +168,7 @@ for use now and you can start clustering your data with affinity propagation.
 The package includes both a user manual (this document) and a reference manual
 (help pages for each function). To view the user manual, enter
 <<eval=FALSE>>=
-vignette("APCluster-Manual")
+vignette("apcluster")
 @
 Help pages can be viewed using the \verb+help+ command. It is recommended to
 start with
