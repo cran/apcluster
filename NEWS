@@ -1,6 +1,10 @@
 Change history of package apcluster:
 ====================================
 
+Version 1.0.3:
+- Makefile in inst/doc eliminated to avoid installation problems
+- renamed vignette to "apcluster"
+
 Version 1.0.2:
 - replacement of computation of responsibilities and availabilities in
   apcluster() by pure matrix operations; traditional implementation according
