@@ -1,14 +1,14 @@
 importFrom("methods")
 
 importFrom("graphics",
-           "lines",
-           "plot",
-           "legend",
-           "points")
+           "plot")
+
+importFrom("stats",
+           "cutree")
 
 export("apcluster", "apclusterLM", "apclusterDemo", "apclusterK",
        "negDistMat", "expSimMat", "linSimMat", "linKernel",
-       "preferenceRange", "sparseToFull")
+       "preferenceRange", "sparseToFull", "aggExCluster")
 
 exportClasses("APResult")
-exportMethods("show", "plot", "labels")
+exportMethods("show", "plot", "labels", "cutree")

@@ -2,7 +2,7 @@
 \alias{sparseToFull}
 \title{Convert a Sparse Similarity Matrix to Standard Representation}
 \description{
-   Converts a similarity matrix in sparse format to a full NxN matrix
+   Converts a similarity matrix in sparse format to a full l by l matrix
 }
 \usage{
 sparseToFull(s, fill=-Inf)
@@ -35,7 +35,7 @@ sparseToFull(s, fill=-Inf)
   we admit that clustering of 3 values makes as little sense as
   considering similarity matrices with only three entries).
 }
-\value{Returns a square similarity matrix}
+\value{returns a square similarity matrix}
 \author{Ulrich Bodenhofer & Andreas Kothmeier
 \email{apcluster@bioinf.jku.at}}
 \references{\url{http://www.bioinf.jku.at/software/apcluster}

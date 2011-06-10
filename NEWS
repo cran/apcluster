@@ -1,6 +1,15 @@
 Change history of package apcluster:
 ====================================
 
+Version 1.1.0:
+- exemplar-based agglomerative clustering (function aggExCluster()) added
+- added various plotting functions, e.g. for dendrograms and heatmaps
+- added sequence analysis example to vignette
+- extension of vignette according to new functionality
+- re-organization of variable names in vignette
+- added option 'verbose' to apclusterK()
+- numerous minor corrections in help pages and vignette
+
 Version 1.0.3:
 - Makefile in inst/doc eliminated to avoid installation problems
 - renamed vignette to "apcluster"

@@ -1,26 +1,22 @@
 \name{apcluster-package}
 \alias{apcluster-package}
 \docType{package}
-\title{Affinity Propagation Package}
+\title{APCluster Package}
 \description{
 The apcluster package implements affinity propagation according to
-Frey and Dueck. It further offers visualization of the algorithm's
-progress and clustering results (limited to 2D data sets).
+Frey and Dueck and a method for exemplar-based agglomerative clustering.
+It further offers various functions for plotting clustering results.
 }
-\details{
-\tabular{ll}{
-Package: \tab apcluster\cr
-Type: \tab Package\cr
-Version: \tab 1.0.3\cr
-Date: \tab 2011-03-01\cr
-License: \tab GPL (>= 2)\cr
-LazyLoad: \tab yes\cr
-}
-The central function is \code{\link{apcluster}}. It runs affinity
+\details{The central function is \code{\link{apcluster}}. It runs affinity
 propagation on a given similarity matrix. The function returns
 an \code{\linkS4class{APResult}} object from which the clustering
 itself and information about the affinity propagation run can be
-obtained. Further functions are implemented to visualize the
+obtained. The package further implements an exemplar-based agglomerative
+clustering method \code{\link{aggExCluster}} that can be used for
+computing a complete cluster hierarchy, but also
+for joining fine-grained clusters previously obtained by
+affinity propagation clustering.
+Further functions are implemented to visualize the
 results and to create distance matrices.
 }
 \author{Ulrich Bodenhofer & Andreas Kothmeier
@@ -51,4 +47,20 @@ plot(apres)
 
 ## plot clustering result
 plot(apres, x)
+
+## employ agglomerative clustering to join clusters
+aggres <- aggExCluster(sim, apres)
+
+## show information
+show(aggres)
+show(cutree(aggres, 2))
+
+## plot dendrogram
+plot(aggres)
+
+## plot clustering result for k=2 clusters
+plot(aggres, x, k=2)
+
+## plot heatmap
+plot(apres, sim)
 }

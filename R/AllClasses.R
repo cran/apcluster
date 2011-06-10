@@ -1,4 +1,4 @@
-# S4 class definition for the result object
+# S4 class definition for the result object of affinity propagation clustering
 setClass("APResult",
     representation = representation
     (
@@ -30,7 +30,53 @@ setClass("APResult",
         netsimAll = NaN,
         dpsimAll  = NaN,
         exprefAll = NaN,
-        idxAll    = matrix(NA,1,1)
+        idxAll    = matrix(NA, 1, 1)
     )
 )
+
+# S4 class definition for the result object of the aggExCluster algorithm
+setClass("AggExResult",
+    representation = representation
+    (
+        l             = "numeric",
+        maxNoClusters = "numeric",
+        clusters      = "list",
+        exemplars     = "list",
+        merge         = "matrix",
+        height        = "numeric",
+        order         = "numeric",
+        labels        = "character"
+    ),
+    prototype = prototype
+    (
+        l             = 0,
+        maxNoClusters = 0,
+        clusters      = list(),
+        exemplars     = list(),
+        merge         = matrix(NA, 1, 1),
+        height        = c(),
+        order         = c(),
+        labels        = c()
+    )
+)
+
+
+# S4 class definition for exemplar-based clustering
+setClass("ExClust",
+    representation = representation
+    (
+        l         = "numeric",
+        exemplars = "numeric",
+        clusters  = "list",
+        idx       = "numeric"
+    ),
+    prototype = prototype
+    (
+        l         = 0,
+        exemplars = c(),
+        clusters  = list(),
+        idx       = c()
+    )
+)
+
 

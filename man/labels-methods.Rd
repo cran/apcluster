@@ -3,23 +3,25 @@
 \alias{labels}
 \alias{labels-methods}
 \alias{labels,APResult-method}
-\title{Generate label vector from APResult object}
+\alias{labels,ExClust-method}
+\title{Generate label vector from clustering result}
 \description{
-  Generate a label vector from an \code{\linkS4class{APResult}} object
+  Generate a label vector from an clustering result
 }
 \usage{
 \S4method{labels}{APResult}(object, type="names")
+\S4method{labels}{ExClust}(object, type="names")
 }
 \arguments{
-  \item{object}{An \code{\linkS4class{APResult}} object created by
-                affinity propagation clustering}
-	      \item{type}{specifies which kind of label vector should be
-		created, see details below;}
+  \item{object}{object of class \code{\linkS4class{APResult}}
+    or \code{\linkS4class{ExClust}}}
+  \item{type}{specifies which kind of label vector should be
+    created, see details below}
 }
 \details{
-  The function \code{labels} creates a label vector for a data set
-  previously clustered with affinity propagation. Which kind of labels
-  are produced is controlled by the argument \code{type}:
+  The function \code{labels} creates a label vector from a clustering
+  result. Which kind of labels are produced is controlled by the
+  argument \code{type}:
   \describe{
     \item{\dQuote{names}}{(default) returns the name of the exemplar
     to which each
@@ -35,18 +37,16 @@
     \code{object@idx} with attributes removed.}}
 }
 \value{
-  \code{labels} returns a label vector as long as the original data set
+  returns a label vector as long as the number of samples in the
+  original data set
 }
 \author{Ulrich Bodenhofer & Andreas Kothmeier
 \email{apcluster@bioinf.jku.at}}
-\references{\url{http://www.bioinf.jku.at/software/apcluster}
-
-Frey, B. J. and Dueck, D. (2007) Clustering by passing messages
-between data points. \emph{Science} \bold{315}, 972-976.
-}
-\seealso{\code{\link{APResult-class}}}
+\references{\url{http://www.bioinf.jku.at/software/apcluster}}
+\seealso{\code{\linkS4class{APResult}},
+  \code{\linkS4class{ExClust}}, \code{\link{cutree}}}
 \examples{
-## create two Gaussian clouds
+## create two simple clusters
 x <- c(1, 2, 3, 7, 8, 9)
 names(x) <- c("a", "b", "c", "d", "e", "f")
 
@@ -67,8 +67,12 @@ labels(apres, type="enum")
 
 ## label vector (index of exemplars within original data set)
 labels(apres, type="exemplars")
+
+## now with agglomerative clustering
+aggres <- aggExCluster(sim)
+
+## label (names of exemplars)
+labels(cutree(aggres, 2))
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
 \keyword{cluster}
 \keyword{methods}

@@ -7,7 +7,7 @@
 \title{Class "APResult"}
 \description{S4 class for storing results of affinity propagation
 clustering}
-\section{Objects from the Class}{
+\section{Objects}{
 Objects of this class can be created by calling \code{\link{apcluster}}
 for a given similarity matrix.
 }
@@ -26,25 +26,25 @@ are taken from Frey's and Dueck's original Matlab package:
                          exemplars}
     \item{\code{expref}:}{final sum of preferences of the identified
                           exemplars}
-    \item{\code{exemplars}:}{array containing indices of exemplars}
+    \item{\code{exemplars}:}{vector containing indices of exemplars}
     \item{\code{clusters}:}{list containing the clusters; the i-th
-                            component is a array of indices of
+                            component is a vector of indices of
                             data points belonging to the i-th
                             exemplar (including the exemplar itself)}
-    \item{\code{idx}:}{array of length \code{n} realizing a
+    \item{\code{idx}:}{vector of length \code{l} realizing a
                        sample-to-exemplar mapping; the i-th entry
                        contains the index of the exemplar the i-th
                        sample belongs to}
-    \item{\code{netsimAll}:}{array containing the total net similarity
+    \item{\code{netsimAll}:}{vector containing the total net similarity
                              for each iteration; only available if
                              \code{\link{apcluster}} was called with
                              \code{details=TRUE}}
-    \item{\code{dpsimAll}:}{array containing the sum of similarities
+    \item{\code{dpsimAll}:}{vector containing the sum of similarities
                             of data points to exemplars
                             for each iteration; only available if
                             \code{\link{apcluster}} was called with
                             \code{details=TRUE}}
-    \item{\code{exprefAll}:}{array containing the sum of preferences
+    \item{\code{exprefAll}:}{vector containing the sum of preferences
                              of the identified exemplars
                              for each iteration; only available if
                              \code{\link{apcluster}} was called with
@@ -64,7 +64,9 @@ are taken from Frey's and Dueck's original Matlab package:
     \item{show}{\code{signature(object = "APResult")}: see
        \code{\link{show-methods}}}
     \item{labels}{\code{signature(object = "APResult")}: see
-       \code{\link{labels-methods}}}}
+       \code{\link{labels-methods}}}
+    \item{cutree}{\code{signature(object = "APResult")}: see
+       \code{\link{cutree-methods}}}}
 }
 \author{Ulrich Bodenhofer & Andreas Kothmeier
 \email{apcluster@bioinf.jku.at}}
@@ -74,7 +76,8 @@ Frey, B. J. and Dueck, D. (2007) Clustering by passing messages
 between data points. \emph{Science} \bold{315}, 972-976.
 }
 \seealso{\code{\link{apcluster}}, \code{\link{show-methods}},
-  \code{\link{plot-methods}}, \code{\link{labels-methods}}}
+  \code{\link{plot-methods}}, \code{\link{labels-methods}},
+  \code{\link{cutree-methods}}}
 \examples{
 ## create two Gaussian clouds
 cl1 <- cbind(rnorm(100,0.2,0.05),rnorm(100,0.8,0.06))
@@ -95,5 +98,8 @@ plot(apres)
 
 ## plot clustering result
 plot(apres, x)
+
+## plot heatmap
+plot(apres, sim)
 }
 \keyword{classes}

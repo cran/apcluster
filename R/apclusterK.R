@@ -1,5 +1,5 @@
 apclusterK <- function(s, K, prc=10, bimaxit=20, exact=FALSE,
-                       nonoise=FALSE, seed=NA, ...)
+                       nonoise=FALSE, seed=NA, verbose=FALSE, ...)
 {
     if (!is.na(seed)) set.seed(seed)
 
@@ -8,17 +8,13 @@ apclusterK <- function(s, K, prc=10, bimaxit=20, exact=FALSE,
     #
 
     if (length(dim(s)) != 2 || ncol(s) != nrow(s))
-    {
         stop("s must be a square matrix")
-    }
 
     N <- nrow(s)
 
     if (K < 2 || K >= N)
-    {
         stop("Number of data samples is ", N, ".\n",
-             "       Meaningful range for K: 2 to ", N - 1, "\n", call.=FALSE)
-    }
+             "       Meaningful range for K: 2 to ", N - 1)
 
     pminmax <- preferenceRange(s, exact)
 
@@ -27,7 +23,8 @@ apclusterK <- function(s, K, prc=10, bimaxit=20, exact=FALSE,
     lok    <- 1
     hik    <- N
 
-    if (is.na(lopref)) stop("Could not find numeric entries in matrix\n")
+    if (is.na(lopref))
+        stop("Could not find numeric entries in matrix")
 
     # In case user did not remove degeneracies from the input similarities,
     # avoid degenerate solutions by adding a small amount of noise to the
@@ -49,14 +46,16 @@ apclusterK <- function(s, K, prc=10, bimaxit=20, exact=FALSE,
     {
         tmppref <- hipref - 10^ex * (hipref - lopref)
 
-        cat("Trying p =", tmppref, "\n")
+        if (verbose)
+            cat("Trying p =", tmppref, "\n")
 
         apresultObj <- apcluster(s, p=tmppref, nonoise=TRUE, ...)
 
         tmpk <- length(apresultObj@exemplars)
 
-        cat("   Number of clusters:", tmpk, "\n");
-        
+        if (verbose)
+            cat("   Number of clusters:", tmpk, "\n");
+
         if (tmpk < K)
         {
             lok <- tmpk
@@ -76,20 +75,22 @@ apclusterK <- function(s, K, prc=10, bimaxit=20, exact=FALSE,
     # now do bisection (if still necessary)
 
     ntries <- 0
-    
+
     while ((abs(tmpk - K) * 100 / K) > prc && ntries < bimaxit)
     {
         ntries <- ntries + 1
-        
+
         tmppref <- (lopref + hipref) / 2
-        
-        message("Trying p = ", tmppref, " (bisection step no. ", ntries, ")\n")
+
+        if (verbose)
+            cat("Trying p =", tmppref, "(bisection step no.", ntries, ")\n")
 
         apresultObj <- apcluster(s, p=tmppref, nonoise=TRUE, ...)
 
         tmpk <- length(apresultObj@exemplars)
 
-        message("   Number of clusters:", tmpk, "\n");
+        if (verbose)
+            cat("   Number of clusters:", tmpk, "\n");
 
         if (K > tmpk)
         {
@@ -103,13 +104,12 @@ apclusterK <- function(s, K, prc=10, bimaxit=20, exact=FALSE,
         }
     }
 
-    message("\nNumber of clusters: ", tmpk, " for p = ", tmppref, "\n")
+    if (verbose)
+        cat("\nNumber of clusters:", tmpk, "for p =", tmppref, "\n")
 
     if ((abs(tmpk - K) * 100 / K) > prc)
-    {
         warning("Number of clusters not in desired range. Increase bimaxit",
                 " to improve accuracy of bisection.")
-    }
 
     apresultObj
 }

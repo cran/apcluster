@@ -3,37 +3,57 @@
 \alias{show}
 \alias{show-methods}
 \alias{show,APResult-method}
-\title{Display APResult objects}
+\alias{show,ExClust-method}
+\alias{show,AggExResult-method}
+\title{Display Clustering Result Objects}
 \description{
- Display method for S4 class \code{\linkS4class{APResult}}
+  Display methods for S4 classes \code{\linkS4class{APResult}},
+  \code{\linkS4class{ExClust}}, and \code{\linkS4class{AggExResult}}
 }
 \usage{
 \S4method{show}{APResult}(object)
+\S4method{show}{ExClust}(object)
+\S4method{show}{AggExResult}(object)
 }
 \arguments{
-  \item{object}{An \code{\linkS4class{APResult}} object created by
-                affinity propagation clustering}
+  \item{object}{an object of class
+    \code{\linkS4class{APResult}}, \code{\linkS4class{ExClust}}, or
+    \code{\linkS4class{AggExResult}}
+  }
 }
 \details{
   \code{show} displays the most important information stored in
-  \code{object},
-  namely number of data samples, number of iterations, input
-  preference, final objective
-  function values, exemplars, and clusters. For accessing more
-  detailed information, it is necessary to directly the corresponding
-  slots (see  \linkS4class{APResult}).
+  \code{object}.
+
+  For \code{\linkS4class{APResult}} objects,
+  the number of data samples, the number of clusters, the number of
+  iterations, the input preference, the final objective
+  function values, the vector of exemplars, and the list of clusters
+  are printed.
+
+  For \code{\linkS4class{ExClust}} objects,
+  the number of data samples, the number of clusters,
+  the vector of exemplars, and list of clusters are printed.
+
+  For \code{\linkS4class{AggExResult}} objects,
+  only the number of data samples and the maximum
+  number of clusters are printed. For retrieving a particular
+  clustering level, use the function \code{\link{cutree}}.
+
+  For accessing more detailed information, it is necessary to
+  access the slots of \code{object} directly. Use
+  \code{\link{str}} to get a compact overview of all slots of an object.
 }
 \value{
   \code{show} returns an invisible \code{NULL}
 }
 \author{Ulrich Bodenhofer & Andreas Kothmeier
 \email{apcluster@bioinf.jku.at}}
-\references{\url{http://www.bioinf.jku.at/software/apcluster}
-
-Frey, B. J. and Dueck, D. (2007) Clustering by passing messages
-between data points. \emph{Science} \bold{315}, 972-976.
+\references{\url{http://www.bioinf.jku.at/software/apcluster}}
+\seealso{\code{\linkS4class{APResult}},
+  \code{\linkS4class{ExClust}}, \code{\linkS4class{AggExResult}},
+  \code{\link{cutree-methods}}
 }
-\seealso{\code{\link{APResult-class}}, \code{\link{apcluster}}}
 \examples{
 ## create two Gaussian clouds
 cl1 <- cbind(rnorm(100,0.2,0.05),rnorm(100,0.8,0.06))
@@ -48,6 +68,15 @@ apres <- apcluster(sim)
 
 ## show details of clustering results
 show(apres)
+
+## apply agglomerative clustering to apres
+aggres <- aggExCluster(sim, apres)
+
+## display overview of result
+show(aggres)
+
+## show clustering level with two clusters
+show(cutree(aggres, 2))
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

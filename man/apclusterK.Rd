@@ -3,12 +3,12 @@
 \title{Affinity Propagation for Pre-defined Number of Clusters}
 \description{
   Runs affinity propagation clustering for a given similarity matrix
-  adjusting input preferences iteratively in order to adjust number of
-  clusters to given value
+  adjusting input preferences iteratively in order to achieve a desired
+  number of clusters
 }
 \usage{
 apclusterK(s, K, prc=10, bimaxit=20, exact=FALSE,
-           nonoise=FALSE, seed=NA, ...)
+           nonoise=FALSE, seed=NA, verbose=FALSE, ...)
 }
 \arguments{
   \item{s}{an \eqn{l\times l}{lxl} similarity matrix}
@@ -17,7 +17,7 @@ apclusterK(s, K, prc=10, bimaxit=20, exact=FALSE,
     deviate more than prc percent from desired value K; set to 0 if you
     want to have exactly K clusters}
   \item{bimaxit}{maximum number of bisection steps to perform; note that
-    no warning is issued if if the number of clusters is still not in
+    no warning is issued if the number of clusters is still not in
     the desired range}
   \item{exact}{flag indicating whether or not to compute the initial
     preference range exactly (see \code{\link{preferenceRange}})}
@@ -28,18 +28,21 @@ apclusterK(s, K, prc=10, bimaxit=20, exact=FALSE,
               generator can be set to a fixed value before
               adding noise (see above), if \code{NA}, the seed remains
               unchanged}
+  \item{verbose}{flag indicating whether status information should be
+	         displayed during bisection}
   \item{...}{all other arguments are passed to
              \code{\link{apcluster}} as they are}
 }
-\details{Affinity Propagation clusters data, using a set of
-real-valued pairwise data point similarities as input. Clusters 
-are each represented by a cluster center data point (the exemplar). 
-The method is iterative and searches for clusters so as to maximize 
-an objective function, called net similarity.
+\details{
+  \code{apclusterK} first runs \code{\link{preferenceRange}} to determine
+  the range of meaningful choices of the input preference \code{p}. Then
+  it decreases \code{p} exponentially for a few iterations to obtain a
+  good initial guess for \code{p}. If the number of clusters is still
+  too far from the desired goal, bisection is applied.
 
-Apart from minor adaptations and optimizations, the implementation is
-largely analogous to Frey's and Dueck's Matlab code
-(see \url{http://www.psi.toronto.edu/affinitypropagation/}).
+  Apart from minor adaptations and optimizations, the implementation is
+  largely analogous to Frey's and Dueck's Matlab code
+  (see \url{http://www.psi.toronto.edu/affinitypropagation/}).
 }
 \value{
   Upon successful completion, the function returns a
@@ -53,7 +56,7 @@ Frey, B. J. and Dueck, D. (2007) Clustering by passing messages
 between data points. \emph{Science} \bold{315}, 972-976.
 }
 \seealso{\code{\link{apcluster}}, \code{\link{preferenceRange}},
-         \code{\link{APResult-class}}}
+         \code{\linkS4class{APResult}}}
 \examples{
 ## create three Gaussian clouds
 cl1 <- cbind(rnorm(70, 0.2, 0.05), rnorm(70, 0.8, 0.06))

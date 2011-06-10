@@ -3,7 +3,7 @@
 \alias{expSimMat}
 \alias{linSimMat}
 \alias{linKernel}
-\title{Methods for computing similarity matrices}
+\title{Methods for Computing Similarity Matrices}
 \description{
    Compute similarity matrices from data set
 }
@@ -14,7 +14,7 @@ linSimMat(x, w=1, ...)
 linKernel(x, normalize=FALSE)
 }
 \arguments{
-  \item{x}{real-valued data matrix, every row is a sample, every
+  \item{x}{real-valued data matrix; every row is a sample, every
            column a feature/input dimension}
   \item{r}{exponent (see details below)}
   \item{w}{radius (see details below)}
@@ -33,7 +33,7 @@ given a distance d, the resulting similarity is computed as
 \eqn{s=-d^r}. Internally, the computation of distances is done using
 \code{\link[stats:dist]{dist}}. All options of this function
 except \code{diag} and \code{upper} can be used, especially
-\code{method} that allows for selecting different distance measures.
+\code{method} which allows for selecting different distance measures.
 
 \code{expSimMat} computes similarities in a way similar to
 \code{negDistMat}, but the transformation of distances to similarities
@@ -49,7 +49,7 @@ similarity measures can also be understood as fuzzy equality relations.
 into similarities by applying the following transformation to a
 distance d:
 \deqn{s=\max\left(0,1-\frac{d}{w}\right)}{s=max(0,1-d/w)}
-Here, w corresponds to a maximal radius of interest. Note that this
+Here \code{w} corresponds to a maximal radius of interest. Note that this
 is a fuzzy equality relation with respect to the Lukasiewicz t-norm.
 
 Unlike the above three functions, \code{linKernel} computes pairwise
@@ -60,7 +60,7 @@ following way (for two samples \code{x} and \code{y}:
 \deqn{s=\frac{\vec{x}^T\vec{y}}{\|\vec{x}\| \|\vec{y}\|}}{s=(x^T y)/(|x| |y|)}
 }
 \value{
-   all functions listed above return square matrices of similarities
+   All functions listed above return square matrices of similarities.
 }
 \author{Ulrich Bodenhofer & Andreas Kothmeier
 \email{apcluster@bioinf.jku.at}}
