@@ -10,27 +10,19 @@ apcluster <- function(s, p=NA, q=NA, maxits=1000, convits=100,
     #
 
     if (!is.na(p) && (!is.numeric(p) || !is.vector(p)))
-    {
         stop("p must be a number or vector")
-    }
 
     if (length(dim(s)) != 2 || ncol(s) != nrow(s))
-    {
         stop("s must be a square matrix")
-    }
 
     N <- nrow(s)
 
     if (length(p) > 1)
     {
         if (length(p) < N)
-        {
-            stop("vector p is shorter than number of samples", call.=FALSE)
-        }
+            stop("vector p is shorter than number of samples")
         else if (length(p) > N)
-        {
             p <- p[1:N] # truncate unnecessarily long p
-        }
     }
 
     if (lam > 0.9)
@@ -38,7 +30,7 @@ apcluster <- function(s, p=NA, q=NA, maxits=1000, convits=100,
         warning("Large damping factor in use. Turn on details\n",
                 "and call plot() to monitor net similarity. The\n",
                 "algorithm will change decisions slowly, so consider using\n",
-                "a larger value of convits.\n", call.=FALSE)
+                "a larger value of convits.")
     }
 
     # If argument p is not given, p is set to median of s
@@ -68,7 +60,7 @@ apcluster <- function(s, p=NA, q=NA, maxits=1000, convits=100,
     }
 
     attributes(p) <- NULL
-    
+
     # Place preferences on the diagonal of s (recycled if p is scalar)
     diag(s) <- p
 
@@ -89,15 +81,13 @@ apcluster <- function(s, p=NA, q=NA, maxits=1000, convits=100,
     infelem <- which(s > .Machine$double.xmax)
 
     if (length(infelem) > 0)
-    {
         stop("+Inf similarities detected: change to a large positive value,",
              " but smaller than realmax")
-    }
 
     # create temporary storage
     e   <- matrix(0, N, convits)
     dn  <- FALSE
-    i   <- 0	
+    i   <- 0
     dS  <- diag(s)
     A   <- matrix(0, N, N)
     R   <- matrix(0, N, N)
@@ -134,7 +124,7 @@ apcluster <- function(s, p=NA, q=NA, maxits=1000, convits=100,
         R[1:N + (I - 1) * N] <- s[1:N + (I - 1) * N] - Y2
 
         R <- (1 - lam) * R + lam * old
-         
+
         R[R > .Machine$double.xmax] <- .Machine$double.xmax
 
         # Compute availabilities
@@ -180,7 +170,7 @@ apcluster <- function(s, p=NA, q=NA, maxits=1000, convits=100,
         {
             I <- which(E != 0)
             notI <- which(E == 0)
- 
+
             c         <- max.col(s[,I])
             c[I]      <- 1:K
             tmpidx    <- I[c]
@@ -214,7 +204,7 @@ apcluster <- function(s, p=NA, q=NA, maxits=1000, convits=100,
         {
             ii <- which(c == k)
             j <- which.max(colSums(s[ii,ii,drop=FALSE]))
-            I[k] <- ii[j[1]] 
+            I[k] <- ii[j[1]]
         }
 
         notI <- matrix(sort(setdiff(1:N, I)), ncol=1)
@@ -244,7 +234,6 @@ apcluster <- function(s, p=NA, q=NA, maxits=1000, convits=100,
                 names(apresultObj@clusters[[c]]) <-
                     colnames(s)[apresultObj@clusters[[c]]]
             }
-            
         }
     }
     else
@@ -277,12 +266,10 @@ apcluster <- function(s, p=NA, q=NA, maxits=1000, convits=100,
     }
 
     if (unconverged)
-    {
         warning("Algorithm did not converge. Turn on details\n",
                 "and call plot() to monitor net similarity. Consider\n",
                 "increasing maxits and convits, and, if oscillations occur\n",
-                "also increasing damping factor lam.\n", call.=FALSE);
-    }
+                "also increasing damping factor lam.")
 
     apresultObj
 }

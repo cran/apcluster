@@ -18,10 +18,10 @@ preferenceRange(s, exact=FALSE)
   determining meaningful lower and upper bounds.
 }
 \value{
-  Returns a vector with two entries, the first of which is the minimal
+  returns a vector with two entries, the first of which is the minimal
   input preference (which would lead to 1 or 2 clusters) and the second
   of which is the maximal input prefence (which would lead to as many
-  clusters as data samples). 
+  clusters as data samples)
 }
 \author{Ulrich Bodenhofer & Andreas Kothmeier
 \email{apcluster@bioinf.jku.at}}

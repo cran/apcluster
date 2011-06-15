@@ -19,7 +19,7 @@ apclusterLM(s, p=NA, q=NA, maxits=1000, convits=100, lam=0.9,
            exemplar preferences are initialized according to the
            distribution of non-Inf values in \code{s}. How this
            is done is controlled by the parameter \code{q}.}
-  \item{q}{If \code{p=NA}, exemplar preferences are initialized
+  \item{q}{if \code{p=NA}, exemplar preferences are initialized
            according to the distribution of non-Inf values in \code{s}.
            If \code{q=NA}, exemplar preferences are set to the median
            of non-Inf values in \code{s}. If \code{q} is a value
@@ -33,7 +33,7 @@ apclusterLM(s, p=NA, q=NA, maxits=1000, convits=100, lam=0.9,
              higher values correspond to heavy damping which may be
              needed if oscillations occur}
   \item{details}{if \code{TRUE}, more detailed information about the
-                 algorithm's progess is stored in the output object
+                 algorithm's progress is stored in the output object
                  (see \code{\linkS4class{APResult}})}
   \item{nonoise}{\code{apcluster} adds a small amount of noise to
                  \code{s} to prevent degenerate cases; if \code{TRUE},
@@ -43,11 +43,11 @@ apclusterLM(s, p=NA, q=NA, maxits=1000, convits=100, lam=0.9,
               adding noise (see above), if \code{NA}, the seed remains
               unchanged}
 }
-\details{Affinity Propagation clusters data, using a set of
-real-valued pairwise data point similarities as input. Clusters 
-are each represented by a cluster center data point (the exemplar). 
-The method is iterative and searches for clusters so as to maximize 
-an objective function, called net similarity.
+\details{Affinity Propagation clusters data using a set of
+real-valued pairwise data point similarities as input. Each cluster
+is represented by a cluster center data point (the so-called exemplar). 
+The method is iterative and searches for clusters maximizing
+an objective function called net similarity.
 
 Apart from minor adaptations and optimizations, the
 implementation of the function \code{apclusterLM} is 
@@ -71,7 +71,7 @@ certain fixed number of clusters may be desirable. For this purpose,
 the function \code{\link{apclusterK}} is available.
 }
 \value{
-  Upon successful completion, the function returns a
+  Upon successful completion, the function returns an
   \code{\linkS4class{APResult}} object.
 }
 \author{Ulrich Bodenhofer & Andreas Kothmeier
@@ -81,7 +81,7 @@ the function \code{\link{apclusterK}} is available.
 Frey, B. J. and Dueck, D. (2007) Clustering by passing messages
 between data points. \emph{Science} \bold{315}, 972-976.
 }
-\seealso{\code{\link{APResult-class}}, \code{\link{show-methods}},
+\seealso{\code{\link{APResult}}, \code{\link{show-methods}},
   \code{\link{plot-methods}}, \code{\link{labels-methods}},
   \code{\link{preferenceRange}}, \code{\link{apclusterK}}}
 \examples{
@@ -102,6 +102,9 @@ show(apres)
 ## plot clustering result
 plot(apres, x)
 
+## plot heatmap
+plot(apres, sim)
+
 ## run affinity propagation with default preference of 10% quantile
 ## of similarities; this should lead to a smaller number of clusters
 apres <- apcluster(sim, q=0.1)
@@ -114,7 +117,5 @@ apres <- apcluster(sim, q=0.2)
 show(apres)
 plot(apres, x)
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
 \keyword{cluster}
 

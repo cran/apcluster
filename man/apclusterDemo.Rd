@@ -44,8 +44,7 @@ distributed data - all clusters found must be random artefacts.
 Frey, B. J. and Dueck, D. (2007) Clustering by passing messages
 between data points. \emph{Science} \bold{315}, 972-976.
 }
-\seealso{\code{\link{APResult-class}},
-  \code{\link{show-methods}}, \code{\link{plot-methods}},
+\seealso{\code{\linkS4class{APResult}}, \code{\link{plot-methods}},
   \code{\link{apcluster}}}
 \examples{
 ## create random data set and run affinity propagation

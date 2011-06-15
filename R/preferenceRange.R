@@ -1,9 +1,7 @@
 preferenceRange <- function(s, exact=FALSE)
 {
     if (length(dim(s)) != 2 || ncol(s) != nrow(s))
-    {
         stop("s must be a square matrix")
-    }
 
     N <- nrow(s)
 
@@ -30,7 +28,7 @@ preferenceRange <- function(s, exact=FALSE)
         }
 
         pmin <- dpsim1 - dpsim2
-    
+
         diag(s) <- -Inf
     }
     else

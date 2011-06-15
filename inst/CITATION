@@ -17,7 +17,7 @@ citEntry(entry="Manual",
          url=url,
          textVersion =
              paste("Ulrich Bodenhofer and Andreas Kothmeier (",
-                   year, "). An R package for affinity propagation ",
+                   year, "). APCluster: an R package for affinity propagation ",
                    "clustering. ", vers,
                    ". Institute of Bioinformatics, ",
                    "Johannes Kepler University, Linz, Austria.",
