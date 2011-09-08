@@ -1,6 +1,10 @@
 Change history of package apcluster:
 ====================================
 
+Version 1.1.1:
+- updated citation
+- minor corrections in help pages and vignette
+
 Version 1.1.0:
 - exemplar-based agglomerative clustering (function aggExCluster()) added
 - added various plotting functions, e.g. for dendrograms and heatmaps

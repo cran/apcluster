@@ -1,8 +1,8 @@
 Package: apcluster
 Type: Package
 Title: Affinity Propagation Clustering
-Version: 1.1.0
-Date: 2011-06-10
+Version: 1.1.1
+Date: 2011-09-08
 Depends: R (>= 2.10.1), methods
 Imports: methods, stats, graphics, utils
 Suggests: kernlab
@@ -23,6 +23,6 @@ Collate: AllClasses.R show-methods.R plot-methods.R labels-methods.R
         sparseToFull.R
 URL: http://www.bioinf.jku.at/software/apcluster/
 LazyLoad: yes
-Packaged: 2011-06-10 08:28:42 UTC; bodenhof
+Packaged: 2011-09-08 08:32:41 UTC; bodenhof
 Repository: CRAN
-Date/Publication: 2011-06-15 17:59:42
+Date/Publication: 2011-09-08 09:24:37

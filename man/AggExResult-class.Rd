@@ -38,7 +38,7 @@ The following slots are defined for \link{AggExResult} objects:
       that can be used for plotting proper dendrograms without crossing
       branches; fully analogous to the
       slot \code{order} in the class \code{\link{hclust}}.}
-    \item{\code{label}:}{a character vector containing labels of
+    \item{\code{labels}:}{a character vector containing labels of
       clustered objects used for plotting dendrograms.} 
   }
 }
@@ -55,7 +55,13 @@ The following slots are defined for \link{AggExResult} objects:
 }
 \author{Ulrich Bodenhofer & Andreas Kothmeier
 \email{apcluster@bioinf.jku.at}}
-\references{\url{http://www.bioinf.jku.at/software/apcluster}}
+\references{\url{http://www.bioinf.jku.at/software/apcluster}
+
+Bodenhofer, U., Kothmeier, A., and Hochreiter, S. (2011)
+APCluster: an R package for affinity propagation clustering.
+\emph{Bioinformatics} \bold{27}, 2463-2464.
+DOI: \href{http://dx.doi.org/10.1093/bioinformatics/btr406}{10.1093/bioinformatics/btr406}.
+}
 \seealso{\code{\link{aggExCluster}}, \code{\link{show-methods}},
   \code{\link{plot-methods}}, \code{\link{cutree-methods}}}
 \examples{
