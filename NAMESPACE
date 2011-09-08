@@ -10,5 +10,5 @@ export("apcluster", "apclusterLM", "apclusterDemo", "apclusterK",
        "negDistMat", "expSimMat", "linSimMat", "linKernel",
        "preferenceRange", "sparseToFull", "aggExCluster")
 
-exportClasses("APResult")
+exportClasses("APResult", "AggExResult", "ExClust")
 exportMethods("show", "plot", "labels", "cutree")

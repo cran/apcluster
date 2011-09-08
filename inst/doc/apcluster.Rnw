@@ -34,14 +34,23 @@ Linz\\Altenberger Str. 69, 4040 Linz, Austria\\
 options(width=75)
 set.seed(0)
 library(apcluster)
-apclusterver<-packageDescription("apcluster")$Version
+apclusterVersion <- packageDescription("apcluster")$Version
+apclusterDateRaw <- packageDescription("apcluster")$Date
+apclusterDateYear <- as.numeric(substr(apclusterDateRaw, 1, 4))
+apclusterDateMonth <- as.numeric(substr(apclusterDateRaw, 6, 7))
+apclusterDateDay <- as.numeric(substr(apclusterDateRaw, 9, 10))
+apclusterDate <- paste(month.name[apclusterDateMonth], " ",
+                     apclusterDateDay, ", ",
+                     apclusterDateYear, sep="")
 @
-\newcommand{\APClusterVer}{\Sexpr{apclusterver}}
-\manualtitlepage[Version \APClusterVer, \today]
+\newcommand{\APClusterVer}{\Sexpr{apclusterVersion}}
+\newcommand{\APClusterDate}{\Sexpr{apclusterDate}}
+\manualtitlepage[Version \APClusterVer, \APClusterDate]
 
 \section*{Scope and Purpose of this Document}
 
-This document is a user manual for the \R\ package \APCluster.
+This document is a user manual for the \R\ package \APCluster\
+\cite{BodenhoferKothmeierHochreiter11}.
 It is only meant as a gentle introduction into how to use the basic
 functions implemented in this package. Not all features of the \R\
 package are described in full detail. Such details can be obtained
@@ -913,6 +922,11 @@ a full $l\times l$ matrix.
 \section{Change Log}
 
 \begin{description}
+\item[Version 1.1.1:] \hfill
+  \begin{itemize}
+  \item updated citation
+  \item minor corrections in help pages and vignette
+  \end{itemize}
 \item[Version 1.1.0:] \hfill
   \begin{itemize}
   \item added exemplar-based agglomerative clustering function
@@ -948,10 +962,10 @@ a full $l\times l$ matrix.
 If you use this package for research that is published later, you are kindly
 asked to cite it as follows:
 \begin{quotation}
-\noindent U.\ Bodenhofer and A.\ Kothmeier (2010).
+\noindent U.\ Bodenhofer, A.\ Kothmeier, and S.\ Hochreiter (2011).
 APCluster: an R package for affinity propagation clustering.
-R package version \APClusterVer.
-Institute of Bioinformatics, Johannes Kepler University, Linz, Austria.
+{\em Bioinformatics} {\bf 27}(17):2463--2464.
+DOI: \href{http://dx.doi.org/10.1093/bioinformatics/btr406}{10.1093/bioinformatics/btr406}.
 \end{quotation}
 Moreover, we insist that, any time you cite the package, you also cite the
 original paper in which affinity propagation has been introduced
@@ -968,6 +982,11 @@ toBibtex(citation("apcluster"))
 %MathematicsMisc,FuzzySetsRelations}
 
 \begin{thebibliography}{10}
+
+\bibitem{BodenhoferKothmeierHochreiter11}
+U. Bodenhofer, A. Kothmeier, and S. Hochreiter.
+\newblock APCluster: an R package for affinity propagation clustering.
+\newblock {\em Bioinformatics}, 27:2463--2464, 2011.
 
 \bibitem{DeBaetsMesiar02}
 B. {De Baets} and R. Mesiar.
