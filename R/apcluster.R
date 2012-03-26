@@ -26,12 +26,10 @@ apcluster <- function(s, p=NA, q=NA, maxits=1000, convits=100,
     }
 
     if (lam > 0.9)
-    {
         warning("Large damping factor in use. Turn on details\n",
                 "and call plot() to monitor net similarity. The\n",
                 "algorithm will change decisions slowly, so consider using\n",
                 "a larger value of convits.")
-    }
 
     # If argument p is not given, p is set to median of s
     if (is.na(p))
@@ -84,135 +82,45 @@ apcluster <- function(s, p=NA, q=NA, maxits=1000, convits=100,
         stop("+Inf similarities detected: change to a large positive value,",
              " but smaller than realmax")
 
-    # create temporary storage
-    e   <- matrix(0, N, convits)
-    dn  <- FALSE
-    i   <- 0
-    dS  <- diag(s)
-    A   <- matrix(0, N, N)
-    R   <- matrix(0, N, N)
-    AS  <- matrix(0, N, N)
-    Rp  <- matrix(0, N, N)
-    old <- matrix(0, N, N)
-    t   <- 1
+    res <- .Call("apclusterC", s, as.integer(maxits),
+                 as.integer(convits), as.double(lam), as.logical(details))
+
+    K <- res$K
+    I <- res$I[1:K] + 1
+    names(I) <- colnames(s)[I]
+    i <- res$it
 
     if (details)
     {
-        apresultObj@idxAll    <- matrix(0, N, maxits + 1)
-        apresultObj@netsimAll <- seq(0, 0, length.out=(maxits + 1))
-        apresultObj@dpsimAll  <- seq(0, 0, length.out=(maxits + 1))
-        apresultObj@exprefAll <- seq(0, 0, length.out=(maxits + 1))
+        apresultObj@idxAll    <- res$idxAll[,1:i]
+        apresultObj@netsimAll <- res$netsimAll[1:i]
+        apresultObj@dpsimAll  <- res$dpsimAll[1:i]
+        apresultObj@exprefAll <- res$exprefAll[1:i]
     }
-
-    # main loop
-
-    while (!dn)
-    {
-        i <- i + 1;
-
-        # Compute responsibilities
-        old <- R
-
-        AS <- A + s
-        I  <- apply(AS, 1, which.max)
-        Y  <- AS[1:N + (I - 1) * N]
-        AS[1:N + (I - 1) * N] <- -Inf
-
-        Y2  <- apply(AS, 1, max)
-
-        R <- s - Y
-        R[1:N + (I - 1) * N] <- s[1:N + (I - 1) * N] - Y2
-
-        R <- (1 - lam) * R + lam * old
-
-        R[R > .Machine$double.xmax] <- .Machine$double.xmax
-
-        # Compute availabilities
-        old <- A
-        Rp <- (R + abs(R)) / 2
-
-        diag(Rp) <- diag(R)
-        auxsum <- colSums(Rp)
-
-        A <- t(auxsum - t(Rp)) # auxsum - Rp columnwise
-        dA <- diag(A)
-
-        A <- (A - abs(A)) / 2
-        diag(A) <- dA
-
-        A <- (1 - lam) * A + lam * old
-
-        # determine clusters and check for convergence
-        E <- as.numeric((diag(A) + diag(R)) > 0)
-        e[,((i - 1) %% convits) + 1] <- E
-        K <- sum(E)
-
-        if (i >= convits || i >= maxits)
-        {
-            se <- rowSums(e)
-
-            unconverged <- (sum((se == convits) + (se == 0)) != N)
-
-            if ((!unconverged && (K > 0)) || (i == maxits))
-            {
-                dn <- TRUE
-            }
-        }
-
-        if (K==0)
-        {
-            tmpnetsim <- NaN
-            tmpdpsim <- NaN
-            tmpexpref <- NaN
-            tmpidx <- NaN
-        }
-        else
-        {
-            I <- which(E != 0)
-            notI <- which(E == 0)
-
-            c         <- max.col(s[,I])
-            c[I]      <- 1:K
-            tmpidx    <- I[c]
-            tmpdpsim  <- sum(s[sub2ind(N, notI, tmpidx[notI])])
-            tmpexpref <- sum(dS[I])
-            tmpnetsim <- tmpdpsim + tmpexpref
-        }
-
-        if (details)
-        {
-            apresultObj@netsimAll[i] <- tmpnetsim
-            apresultObj@dpsimAll[i]  <- tmpdpsim
-            apresultObj@exprefAll[i] <- tmpexpref
-            apresultObj@idxAll[,i]   <- tmpidx
-        }
-    } # iterations
-
-    I <- which((diag(A) + diag(R)) > 0)
-    K <- length(I) # Identify exemplars
 
     if (K > 0)
     {
-        c <- max.col(s[,I])
+        i <- i + 1
+
+        c <- max.col(s[, I])
 
         c[I] <- 1:K # Identify clusters
         c[is.na(c)] <- 0 # R inserts NAs by default, so replace them with 0s
-                         # to get same result as the Matlab code
+                         # to get the same result as the Matlab code
 
         # Refine the final set of exemplars and clusters and return results
         for (k in 1:K)
         {
             ii <- which(c == k)
-            j <- which.max(colSums(s[ii,ii,drop=FALSE]))
-            I[k] <- ii[j[1]]
+            I[k] <- ii[which.max(colSums(s[ii, ii, drop=FALSE]))]
         }
 
         notI <- matrix(sort(setdiff(1:N, I)), ncol=1)
-        c <- max.col(s[,I])
+        c <- max.col(s[, I])
         c[I] <- 1:K
         tmpidx <- I[c]
         tmpdpsim <- sum(s[sub2ind(N, notI, tmpidx[notI])])
-        tmpexpref <- sum(dS[I])
+        tmpexpref <- sum(diag(s)[I])
         tmpnetsim <- tmpdpsim + tmpexpref
 
         apresultObj@exemplars <- as.numeric(levels(factor(tmpidx)))
@@ -238,7 +146,7 @@ apcluster <- function(s, p=NA, q=NA, maxits=1000, convits=100,
     }
     else
     {
-        tmpidx    <- matrix(NaN, N, 1)
+        tmpidx    <- rep(NaN, N)
         tmpnetsim <- NaN
         tmpexpref <- NaN
 
@@ -254,18 +162,13 @@ apcluster <- function(s, p=NA, q=NA, maxits=1000, convits=100,
 
     if (details)
     {
-        apresultObj@netsimAll[i+1] <- tmpnetsim
-        apresultObj@dpsimAll[i+1]  <- tmpdpsim
-        apresultObj@exprefAll[i+1] <- tmpexpref
-        apresultObj@idxAll[,i+1]   <- tmpidx
-
-        apresultObj@idxAll    <- apresultObj@idxAll[,1:i+1]
-        apresultObj@netsimAll <- apresultObj@netsimAll[1:i+1]
-        apresultObj@dpsimAll  <- apresultObj@dpsimAll[1:i+1]
-        apresultObj@exprefAll <- apresultObj@exprefAll[1:i+1]
+        apresultObj@netsimAll <- c(apresultObj@netsimAll, tmpnetsim)
+        apresultObj@dpsimAll  <- c(apresultObj@dpsimAll, tmpdpsim)
+        apresultObj@exprefAll <- c(apresultObj@exprefAll, tmpexpref)
+        apresultObj@idxAll    <- cbind(apresultObj@idxAll, tmpidx)
     }
 
-    if (unconverged)
+    if (res$unconv)
         warning("Algorithm did not converge. Turn on details\n",
                 "and call plot() to monitor net similarity. Consider\n",
                 "increasing maxits and convits, and, if oscillations occur\n",
@@ -273,7 +176,6 @@ apcluster <- function(s, p=NA, q=NA, maxits=1000, convits=100,
 
     apresultObj
 }
-
 
 # Linear index from multiple subscripts.
 #   sub2ind is used to determine the equivalent single index

@@ -1,14 +1,11 @@
 \name{apcluster}
 \alias{apcluster}
-\alias{apclusterLM}
 \title{Affinity Propagation}
 \description{
    Runs affinity propagation clustering for a given similarity matrix
 }
 \usage{
 apcluster(s, p=NA, q=NA, maxits=1000, convits=100, lam=0.9,
-          details=FALSE, nonoise=FALSE, seed=NA)
-apclusterLM(s, p=NA, q=NA, maxits=1000, convits=100, lam=0.9,
           details=FALSE, nonoise=FALSE, seed=NA)
 }
 \arguments{
@@ -50,18 +47,9 @@ The method is iterative and searches for clusters maximizing
 an objective function called net similarity.
 
 Apart from minor adaptations and optimizations, the
-implementation of the function \code{apclusterLM} is 
+implementation of the function \code{apcluster} is 
 largely analogous to Frey's and Dueck's Matlab code
-(see \url{http://www.psi.toronto.edu/affinitypropagation/}). The
-function \code{apcluster} uses the same ideas, but replaces the loops
-in the computations of responsibilities and availabilities by pure
-matrix operations. For moderate data sets, the variant \code{apcluster}
-is approximately 60\% faster than \code{apclusterLM}. For large
-data sets (several thousands of data samples), the use of
-\code{apclusterLM} (LM = Less Memory) may be advantageous, since this
-function requires less temporal storage (LM = Less Memory). For at most
-5000 samples, we recommend to use \code{apcluster} (on up-to-date
-systems that are not too tight with memory).
+(see \url{http://www.psi.toronto.edu/affinitypropagation/}).
 
 The new argument \code{q} allows for better controlling the number of
 clusters without knowing the distribution of similarity

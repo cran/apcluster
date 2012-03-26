@@ -1,3 +1,5 @@
+useDynLib(apcluster)
+
 importFrom("methods")
 
 importFrom("graphics",
@@ -6,7 +8,7 @@ importFrom("graphics",
 importFrom("stats",
            "cutree")
 
-export("apcluster", "apclusterLM", "apclusterDemo", "apclusterK",
+export("apcluster", "apclusterDemo", "apclusterK",
        "negDistMat", "expSimMat", "linSimMat", "linKernel",
        "preferenceRange", "sparseToFull", "aggExCluster")
 
