@@ -1,6 +1,12 @@
 Change history of package apcluster:
 ====================================
 
+Version 1.2.0:
+- reimplementation of apcluster() in C++ using the Rcpp package which reduces
+  computation times by a factor of 9-10
+- obsolete function apclusterLM() removed
+- updates of help pages and vignette
+
 Version 1.1.1:
 - updated citation
 - minor corrections in help pages and vignette
