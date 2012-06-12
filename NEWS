@@ -1,6 +1,13 @@
 Change history of package apcluster:
 ====================================
 
+Version 1.2.1:
+- added convenient accessor functions to extracting cluster indices from
+  APResult and ExClust objects
+- added a function for coercing an APResult object into an ExClust object
+- correction of color bar on the left side of heatmaps (default behavior
+  of RowSideColors parameter changed with R 2.15)
+
 Version 1.2.0:
 - reimplementation of apcluster() in C++ using the Rcpp package which reduces
   computation times by a factor of 9-10

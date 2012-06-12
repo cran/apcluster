@@ -80,3 +80,14 @@ setClass("ExClust",
 )
 
 
+
+setAs("APResult", "ExClust",
+    def=function(from)
+    {
+        new("ExClust",
+            l=from@l,
+            exemplars=from@exemplars,
+            clusters=from@clusters,
+            idx=from@idx)
+    }
+)

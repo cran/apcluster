@@ -3,6 +3,8 @@
 \alias{ExClust-class}
 \alias{ExClust}
 \alias{exclust}
+\alias{[,ExClust-method}
+\alias{[[,ExClust-method}
 
 \title{Class "ExClust"}
 \description{S4 class for storing exemplar-based clusterings}
@@ -39,6 +41,20 @@ The following slots are defined for \link{ExClust} objects:
     \item{cutree}{\code{signature(object = "ExClust", k="ANY", h="ANY")}: see
        \code{\link{cutree-methods}}}}
 }
+\section{Accessors}{
+  In the following code snippets, \code{x} is an \code{ExClust} object.
+  \describe{
+    \item{}{\code{x[[i]]}: Returns the i-th cluster as a list of indices
+      of samples belonging to the i-th cluster.
+    }
+    \item{}{\code{x[i]}: Returns a list of integer vectors with the
+      indices  of samples belonging to this cluster. The list has as
+      many components as the argument \code{i} has elements. A list is
+      returned even if \code{i} is a single integer.
+    }
+  }
+}
+
 \author{Ulrich Bodenhofer & Andreas Kothmeier
 \email{apcluster@bioinf.jku.at}}
 \references{\url{http://www.bioinf.jku.at/software/apcluster}

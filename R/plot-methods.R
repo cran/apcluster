@@ -92,11 +92,11 @@ setMethod("plot", signature(x="APResult", y="missing"),
     }
 )
 
-# Plot clustering result along with data set (works only for 2D data)
+# Plot clustering result along with data set
 setMethod("plot", signature(x="APResult", y="matrix"),
     function(x, y, connect=TRUE, xlab="", ylab="", ...)
     {
-        plot(cutree(x), y, connect, xlab, ylab, ...)
+        plot(as(x, "ExClust"), y, connect, xlab, ylab, ...)
     }
 )
 
@@ -192,8 +192,7 @@ setMethod("plot", signature(x="AggExResult", y="missing"),
 )
 
 
-
-# Plot clustering result along with data set (works only for 2D data)
+# Plot clustering result along with data set
 setMethod("plot", signature(x="AggExResult", y="matrix"),
     function(x, y, k=NA, h=NA, ...)
     {
@@ -226,8 +225,15 @@ setMethod("plot", signature(x="AggExResult", y="matrix"),
                     rep(colVec[x@order[i]],
                         length(x@clusters[[x@maxNoClusters]][[x@order[i]]]))))
 
-            heatmap(y[order, order], symm=TRUE, Rowv=NA, Colv=NA, revC=TRUE,
-                    ColSideColors=colors, RowSideColors=rev(colors), ...)
+            ver <- getRversion()
+            ver <- as.integer(c(ver[[c(1, 1)]], ver[[c(1, 2)]]))
+
+            if (ver[1] > 2 || (ver[1] == 2 && ver[2] >= 15))
+                heatmap(y[order, order], symm=TRUE, Rowv=NA, Colv=NA, revC=TRUE,
+                        ColSideColors=colors, RowSideColors=colors, ...)
+            else
+                heatmap(y[order, order], symm=TRUE, Rowv=NA, Colv=NA, revC=TRUE,
+                        ColSideColors=colors, RowSideColors=rev(colors), ...)
         }
         else
         {

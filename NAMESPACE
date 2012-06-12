@@ -13,4 +13,4 @@ export("apcluster", "apclusterDemo", "apclusterK",
        "preferenceRange", "sparseToFull", "aggExCluster")
 
 exportClasses("APResult", "AggExResult", "ExClust")
-exportMethods("show", "plot", "labels", "cutree")
+exportMethods("show", "plot", "labels", "cutree", "[", "[[")
