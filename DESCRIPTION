@@ -1,8 +1,8 @@
 Package: apcluster
 Type: Package
 Title: Affinity Propagation Clustering
-Version: 1.2.0
-Date: 2012-03-26
+Version: 1.2.1
+Date: 2012-06-12
 Depends: R (>= 2.12.0), Rcpp (>= 0.9.4), methods
 Imports: methods, stats, graphics, utils
 Suggests: kernlab
@@ -17,12 +17,13 @@ Description: The apcluster package implements Frey's and Dueck's
         plotting functions are available for analyzing clustering
         results.
 License: GPL (>= 2)
-Collate: AllClasses.R show-methods.R plot-methods.R labels-methods.R
-        cutree-methods.R aggExCluster.R apcluster.R apclusterK.R
-        apclusterDemo.R preferenceRange.R similarity.R sparseToFull.R
+Collate: AllClasses.R access-methods.R show-methods.R plot-methods.R
+        labels-methods.R cutree-methods.R aggExCluster.R apcluster.R
+        apclusterK.R apclusterDemo.R preferenceRange.R similarity.R
+        sparseToFull.R
 URL: http://www.bioinf.jku.at/software/apcluster/
 LinkingTo: Rcpp
 LazyLoad: yes
-Packaged: 2012-03-26 07:35:01 UTC; bodenhof
+Packaged: 2012-06-12 12:44:26 UTC; bodenhof
 Repository: CRAN
-Date/Publication: 2012-03-26 07:56:26
+Date/Publication: 2012-06-12 14:56:53

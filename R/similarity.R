@@ -9,7 +9,7 @@ negDistMat <- function(x, r=1, ...)
     }
 
     if (r != 1)
-        dm <- apply(dm, c(1,2), function(x){x^r})
+        dm <- apply(dm, c(1, 2), function(x){x^r})
 
     -dm
 }

@@ -3,6 +3,9 @@
 \alias{APResult-class}
 \alias{APResult}
 \alias{apresult}
+\alias{[,APResult-method}
+\alias{[[,APResult-method}
+\alias{coerce,ExClust,APResult-method}
 
 \title{Class "APResult"}
 \description{S4 class for storing results of affinity propagation
@@ -67,6 +70,28 @@ are taken from Frey's and Dueck's original Matlab package:
        \code{\link{labels-methods}}}
     \item{cutree}{\code{signature(object = "APResult")}: see
        \code{\link{cutree-methods}}}}
+}
+\section{Accessors}{
+  In the following code snippets, \code{x} is an \code{APClust} object.
+  \describe{
+    \item{}{\code{x[[i]]}: Returns the i-th cluster as a list of indices
+      of samples belonging to the i-th cluster.
+    }
+    \item{}{\code{x[i]}: Returns a list of integer vectors with the
+      indices  of samples belonging to this cluster. The list has as
+      many components as the argument \code{i} has elements. A list is
+      returned even if \code{i} is a single integer.
+    }
+  }
+}
+
+\section{Coercion}{
+  \describe{
+    \item{}{\code{as(from, "ExClust")}:
+      Coerces an object of class \code{APResult} to an object of
+      class \code{\linkS4class{ExClust}}.
+    }
+  }
 }
 \author{Ulrich Bodenhofer & Andreas Kothmeier
 \email{apcluster@bioinf.jku.at}}
