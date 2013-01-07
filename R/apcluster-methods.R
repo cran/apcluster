@@ -1,14 +1,16 @@
-apcluster <- function(s, p=NA, q=NA, maxits=1000, convits=100,
-                      lam=0.9, details=FALSE, nonoise=FALSE, seed=NA)
+apcluster.matrix <- function(s, x, p=NA, q=NA, maxits=1000, convits=100,
+                             lam=0.9, includeSim=FALSE, details=FALSE,
+                             nonoise=FALSE, seed=NA)
 {
     if (!is.na(seed)) set.seed(seed)
 
     apresultObj <- new("APResult") # create the result object to be returned
 
+    apresultObj@call <- deparse(sys.call(-1))
+
     #
     # check input data
     #
-
     if (!is.na(p) && (!is.numeric(p) || !is.vector(p)))
         stop("p must be a number or vector")
 
@@ -35,13 +37,9 @@ apcluster <- function(s, p=NA, q=NA, maxits=1000, convits=100,
     if (is.na(p))
     {
         if (is.na(q))
-        {
-            p <- median(s[setdiff(which(s > -Inf), 0:(N-1) * N + 1:N)])
-        }
+             p <- median(s[setdiff(which(s > -Inf), 0:(N-1) * N + 1:N)])
         else
-        {
             p <- quantile(s[setdiff(which(s > -Inf), 0:(N-1) * N + 1:N)], q)
-        }
     }
 
     apresultObj@l <- N
@@ -87,12 +85,11 @@ apcluster <- function(s, p=NA, q=NA, maxits=1000, convits=100,
 
     K <- res$K
     I <- res$I[1:K] + 1
-    names(I) <- colnames(s)[I]
     i <- res$it
 
     if (details)
     {
-        apresultObj@idxAll    <- res$idxAll[,1:i]
+        apresultObj@idxAll    <- res$idxAll[,1:i] + 1
         apresultObj@netsimAll <- res$netsimAll[1:i]
         apresultObj@dpsimAll  <- res$dpsimAll[1:i]
         apresultObj@exprefAll <- res$exprefAll[1:i]
@@ -115,10 +112,15 @@ apcluster <- function(s, p=NA, q=NA, maxits=1000, convits=100,
             I[k] <- ii[which.max(colSums(s[ii, ii, drop=FALSE]))]
         }
 
+        names(I) <- colnames(s)[I]
+
         notI <- matrix(sort(setdiff(1:N, I)), ncol=1)
         c <- max.col(s[, I])
         c[I] <- 1:K
+
         tmpidx <- I[c]
+
+
         tmpdpsim <- sum(s[sub2ind(N, notI, tmpidx[notI])])
         tmpexpref <- sum(diag(s)[I])
         tmpnetsim <- tmpdpsim + tmpexpref
@@ -128,29 +130,26 @@ apcluster <- function(s, p=NA, q=NA, maxits=1000, convits=100,
         apresultObj@clusters <- list()
 
         for (c in 1:length(apresultObj@exemplars))
-        {
             apresultObj@clusters[[c]] <- which(tmpidx ==
                                                apresultObj@exemplars[c])
-        }
 
         if (length(colnames(s)) == N)
         {
             names(apresultObj@exemplars) <- colnames(s)[apresultObj@exemplars]
 
             for (c in 1:length(apresultObj@exemplars))
-            {
-                names(apresultObj@clusters[[c]]) <-
+                 names(apresultObj@clusters[[c]]) <-
                     colnames(s)[apresultObj@clusters[[c]]]
-            }
         }
     }
     else
     {
         tmpidx    <- rep(NaN, N)
         tmpnetsim <- NaN
+        tmpdpsim <- NaN
         tmpexpref <- NaN
 
-        apresultObj@exemplars <- c()
+        apresultObj@exemplars <- numeric(0)
         apresultObj@clusters  <- list()
     }
 
@@ -174,13 +173,60 @@ apcluster <- function(s, p=NA, q=NA, maxits=1000, convits=100,
                 "increasing maxits and convits, and, if oscillations occur\n",
                 "also increasing damping factor lam.")
 
+    if (includeSim)
+        apresultObj@sim <- s
+
     apresultObj
 }
+
+setMethod("apcluster", signature(s="matrix", x="missing"), apcluster.matrix)
+
+
+apcluster.function <- function(s, x, p=NA, q=NA, maxits=1000, convits=100,
+                               lam=0.9, includeSim=TRUE, details=FALSE,
+                               nonoise=FALSE, seed=NA, ...)
+{
+    if (!is.na(seed)) set.seed(seed)
+
+    if (is.data.frame(x))
+        x <- as.matrix(x[, sapply(x, is.numeric)])
+
+    if (is.matrix(x))
+        N <- nrow(x)
+    else
+        N <- length(x)
+
+    if (N < 2) stop("cannot cluster less than 2 samples")
+
+    if (!is.function(s))
+    {
+        if (!is.character(s) || !exists(s, mode="function"))
+            stop("Invalid distance function")
+
+        s <- match.fun(s)
+    }
+
+    sim <- s(x=x, ...)
+
+    if (!is.matrix(sim) || (nrow(sim) != N) || ncol(sim) != N)
+        stop("Computation of similarity matrix failed")
+
+    apres <- apcluster(s=sim, p=p, q=q, maxits=maxits, convits=convits, lam=lam,
+                       details=details, nonoise=nonoise)
+
+    apres@call <- deparse(sys.call(-1))
+
+    if (includeSim)
+        apres@sim <- sim
+
+    apres
+}
+
+setMethod("apcluster", signature(s="function", x="ANY"), apcluster.function)
+setMethod("apcluster", signature(s="character", x="ANY"), apcluster.function)
+
 
 # Linear index from multiple subscripts.
 #   sub2ind is used to determine the equivalent single index
 #   corresponding to a given set of subscript values.
-sub2ind <- function(N, I, J)
-{
-    I + (N * (J - 1))
-}
+sub2ind <- function(N, I, J) (I + (N * (J - 1)))

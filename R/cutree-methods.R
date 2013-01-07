@@ -42,6 +42,9 @@ setMethod("cutree", signature(tree="AggExResult", k="ANY", h="ANY"),
                     names(outObj@exemplars)[i]
         }
 
+        outObj@sim  <- tree@sim
+        outObj@call <- tree@call
+
         outObj
     }
 )
@@ -55,6 +58,8 @@ setMethod("cutree", signature(tree="APResult", k="ANY", h="ANY"),
         outObj@exemplars <- tree@exemplars
         outObj@clusters  <- tree@clusters
         outObj@idx       <- tree@idx
+        outObj@sim       <- tree@sim
+        outObj@call      <- tree@call
 
         outObj
     }

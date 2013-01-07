@@ -6,11 +6,11 @@ importFrom("graphics",
            "plot")
 
 importFrom("stats",
-           "cutree")
+           "cutree", "heatmap")
 
-export("apcluster", "apclusterDemo", "apclusterK",
-       "negDistMat", "expSimMat", "linSimMat", "linKernel",
-       "preferenceRange", "sparseToFull", "aggExCluster")
+export("apclusterDemo", "negDistMat", "expSimMat", "corSimMat", "linSimMat",
+       "linKernel", "preferenceRange", "sparseToFull")
 
 exportClasses("APResult", "AggExResult", "ExClust")
-exportMethods("show", "plot", "labels", "cutree", "[", "[[")
+exportMethods("show", "plot", "heatmap", "labels", "cutree", "[", "[[", similarity,
+              "length", "apcluster", "apclusterL", "apclusterK", "aggExCluster")

@@ -34,6 +34,10 @@ sparseToFull(s, fill=-Inf)
   distinguishing between sparse and dense similarity matrices (although
   we admit that clustering of 3 values makes as little sense as
   considering similarity matrices with only three entries).
+
+  This function is deprecated, but still included in the package for
+  backward compatibility. All users are recommended to use the
+  conversion facilities of the \code{Matrix} package.
 }
 \value{returns a square similarity matrix}
 \author{Ulrich Bodenhofer & Andreas Kothmeier

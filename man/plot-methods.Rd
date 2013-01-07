@@ -1,43 +1,53 @@
-\name{plot-methods}
+\name{plot}
 \docType{methods}
 \alias{plot}
 \alias{plot-methods}
 \alias{plot,APResult,missing-method}
 \alias{plot,APResult,matrix-method}
+\alias{plot,APResult,data.frame-method}
+\alias{plot,ExClust,missing-method}
 \alias{plot,ExClust,matrix-method}
+\alias{plot,ExClust,data.frame-method}
 \alias{plot,AggExResult,missing-method}
 \alias{plot,AggExResult,matrix-method}
+\alias{plot,AggExResult,data.frame-method}
 \title{Plot Clustering Results}
 \description{
   Functions for Visualizing Clustering Results
 }
 \usage{
-\S4method{plot}{APResult,missing}(x,
+\S4method{plot}{APResult,missing}(x, y,
              type=c("netsim", "dpsim", "expref"),
              xlab="# Iterations",
              ylab="Similarity", ...)
 \S4method{plot}{APResult,matrix}(x, y,
               connect=TRUE, xlab="", ylab="", ...)
+\S4method{plot}{APResult,data.frame}(x, y,
+              connect=TRUE, xlab="", ylab="", ...)
+\S4method{plot}{ExClust,missing}(x, y, ...)
 \S4method{plot}{ExClust,matrix}(x, y,
               connect=TRUE, xlab="", ylab="", ...)
-\S4method{plot}{AggExResult,missing}(x, main="Cluster dendrogram",
+\S4method{plot}{ExClust,data.frame}(x, y,
+              connect=TRUE, xlab="", ylab="", ...)
+\S4method{plot}{AggExResult,missing}(x, y, main="Cluster dendrogram",
               xlab="", ylab="Balanced avg. similarity to exemplar",
               ticks=4, digits=2, ...)
 \S4method{plot}{AggExResult,matrix}(x, y, k=NA, h=NA, ...)
+\S4method{plot}{AggExResult,data.frame}(x, y, k=NA, h=NA, ...)
 }
 \arguments{
   \item{x}{a clustering result object of class
      \code{\linkS4class{APResult}}, \code{\linkS4class{ExClust}},
      or \code{\linkS4class{AggExResult}}}
-  \item{y}{a matrix (see details below)}
+  \item{y}{a matrix or data frame (see details below)}
   \item{type}{a string or array of strings indicating which
               performance measures should be plotted; valid values are
               \code{"netsim"}, \code{"dpsim"}, and \code{"expref"}
               which can be used in any combination or order;
               all other strings are ignored (for the meaning see
               \code{\linkS4class{APResult}})}
-  \item{xlab}{label for x axis of plot}
-  \item{ylab}{label for y axis of plot}
+  \item{xlab}{label for x axis of plot; irrelevant for heatmaps}
+  \item{ylab}{label for y axis of plot; irrelevant for heatmaps}
   \item{connect}{used only if clustering is plotted on original data,
     ignored otherwise. If \code{connect} is \code{TRUE}, lines are
     drawn connecting exemplars with their cluster members.}
@@ -53,7 +63,7 @@
     level of cluster hierarchy (see \code{\link{cutree-methods}})}
   \item{...}{all other arguments are passed to the plotting command that
     are used internally, \code{\link[graphics:plot]{plot}} or
-    \code{\link{heatmap}}.}
+    \code{\link[stats:heatmap]{heatmap}}.}
 }
 \details{
   If \code{plot} is called for an \code{\linkS4class{APResult}} object
@@ -61,11 +71,15 @@
   a plot is created that displays graphs of performance
   measures over execution time of the affinity propagation run.
   This only works if \code{\link{apcluster}} was called with
-  \code{details=TRUE}, otherwise an error message is displayed.
+  \code{details=TRUE}. If no details are available and if
+  the slot \code{sim} contains a similarity matrix, then a
+  \code{\link{heatmap}} of the clustering result is displayed.
+  If neither details nor a similarity matrix are available in
+  \code{x}, an error message is displayed.
   This variant of \code{plot} does not return any value.
 
   If \code{plot} is called for an \code{\linkS4class{APResult}} object
-  along with a matrix as argument \code{y}, then the dimensions of
+  along with a matrix or data frame as argument \code{y}, then the dimensions of
   the matrix determine the behavior of \code{plot}:
   \enumerate{
     \item{If the matrix \code{y} has two columns, \code{y} is
@@ -76,7 +90,8 @@
       by a black square. If \code{connect} is \code{TRUE}, lines
       connecting the cluster members to their exemplars are drawn.
       This variant of \code{plot} does not return any value.}
-    \item{If the matrix \code{y} is quadratic, \code{y} is
+    \item{If the matrix \code{y} is quadratic for regular clustering or
+      rectangular for leveraged clustering, \code{y} is
       interpreted as the similarity matrix that was used for
       clustering. Then a heatmap of the similarity matrix is drawn, where
       the clusters are grouped together and highlighted in
@@ -87,8 +102,12 @@
   }
   
   If \code{plot} is called for an \code{\linkS4class{ExClust}} object
-  along with a matrix as argument \code{y}, then \code{plot} behaves
-  exactly the same as described in the previous paragraph.
+  along with a matrix or data frame as argument \code{y}, then
+  \code{plot} behaves exactly the same as described in the previous
+  paragraph. Calling \code{plot} for an \code{\linkS4class{ExClust}}
+  object without supplying argument \code{y} attempts to plot a heatmap.
+  If, in this case, no similarity matrix is available in \code{x},
+  an error is displayed.
   
   If \code{plot} is called for an \code{\linkS4class{AggExResult}} object
   without specifying the second argument \code{y}, then a dendrogram
@@ -96,31 +115,42 @@
   \code{\link{dendrogram}} object.
 
   If \code{plot} is called for an \code{\linkS4class{AggExResult}} object
-  along with a square matrix \code{y}, \code{y} is again interpreted
-  as similarity matrix. If \code{x@maxNoClusters} is less than
-  \code{x@l}, \code{plot} produces the same kind of heatmap as
+  along with a square matrix \code{y} for normal clustering or a 
+  rectangular matrix for leveraged clustering, \code{y} is again 
+  interpreted as similarity matrix. If \code{x@maxNoClusters} is less 
+  than \code{x@l}, \code{plot} produces the same kind of heatmap as
   the variant for \code{\linkS4class{APResult}} and
   \code{\linkS4class{ExClust}} objects described above -
   with clusters grouped and highlighted
-  in different colors. If \code{x@maxNoClusters} is equal to
+  in different colors. This variant returns no value.
+  If \code{x@maxNoClusters} is equal to
   \code{x@l}, a heatmap is shown too, but instead of a color coding of
   clusters, the complete dendrogram of the cluster hierarchy is
   shown on the top and the left of the heatmap. This variant of
-  \code{plot} does not return any value.
+  \code{plot} returns a \code{\link[stats:dendrogram]{dendrogram}}
+  object containing the dendrogram computed internally.
 
   If \code{plot} is called for an \code{\linkS4class{AggExResult}} object
-  along with a two-column matrix \code{y}, \code{y} is again interpreted
+  along with a two-column matrix or data frame \code{y}, \code{y} is
+  again interpreted
   as original data set. If one of the two arguments \code{k} or
-  \code{h} is present, a clustering is cut out from the cluster hierarchy using
-  \code{\link{cutree}} and this clustering is displayed with the
+  \code{h} is present, a clustering is cut out from the cluster hierarchy 
+  using \code{\link{cutree}} and this clustering is displayed with the
   original data set as described above. This variant of
   \code{plot} returns an invisible \code{\linkS4class{ExClust}} object
   containing the extracted clustering.
+  
+  Starting with package version 1.3.0 the package function \code{heatmap} 
+  is available for plotting of heatmaps. For backward compatibility 
+  plotting of heatmaps via \code{plot} is still supported, but the user
+  is advised not to rely on the implicit behavior described above, but,
+  instead, to explicitly call \code{\link{heatmap}} when he/she wants to
+  display a heatmap.
 }
 \value{
   see details above
 }
-\author{Ulrich Bodenhofer & Andreas Kothmeier
+\author{Ulrich Bodenhofer, Andreas Kothmeier & Johannes Palme
 \email{apcluster@bioinf.jku.at}}
 \references{\url{http://www.bioinf.jku.at/software/apcluster}
 
@@ -135,7 +165,8 @@ DOI: \href{http://dx.doi.org/10.1126/science.1136800}{10.1126/science.1136800}.
 }
 \seealso{\code{\linkS4class{APResult}},
   \code{\linkS4class{AggExResult}}, \code{\linkS4class{ExClust}},
-  \code{\link{apcluster}}, \code{\link{aggExCluster}},
+  \code{\link{heatmap-methods}}, \code{\link{apcluster}}, 
+  \code{\link{apclusterL}}, \code{\link{aggExCluster}}, 
   \code{\link{cutree-methods}}}
 \examples{
 ## create two Gaussian clouds
@@ -143,11 +174,8 @@ cl1 <- cbind(rnorm(50,0.2,0.05),rnorm(50,0.8,0.06))
 cl2 <- cbind(rnorm(50,0.7,0.08),rnorm(50,0.3,0.05))
 x <- rbind(cl1,cl2)
 
-## compute similarity matrix (negative squared Euclidean)
-sim <- negDistMat(x, r=2)
-
 ## run affinity propagation
-apres <- apcluster(sim, q=0.6, details=TRUE)
+apres <- apcluster(negDistMat(r=2), x, q=0.7, details=TRUE)
 
 ## plot information about clustering run
 plot(apres)
@@ -155,29 +183,23 @@ plot(apres)
 ## plot clustering result
 plot(apres, x)
 
-## plot heatmap
-plot(apres, sim)
-
 ## perform agglomerative clustering of affinity propagation clusters
-aggres1 <- aggExCluster(sim, apres)
+aggres1 <- aggExCluster(x=apres)
 
 ## show dendrogram
 plot(aggres1)
-
-## show heatmap
-plot(aggres1, sim)
 
 ## show clustering result for 4 clusters
 plot(aggres1, x, k=4)
 
 ## perform agglomerative clustering of whole data set
-aggres2 <- aggExCluster(sim)
+aggres2 <- aggExCluster(negDistMat(r=2), x)
 
 ## show dendrogram
 plot(aggres2)
 
 ## show heatmap along with dendrogram
-plot(aggres2, sim)
+heatmap(aggres2)
 
 ## show clustering result for 2 clusters
 plot(aggres2, x, k=2)

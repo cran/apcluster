@@ -5,6 +5,8 @@
 \alias{exclust}
 \alias{[,ExClust-method}
 \alias{[[,ExClust-method}
+\alias{length,ExClust-method}
+\alias{similarity,ExClust-method}
 
 \title{Class "ExClust"}
 \description{S4 class for storing exemplar-based clusterings}
@@ -19,6 +21,7 @@
 The following slots are defined for \link{ExClust} objects:
     \describe{
     \item{\code{l}:}{number of samples in the data set}
+    \item{\code{sel}:}{subset of samples used for leveraged clustering}
     \item{\code{exemplars}:}{vector containing indices of exemplars}
     \item{\code{clusters}:}{list containing the clusters; the i-th
                             component is a vector of indices of
@@ -28,6 +31,10 @@ The following slots are defined for \link{ExClust} objects:
                        sample-to-exemplar mapping; the i-th entry
                        contains the index of the exemplar the i-th
                        sample belongs to}
+    \item{\code{sim}:}{similarity matrix; only available if
+      the preceding clustering method was called with
+      \code{includeSim=TRUE}.}
+    \item{\code{call}:}{method call of the preceding clustering method}
   }
 }
 \section{Methods}{
@@ -39,7 +46,10 @@ The following slots are defined for \link{ExClust} objects:
     \item{labels}{\code{signature(object = "ExClust")}: see
        \code{\link{labels-methods}}}
     \item{cutree}{\code{signature(object = "ExClust", k="ANY", h="ANY")}: see
-       \code{\link{cutree-methods}}}}
+       \code{\link{cutree-methods}}}
+    \item{length}{\code{signature(x = "ExClust")}: gives the number of
+      clusters.}
+    }
 }
 \section{Accessors}{
   In the following code snippets, \code{x} is an \code{ExClust} object.
@@ -52,10 +62,13 @@ The following slots are defined for \link{ExClust} objects:
       many components as the argument \code{i} has elements. A list is
       returned even if \code{i} is a single integer.
     }
+    \item{similarity}{\code{signature(x = "ExClust")}: gives the similarity
+      matrix.
+    }
   }
 }
 
-\author{Ulrich Bodenhofer & Andreas Kothmeier
+\author{Ulrich Bodenhofer, Andreas Kothmeier & Johannes Palme
 \email{apcluster@bioinf.jku.at}}
 \references{\url{http://www.bioinf.jku.at/software/apcluster}
 
