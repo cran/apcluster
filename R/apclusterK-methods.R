@@ -1,12 +1,13 @@
-apclusterK <- function(s, K, prc=10, bimaxit=20, exact=FALSE,
-                       nonoise=FALSE, seed=NA, verbose=FALSE, ...)
+apclusterK.matrix <- function(s, x, K, prc=10, bimaxit=20, exact=FALSE,
+                              maxits=1000, convits=100, lam=0.9,
+                              includeSim=FALSE, details=FALSE, nonoise=FALSE,
+                              seed=NA, verbose=TRUE)
 {
     if (!is.na(seed)) set.seed(seed)
 
     #
     # check input data
     #
-
     if (length(dim(s)) != 2 || ncol(s) != nrow(s))
         stop("s must be a square matrix")
 
@@ -49,7 +50,7 @@ apclusterK <- function(s, K, prc=10, bimaxit=20, exact=FALSE,
         if (verbose)
             cat("Trying p =", tmppref, "\n")
 
-        apresultObj <- apcluster(s, p=tmppref, nonoise=TRUE, ...)
+        apresultObj <- apcluster(s, p=tmppref, nonoise=TRUE)
 
         tmpk <- length(apresultObj@exemplars)
 
@@ -85,7 +86,9 @@ apclusterK <- function(s, K, prc=10, bimaxit=20, exact=FALSE,
         if (verbose)
             cat("Trying p =", tmppref, "(bisection step no.", ntries, ")\n")
 
-        apresultObj <- apcluster(s, p=tmppref, nonoise=TRUE, ...)
+        apresultObj <- apcluster(s, p=tmppref, nonoise=TRUE,
+                                 maxits=maxits, convits=convits, lam=lam,
+                                 details=details)
 
         tmpk <- length(apresultObj@exemplars)
 
@@ -111,5 +114,60 @@ apclusterK <- function(s, K, prc=10, bimaxit=20, exact=FALSE,
         warning("Number of clusters not in desired range. Increase bimaxit",
                 " to improve accuracy of bisection.")
 
+    apresultObj@call <- deparse(sys.call(-1))
+
+    if (includeSim)
+        apresultObj@sim <- s
+
     apresultObj
 }
+
+setMethod("apclusterK", signature(s="matrix", x="missing"), apclusterK.matrix)
+
+
+apclusterK.function <- function(s, x, K, prc=10, bimaxit=20, exact=FALSE,
+                                maxits=1000, convits=100, lam=0.9,
+                                includeSim=TRUE, details=FALSE,
+                                nonoise=FALSE, seed=NA, verbose=TRUE, ...)
+{
+    if (!is.na(seed)) set.seed(seed)
+
+    if (is.data.frame(x))
+        x <- as.matrix(x[, sapply(x, is.numeric)])
+
+    if (is.matrix(x))
+        N <- nrow(x)
+    else
+        N <- length(x)
+
+    if (N < 2)
+        stop("cannot cluster less than 2 samples")
+
+    if (!is.function(s))
+    {
+        if (!is.character(s) || !exists(s, mode="function"))
+            stop("Invalid distance function")
+
+        s <- match.fun(s)
+    }
+
+    sim <- s(x=x, ...)
+
+    if (!is.matrix(sim) || (nrow(sim) != N) || ncol(sim) != N)
+        stop("Computation of similarity matrix failed")
+
+    apres <- apclusterK(s=sim, K=K, prc=prc, bimaxit=bimaxit, exact=exact,
+                        maxits=maxits, convits=convits, lam=lam,
+                        includeSim=FALSE,
+                        details=details, nonoise=nonoise, verbose=verbose)
+
+    apres@call <- deparse(sys.call(-1))
+
+    if (includeSim)
+        apres@sim <- sim
+
+    apres
+}
+
+setMethod("apclusterK", signature(s="function" , x="ANY"), apclusterK.function)
+setMethod("apclusterK", signature(s="character", x="ANY"), apclusterK.function)

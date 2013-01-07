@@ -144,8 +144,8 @@ Johannes Kepler University Linz\\
 A-4040 Linz, Austria
 \end{tabular}}}
 \put(19,0){\makebox(0,0)[rb]{\fontfamily{phv}\normalsize\begin{tabular}[b]{r}
-Tel. +43 732 2468 8880\\
-Fax +43 732 2468 9511\\
+Tel. +43 732 2468 4520\\
+Fax +43 732 2468 4539\\
 http://www.bioinf.jku.at
 \end{tabular}}}
 %\put(0,24.5){\makebox(0,0)[lt]{\noindent\begin{minipage}{19cm}

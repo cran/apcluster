@@ -3,6 +3,10 @@
 \alias{AggExResult-class}
 \alias{AggExResult}
 \alias{aggexresult}
+\alias{[,AggExResult-method}
+\alias{[[,AggExResult-method}
+\alias{length,AggExResult-method}
+\alias{similarity,AggExResult-method}
 
 \title{Class "AggExResult"}
 \description{S4 class for storing results of exemplar-based
@@ -15,6 +19,8 @@ for a given similarity matrix.
 The following slots are defined for \link{AggExResult} objects:
     \describe{
     \item{\code{l}:}{number of samples in the data set}
+    \item{\code{sel}:}{subset of samples used for leveraged clustering 
+    	               (empty for normal clustering)}
     \item{\code{maxNoClusters}:}{maximum number of clusters in the 
       cluster hierarchy, i.e. it
       contains clusterings with 1 - \code{maxNoClusters} clusters.}
@@ -40,6 +46,11 @@ The following slots are defined for \link{AggExResult} objects:
       slot \code{order} in the class \code{\link{hclust}}.}
     \item{\code{labels}:}{a character vector containing labels of
       clustered objects used for plotting dendrograms.} 
+    \item{\code{sim}:}{similarity matrix; only available if
+		       \code{\link{aggExCluster}} was called with similarity
+		       function and \code{includeSim=TRUE}.}
+    \item{\code{call}:}{method call used to produce this
+    	                clustering result}
   }
 }
 \section{Methods}{
@@ -48,12 +59,32 @@ The following slots are defined for \link{AggExResult} objects:
        \code{\link{plot-methods}}}
     \item{plot}{\code{signature(x = "AggExResult", y = "matrix")}: see
        \code{\link{plot-methods}}}
-    \item{show}{\code{signature(object = "APResult")}: see
+    \item{show}{\code{signature(object = "AggExResult")}: see
        \code{\link{show-methods}}}
-    \item{cutree}{\code{signature(object = "APResult", k="ANY", h="ANY")}: see
-       \code{\link{cutree-methods}}}}
+    \item{cutree}{\code{signature(object = "AggExResult", k="ANY",
+	h="ANY")}: see \code{\link{cutree-methods}}}
+    \item{length}{\code{signature(x = "AggExResult")}: gives the number of
+      clustering levels in the clustering result.}
+    }
 }
-\author{Ulrich Bodenhofer & Andreas Kothmeier
+\section{Accessors}{
+  In the following code snippets, \code{x} is an \code{AggExResult} object.
+  \describe{
+    \item{}{\code{x[[i]]}: Returns an object of class
+      \code{\linkS4class{ExClust}} corresponding to the clustering level
+      with \code{i} clusters; synonymous to \code{\link{cutree}(x, i)}.
+    }
+    \item{}{\code{x[i]}: Returns a list of \code{\linkS4class{ExClust}}
+      objects with all clustering levels specified in vector \code{i}.
+      So, the list has as many components as the argument \code{i} has
+      elements. A list is returned even if \code{i} is a single level.
+    }
+    \item{similarity}{\code{signature(x = "AggExResult")}: gives the similarity
+      matrix.
+    }
+  }
+}
+\author{Ulrich Bodenhofer, Andreas Kothmeier & Johannes Palme
 \email{apcluster@bioinf.jku.at}}
 \references{\url{http://www.bioinf.jku.at/software/apcluster}
 
@@ -83,7 +114,7 @@ show(aggres1)
 plot(aggres1)
 
 ## plot heatmap along with dendrogram
-plot(aggres1, sim)
+heatmap(aggres1, sim)
 
 ## plot level with two clusters
 plot(aggres1, x, k=2)
@@ -101,7 +132,7 @@ show(aggres2)
 plot(aggres2)
 
 ## plot heatmap
-plot(aggres2, sim)
+heatmap(aggres2, sim)
 
 ## plot level with two clusters
 plot(aggres2, x, k=2)

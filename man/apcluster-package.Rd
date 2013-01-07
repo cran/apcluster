@@ -8,18 +8,20 @@ Frey and Dueck and a method for exemplar-based agglomerative clustering.
 It further offers various functions for plotting clustering results.
 }
 \details{The central function is \code{\link{apcluster}}. It runs affinity
-propagation on a given similarity matrix. The function returns
-an \code{\linkS4class{APResult}} object from which the clustering
-itself and information about the affinity propagation run can be
-obtained. The package further implements an exemplar-based agglomerative
-clustering method \code{\link{aggExCluster}} that can be used for
-computing a complete cluster hierarchy, but also
-for joining fine-grained clusters previously obtained by
-affinity propagation clustering.
-Further functions are implemented to visualize the
+propagation on a given similarity matrix or it creates a similarity matrix
+for a given data set and similarity measure and runs affinity propagation
+on this matrix. The function returns an \code{\linkS4class{APResult}} 
+object from which the clustering itself and information about the affinity 
+propagation run can be obtained. Leveraged affinity propagation clustering 
+\code{\link{apclusterL}} allows efficient clustering of large datasets by 
+using only a subset of the similarities. The package further implements 
+an exemplar-based agglomerative clustering method \code{\link{aggExCluster}} 
+that can be used for computing a complete cluster hierarchy, but also for 
+joining fine-grained clusters previously obtained by affinity propagation 
+clustering. Further functions are implemented to visualize the
 results and to create distance matrices.
 }
-\author{Ulrich Bodenhofer & Andreas Kothmeier
+\author{Ulrich Bodenhofer, Andreas Kothmeier & Johannes Palme
 \email{apcluster@bioinf.jku.at}}
 \references{\url{http://www.bioinf.jku.at/software/apcluster}
 
@@ -36,7 +38,7 @@ DOI: \href{http://dx.doi.org/10.1126/science.1136800}{10.1126/science.1136800}.
 \examples{
 ## create two Gaussian clouds
 cl1 <- cbind(rnorm(100,0.2,0.05),rnorm(100,0.8,0.06))
-cl2 <- cbind(rnorm(50,0.7,0.08),rnorm(50,0.3,0.05))
+cl2 <- cbind(rnorm(100,0.7,0.08),rnorm(100,0.3,0.05))
 x <- rbind(cl1,cl2)
 
 ## compute similarity matrix (negative squared Euclidean)
@@ -68,5 +70,14 @@ plot(aggres)
 plot(aggres, x, k=2)
 
 ## plot heatmap
-plot(apres, sim)
+heatmap(apres, sim)
+
+## leveraged apcluster
+apresL <- apclusterL(s=negDistMat(r=2), x=x,  frac=0.2, sweeps=3)
+
+## show details of clustering results
+show(apresL)
+
+## plot clustering result
+plot(apresL, x)
 }

@@ -1,9 +1,21 @@
 # Plot graph(s) with objective values (works only if details were switched on)
 setMethod("plot", signature(x="APResult", y="missing"),
-    function(x, type=c("netsim", "dpsim", "expref"),
+    function(x, y, type=c("netsim", "dpsim", "expref"),
              xlab="# Iterations",
              ylab="Similarity", ...)
     {
+        if (length(x@netsimAll) <= 1)
+        {
+            if(!identical(dim(x@sim), as.integer(c(1, 1))))
+            {
+                aggres <- heatmap(x, ...)
+                return(invisible(aggres))
+            }
+            else
+                stop("Details are not available in x and similarity matrix is ",
+                     "not\nincluded either.")
+        }
+
         plotnetsim <- FALSE
         plotexpref <- FALSE
         plotdpsim  <- FALSE
@@ -86,8 +98,8 @@ setMethod("plot", signature(x="APResult", y="missing"),
         else
         {
             stop("No valid data was found for plotting.\n",
-                 "       Please use the apcluster argument details=TRUE in\n",
-                 "       order to add plotting data to the APResult object.")
+                 "       Please use the apcluster() argument details=TRUE in\n",
+                 "       order to add convergene details to the APResult object.")
         }
     }
 )
@@ -100,12 +112,29 @@ setMethod("plot", signature(x="APResult", y="matrix"),
     }
 )
 
+# Plot clustering result along with data set
+setMethod("plot", signature(x="APResult", y="data.frame"),
+    function(x, y, connect=TRUE, xlab="", ylab="", ...)
+    {
+        y <- as.matrix(y[, sapply(y, is.numeric)])
+
+        if (ncol(y) != 2)
+            stop("number of numerical columns in data frame is not 2.\n",
+                 "Plotting clustering on original data only supported for 2D\n",
+                 "data.\n")
+
+        plot(as(x, "ExClust"), y, connect, xlab, ylab, ...)
+    }
+)
+
+
+setMethod("plot", signature("ExClust", "missing"), heatmap.ExClust)
+
+
 setMethod("plot", signature(x="ExClust", y="matrix"),
     function(x, y, connect=TRUE, xlab="", ylab="", ...)
     {
-        if (length(dim(y)) != 2)
-            stop("y must be a matrix")
-        else if (x@l != nrow(y))
+        if (x@l != nrow(y))
             stop("size of clustering result does not fit to size of data set")
         else if (ncol(y) == 2)
         {
@@ -122,39 +151,28 @@ setMethod("plot", signature(x="ExClust", y="matrix"),
                 warning("No exemplars defined in clustering result. Plotting ",
                         "data set as it is.")
 
-                points(y[,1], y[,2], col="black", pch=19, cex=0.8)
+                points(y, col="black", pch=19, cex=0.8)
             }
             else
             {
-                cols <- rainbow(num)
+                cols <- rainbow(num)[labels(x, type="enum")]
 
-                for (i in 1:num)
-                {
-                    data <- y[x@clusters[[i]],,drop=FALSE]
-                    exem <- y[x@exemplars[i],]
+                points(y, col=cols, pch=19, cex=0.8)
 
-                    points(data[,1], data[,2], col=cols[i],
-                           pch=19, cex=0.8)
+                if (connect)
+                   segments(x0=y[, 1], y0=y[, 2],
+                            x1=y[x@idx, 1, drop=FALSE], y1=y[x@idx, 2, drop=FALSE],
+                            col=cols)
 
-                    if (connect)
-                    {
-                        for (j in 1:nrow(data))
-                        {
-                            lines(c(data[j,1], exem[1]), c(data[j,2], exem[2]),
-                                  col=cols[i])
-                        }
-                    }
-
-                    points(exem[1], exem[2], col="black",
-                           type="p", pch=22, cex=1.5)
-                }
-            }
+                points(y[x@exemplars,,drop=FALSE], col="black", type="p", pch=22,
+                       cex=1.5)
+           }
         }
-        else if (nrow(y) == ncol(y))
+        else if (nrow(y) == ncol(y) || length(x@sel) > 0)
         {
             aggres <- aggExCluster(y, x)
 
-            plot(aggres, y, ...)
+            heatmap(aggres, y, ...)
 
             return(invisible(aggres))
         }
@@ -164,9 +182,25 @@ setMethod("plot", signature(x="ExClust", y="matrix"),
 )
 
 
+# Plot clustering result along with data set
+setMethod("plot", signature(x="ExClust", y="data.frame"),
+    function(x, y, connect=TRUE, xlab="", ylab="", ...)
+    {
+        y <- as.matrix(y[, sapply(y, is.numeric)])
+
+        if (ncol(y) != 2)
+            stop("number of numerical columns in data frame is not 2.\n",
+                 "Plotting clustering on original data only supported for 2D\n",
+                 "data.\n")
+
+        plot(x, y, connect, xlab, ylab, ...)
+    }
+)
+
+
 # Plot clustering result
 setMethod("plot", signature(x="AggExResult", y="missing"),
-    function(x, main="Cluster dendrogram", xlab="",
+    function(x, y, main="Cluster dendrogram", xlab="",
              ylab="Balanced avg. similarity to exemplar", ticks=4,
              digits=2, ...)
     {
@@ -214,10 +248,16 @@ setMethod("plot", signature(x="AggExResult", y="matrix"),
 
             return(invisible(excl))
         }
-        else if (ncol(y) != nrow(y))
+        else if (length(x@sel)==0 && ncol(y) != nrow(y))
             stop("y must be quadratic or two-column")
         else if (x@maxNoClusters < 3 || x@maxNoClusters < x@l)
         {
+            if (length(x@sel) > 0)
+            {
+                colInd <- c(rep(0,nrow(y)))
+                for (i in 1:length(x@sel))
+                    colInd[x@sel[i]] <- i
+            }
             order <- unlist(x@clusters[[x@maxNoClusters]][x@order])
             colVec <- rainbow(x@maxNoClusters)
             colors <- unlist(lapply(1:x@maxNoClusters,
@@ -228,12 +268,27 @@ setMethod("plot", signature(x="AggExResult", y="matrix"),
             ver <- getRversion()
             ver <- as.integer(c(ver[[c(1, 1)]], ver[[c(1, 2)]]))
 
-            if (ver[1] > 2 || (ver[1] == 2 && ver[2] >= 15))
-                heatmap(y[order, order], symm=TRUE, Rowv=NA, Colv=NA, revC=TRUE,
-                        ColSideColors=colors, RowSideColors=colors, ...)
+            rowColors <- colors
+
+            if (!(ver[1] > 2 || (ver[1] == 2 && ver[2] >= 15)))
+                rowColors <- rev(colors)
+
+            if (length(x@sel) > 0)
+            {
+                colColors <-
+                    unlist(lapply(1:x@maxNoClusters,
+                                  function(i)
+                                  rep(colVec[x@order[i]],
+                                      length(intersect(x@clusters[[x@maxNoClusters]]
+                                                       [[x@order[i]]],x@sel)))))
+
+                heatmap(y[order, colInd[intersect(order, x@sel)]], Rowv=NA, Colv=NA,
+                        revC=TRUE, ColSideColors=colColors,
+                        RowSideColors=rowColors, ...)
+            }
             else
                 heatmap(y[order, order], symm=TRUE, Rowv=NA, Colv=NA, revC=TRUE,
-                        ColSideColors=colors, RowSideColors=rev(colors), ...)
+                        ColSideColors=colors, RowSideColors=rowColors, ...)
         }
         else
         {
@@ -254,3 +309,18 @@ setMethod("plot", signature(x="AggExResult", y="matrix"),
     }
 )
 
+
+# Plot clustering result along with data set
+setMethod("plot", signature(x="AggExResult", y="data.frame"),
+    function(x, y, k=NA, h=NA, ...)
+    {
+        y <- as.matrix(y[, sapply(y, is.numeric)])
+
+        if (ncol(y) != 2)
+            stop("number of numerical columns in data frame is not 2.\n",
+                 "Plotting clustering on original data only supported for 2D\n",
+                 "data.\n")
+
+        plot(x, y, k=k, h=h,  ...)
+    }
+)

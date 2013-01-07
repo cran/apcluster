@@ -28,8 +28,8 @@
   For \code{\linkS4class{APResult}} objects,
   the number of data samples, the number of clusters, the number of
   iterations, the input preference, the final objective
-  function values, the vector of exemplars, and the list of clusters
-  are printed.
+  function values, the vector of exemplars, the list of clusters and
+  for leveraged clustering the selected sample subset are printed.  
 
   For \code{\linkS4class{ExClust}} objects,
   the number of data samples, the number of clusters,
@@ -47,7 +47,7 @@
 \value{
   \code{show} returns an invisible \code{NULL}
 }
-\author{Ulrich Bodenhofer & Andreas Kothmeier
+\author{Ulrich Bodenhofer, Andreas Kothmeier & Johannes Palme
 \email{apcluster@bioinf.jku.at}}
 \references{\url{http://www.bioinf.jku.at/software/apcluster}
 

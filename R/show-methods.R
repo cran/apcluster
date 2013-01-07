@@ -8,14 +8,20 @@ setMethod("show", signature(object="APResult"),
             stop("Object is not result of an affinity propagation run.",
                  "It is pointless to create APResult objects yourself.")
 
-        cat("\nNumber of samples    = ", object@l, "\n")
-        cat("Number of iterations = ", object@it, "\n")
-        cat("Input preference     = ", object@p, "\n")
-        cat("Sum of similarities  = ", object@dpsim, "\n")
-        cat("Sum of preferences   = ", object@expref, "\n")
-        cat("Net similarity       = ", object@netsim, "\n")
-        cat("Number of clusters   = ", length(object@exemplars), "\n\n")
-
+        cat("\nNumber of samples     = ", object@l, "\n")
+        if (length(object@sel) > 0)
+        {
+            cat("Number of sel samples = ", length(object@sel), 
+                paste("   (", round(100*length(object@sel)/object@l,1), "%)\n", sep=""))
+            cat("Number of sweeps      = ", object@sweeps, "\n")
+        }
+        cat("Number of iterations  = ", object@it, "\n")
+        cat("Input preference      = ", object@p, "\n")
+        cat("Sum of similarities   = ", object@dpsim, "\n")
+        cat("Sum of preferences    = ", object@expref, "\n")
+        cat("Net similarity        = ", object@netsim, "\n")
+        cat("Number of clusters    = ", length(object@exemplars), "\n\n")
+        
         if (length(object@exemplars) > 0)
         {
             if (length(names(object@exemplars)) == 0)

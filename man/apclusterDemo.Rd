@@ -37,7 +37,7 @@ distributed data - all clusters found must be random artefacts.
   \code{\linkS4class{APResult}} object with the clustering results (see
   examples below).
 }
-\author{Ulrich Bodenhofer & Andreas Kothmeier
+\author{Ulrich Bodenhofer, Andreas Kothmeier & Johannes Palme
 \email{apcluster@bioinf.jku.at}}
 \references{\url{http://www.bioinf.jku.at/software/apcluster}
 
@@ -51,7 +51,7 @@ APCluster: an R package for affinity propagation clustering.
 DOI: \href{http://dx.doi.org/10.1093/bioinformatics/btr406}{10.1093/bioinformatics/btr406}.
 }
 \seealso{\code{\linkS4class{APResult}}, \code{\link{plot-methods}},
-  \code{\link{apcluster}}}
+  \code{\link{apcluster}}, \code{\link{apclusterL}}}
 \examples{
 ## create random data set and run affinity propagation
 apd <- apclusterDemo()

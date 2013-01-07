@@ -11,7 +11,7 @@
 
 \title{{\Huge APCluster}\\[5mm]
   An R Package for Affinity Propagation Clustering}
-\author{Ulrich Bodenhofer and Andreas Kothmeier}
+\author{Ulrich Bodenhofer, Andreas Kothmeier, and Johannes Palme}
 \affiliation{Institute of Bioinformatics, Johannes Kepler University
 Linz\\Altenberger Str. 69, 4040 Linz, Austria\\
 \email{apcluster@bioinf.jku.at}}
@@ -59,6 +59,8 @@ the following: (1) this is neither an introduction to affinity propagation
 nor to clustering in general; (2) this is not an introduction to \R.
 If you lack the background for understanding this manual, you first
 have to read introductory literature on these subjects.
+
+\newpage
 
 \vspace{1cm}
 
@@ -112,9 +114,12 @@ to bioinformatics applications. It is as generally applicable as Frey's and
 Dueck's original Matlab code.\footnotemark[1]
 
 Starting with Version 1.1.0, the \APCluster\ package also features
-exemplar-based agglomerative clustering which can be used as a clustering
+{\em exemplar-based agglomerative clustering} which can be used as a clustering
 method on its own or for creating a hierarchy of clusters that have been
 computed previously by affinity propagation.
+{\em Leveraged Affinity Propagation}, a variant of AP especially geared to
+applications involving large data sets, has first been included in Version
+1.3.0.
 
 \section{Installation}
 
@@ -134,7 +139,7 @@ If, for what reason ever, you prefer to install the package manually, download
 the package file suitable for your computer system and copy it to your harddisk.
 Open the package's page at CRAN%
 \footnote{\url{http://cran.r-project.org/web/packages/apcluster/index.html}} and
-the proceed as follows.
+then proceed as follows.
 
 \subsubsection*{Manual installation under Windows}
 
@@ -215,17 +220,25 @@ x1 <- rbind(cl1, cl2)
 plot(x1, xlab="", ylab="", pch=19, cex=0.8)
 @
 \end{center}
-Now we have to create a similarity matrix. The package \APCluster\ offers
-several different ways for doing that (see Section \ref{sec:DistMat} below).
-Let us start with the default similarity measure used in the papers of Frey
-and Dueck --- negative squared distances:
-<<NegDistMatDataSet1>>=
-s1 <- negDistMat(x1, r=2)
-@
-We are now ready to run affinity propagation:
+The package \APCluster\ offers several different ways for clustering data.
+The simplest way is the following:
 <<APClusterDataSet1>>=
-apres1a <- apcluster(s1)
+apres1a <- apcluster(negDistMat(r=2), x1)
 @
+In this example, the function \verb+apcluster()+ first computes a similarity
+matrix for the input data \verb+x1+ using the {\em similarity function}
+passed as first argument. The choice \verb+negDistMat(r=2)+ is the standard
+similarity measure used in the papers of Frey and Dueck ---
+negative squared distances.
+
+Alternatively, one can compute the similarity matrix beforehand and call
+\verb+apcluster()+ for the similarity matrix (for a more detailed description
+of the differences, see \ref{ssec:memeff}):
+<<APClusterDataSet1b>>=
+s1 <- negDistMat(x1, r=2)
+apres1b <- apcluster(s1)
+@
+
 The function \verb+apcluster()+ creates an object belonging to the S4
 class \verb+APResult+ which is defined by the present package. To get
 detailed information on which data are stored in such objects, enter
@@ -249,28 +262,39 @@ In this plot, each color corresponds to one cluster. The exemplar of each
 cluster is marked by a box and all cluster members are connected to their
 exemplars with lines.
 
-If \verb+plot()+ is called with the similarity matrix as second argument,
-a heatmap is created:
+A heatmap is plotted with \verb+heatmap()+:
 \begin{center}
 <<HeatmapResultAPClusterDataSet1,fig=TRUE,echo=TRUE,width=5,height=5>>=
-plot(apres1a, s1)
+heatmap(apres1a)
 @
 \end{center}
 In the heatmap, the samples are grouped according to clusters. The above
 heatmap confirms again that there are two main clusters in the data.
+A heatmap can be plotted for the object \verb+apres1a+ because
+\verb+apcluster()+, if called for data and a similarity function, by default
+includes the similarity matrix in the output object (unless it was called
+with the switch \verb+includeSim=FALSE+). If the similarity matrix is not
+included (which is the default if \verb+apcluster()+ has been called on a
+similarity matrix directly), \verb+heatmap()+ must be called with the
+similarity matrix as second argument:
+\begin{center}
+<<HeatmapResultAPClusterDataSet1b,fig=TRUE,echo=TRUE,width=5,height=5>>=
+heatmap(apres1b, s1)
+@
+\end{center}
 
 Suppose we want to have better insight into what the algorithm did in each
 iteration. For this purpose, we can supply the option \verb+details=TRUE+
 to \verb+apcluster()+:
 <<APClusterDataSet1Details>>=
-apres1b <- apcluster(s1, details=TRUE)
+apres1c <- apcluster(s1, details=TRUE)
 @
 This option tells the algorithm to keep a detailed log about its progress.
 For example, this allows us to plot the three performance measures that AP
 uses internally for each iteration:
 \begin{center}
 <<PlotAPClusterDataSet1Details,fig=TRUE,echo=TRUE,width=6,height=4>>=
-plot(apres1b)
+plot(apres1c)
 @
 \end{center}
 These performance measures are:
@@ -295,7 +319,7 @@ apres1c
 
 \section{Adjusting Input Preferences}\label{sec:ipref}
 
-Apart from the similarity itself, the most important input parameter of
+Apart from the similarity matrix itself, the most important input parameter of
 AP is the so-called {\em input preference} which can be interpreted as the
 tendency of a data sample to become an exemplar (see \cite{FreyDueck07} and
 supplementary material on the AP homepage\footnotemark[1] for a more detailed
@@ -314,7 +338,7 @@ clusters).}'' \cite{FreyDueck07}
 Our AP implementation uses the median rule by default if the user does not
 supply a custom value for the input preferences. In order to provide the user
 with a knob that is --- at least to some extent --- interpretable, the function
-\verb+apcluster+ has a new argument \verb+q+ that allows to set the input
+\verb+apcluster()+ provides an argument \verb+q+ that allows to set the input
 preference to a certain quantile of the input similarities: resulting in the
 median for \verb+q=0.5+ and in the minimum for \verb+q=0+. As an example, let
 us add two more ``clouds'' to the data set from above:
@@ -323,21 +347,20 @@ us add two more ``clouds'' to the data set from above:
 cl3 <- cbind(rnorm(20, 0.50, 0.03), rnorm(20, 0.72, 0.03))
 cl4 <- cbind(rnorm(25, 0.50, 0.03), rnorm(25, 0.42, 0.04))
 x2 <- rbind(x1, cl3, cl4)
-s2 <- negDistMat(x2, r=2)
 plot(x2, xlab="", ylab="", pch=19, cex=0.8)
 @
 \end{center}
 For the default setting, we obtain the following result:
 \begin{center}
 <<APClusterDataSet2,fig=TRUE,echo=TRUE,width=5,height=5>>=
-apres2a <- apcluster(s2)
+apres2a <- apcluster(negDistMat(r=2), x2)
 plot(apres2a, x2)
 @
 \end{center}
 For the minimum of input similarities, we obtain the following result:
 \begin{center}
 <<APClusterDataSet2q0,fig=TRUE,echo=TRUE,width=5,height=5>>=
-apres2b <- apcluster(s2, q=0)
+apres2b <- apcluster(negDistMat(r=2), x2, q=0)
 plot(apres2b, x2)
 @
 \end{center}
@@ -347,7 +370,7 @@ clusters. If we increase input preferences, however, we can force AP to
 split the four clusters into smaller sub-clusters:
 \begin{center}
 <<PlotAPClusterDataSet2q08,fig=TRUE,echo=TRUE,width=5,height=5>>=
-apres2c <- apcluster(s2, q=0.8)
+apres2c <- apcluster(negDistMat(r=2), x2, q=0.8)
 plot(apres2c, x2)
 @
 \end{center}
@@ -361,12 +384,11 @@ the value can be accessed directly via the slot \verb+p+:
 apres2c@p
 @
 
-As noted above already, we can produce a heatmap by calling \verb+plot()+
-with an \verb+APResult+ object as first and the corresponding similarity
-matrix as second argument:
+As noted above already, we can produce a heatmap by calling \verb+heatmap()+
+for an \verb+APResult+ object:
 \begin{center}
 <<HeatmapResultAPClusterDataSet2q08,fig=TRUE,echo=TRUE,width=5,height=5>>=
-plot(apres2c, s2)
+heatmap(apres2c)
 @
 \end{center}
 The order in which the clusters are arranged in the heatmap is determined
@@ -392,7 +414,7 @@ a minimum value (for which one or at most two clusters would be obtained)
 and a maximum value (for which as many clusters as data samples would be
 obtained):
 <<PreferenceRangeDataSet2>>=
-preferenceRange(s2)
+preferenceRange(apres2b@sim)
 @
 The function returns a two-element vector with the minimum value as first and
 the maximum value as second entry. The computations are done approximately
@@ -409,10 +431,12 @@ this search algorithm is available as a function \verb+apclusterK()+
 (analogous to Frey's and Dueck's Matlab implementation\footnotemark[1]).
 We can use this function to
 force AP to produce only two clusters (merging the two pairs of adjacent
-clouds into one cluster each):
+clouds into one cluster each). Analogously to \verb+apcluster()+,
+\verb+apclusterK()+ supports two variants --- it can either be called
+for a similarity measure and data or on a similarity matrix directly.
 \begin{center}
 <<APClusterKDataSet2,fig=TRUE,echo=TRUE,width=5,height=5>>=
-apres2d <- apclusterK(s2, K=2, verbose=TRUE)
+apres2d <- apclusterK(negDistMat(r=2), x2, K=2, verbose=TRUE)
 plot(apres2d, x2)
 @
 \end{center}
@@ -422,14 +446,15 @@ plot(apres2d, x2)
 The function \verb+aggExCluster()+ realizes what can best be
 described as ``exemplar-based agglomerative clustering'', i.e.\
 agglomerative clustering whose merging objective is geared towards
-the identification of meaningful exemplars. \verb+aggExCluster()+ only
-requires a matrix of pairwise similarities.
+the identification of meaningful exemplars.  Analogously to \verb+apcluster()+,
+\verb+aggExCluster()+ supports two variants --- it can either be called
+for a similarity measure and data or on matrix of pairwise similarities.
 
 \subsection{Getting started}
 
 Let us start with a simple example:
 <<AggExClusterDataSet1>>=
-aggres1a <- aggExCluster(s1)
+aggres1a <- aggExCluster(negDistMat(r=2), x1)
 aggres1a
 @
 The output object \verb+aggres1a+ contains the complete cluster hierarchy.
@@ -446,12 +471,11 @@ The heights of the merges in the dendrogram correspond to the merging
 objective: the higher the vertical bar of a merge, the less similar the
 two clusters have been. The dendrogram, therefore, clearly indicates
 two clusters.
-Calling \verb+plot()+for an \verb+AggExResult+ object along with the
-similarity matrix as second argument produces a heatmap, where the
-dendrogram is plotted on top and to the left of the heatmap:
+Heatmaps can be produced analogously as for \verb+APResult+ objects with the
+additional property that dendrograms are displayed on the top and on the left:
 \begin{center}
 <<HeatmapAggExClusterDataSet1,fig=TRUE,echo=TRUE,width=5,height=5>>=
-plot(aggres1a, s1)
+heatmap(aggres1a, s1)
 @
 \end{center}
 
@@ -480,13 +504,13 @@ right number of clusters.
 
 Let us revisit the four-cluster example from Section
 \ref{sec:ipref}. We can apply \verb+aggExCluster()+ to an affinity
-propagation result if we run it on the same similarity matrix (as first
-argument) and supply the affinity propagation result as second argument:
+propagation result if we run it on the affinity propagation result supplied
+as second argument \verb+x+:
 <<AggExClusterAPDataSet2q08>>=
-aggres2a <- aggExCluster(s2, apres2c)
+aggres2a <- aggExCluster(x=apres2c)
 aggres2a
 @
-The result \verb+apres2c+ had \Sexpr{length(apres2c@exemplars)} clusters.
+The result \verb+apres2c+ had \Sexpr{length(apres2c)} clusters.
 \verb+aggExCluster()+ successively joins these clusters until only one
 cluster is left. The dendrogram of this cluster hierarchy is given as
 follows:
@@ -501,7 +525,7 @@ propagation result uses \verb+aggExCluster()+ internally to arrange
 the clusters:
 \begin{center}
 <<HeatmapAggExAPDataSet2,fig=TRUE,echo=TRUE,width=5,height=5>>=
-plot(aggres2a, s2)
+heatmap(aggres2a)
 @
 \end{center}
 
@@ -562,7 +586,124 @@ merging objective is maximal. The rationale behind the merging objective is
 that those two clusters should be joined that are best described by a joint
 exemplar.
 
-\section{A Toy Example with Biological Sequences}
+\section{Leveraged Affinity Propagation}\label{sec:lever}
+
+Leveraged affinity propagation is based on the idea that, for large data sets
+with many samples, the cluster structure is already visible on a subset
+of the samples. Instead of evaluating the similarity matrix for all sample
+pairs, the similarities of all samples to a subset of samples are computed ---
+resulting in a non-square similarity matrix. Clustering is performed on this
+reduced similarity matrix allowing for clustering large data sets more
+efficiently.
+
+In this form of clustering, several rounds of affinity propagation are
+executed with different sample subsets --- iteratively improving the clustering
+result. The implementation is based on the Matlab code of Frey and Dueck
+provided on the AP Web page\footnotemark[1]. Apart from dynamic
+improvements through reduced amount of distance calculations and faster
+clustering, the memory consumption is also reduced not only in terms of the
+memory used for storing the similarity matrix, but also in terms of
+memory used by the clustering algorithm internally.
+
+The two main parameters controlling leveraged AP clustering are the fraction
+of data points that should be selected for clustering (parameter \verb+frac+)
+and the number of sweeps or repetitions of individual clustering runs
+(parameter \verb+sweeps+).
+Initially, a sample subset is selected randomly. For the subsequent
+repetitions, the exemplars of the previous run are kept in the sample subset
+and the other samples in the subset are chosen randomly again. The best
+result  of all sweeps with the highest net similarity is kept as final
+clustering result.
+
+When called with a similarity measure and a dataset the function
+\verb+apclusterL()+ performs both the calculation of similarities and
+leveraged affinity propagation. In the example below, we use  10\% of the
+samples and run 5 repetitions. The function implementing
+the similarity measure can either be passed as a function or as a function
+name (which must of course be resolvable in the current environment).
+Additional parameters for the distance calculation can be passed to
+\verb+apclusterL()+ which passes them on to the function implementing
+the similarity measure via the \verb+...+ argument list. In any case, this
+function must be implemented such that it expects the data in its first argument
+\verb+x+ (a subsettable data structure, such as, a vector, matrix, data frame,
+or list) and that it takes the selection of ``column objects'' as a second
+argument \verb+sel+ which must be a set of column indices.
+The functions \verb+negDistMat()+, \verb+expSimMat()+, \verb+linSimMat()+,
+\verb+corSimMat()+, and \verb+linKernel()+ provided by the
+\APCluster\ package also support the easy creation of parameter-free
+similarity measures (in R terminology called ``closures''). We recommend
+this variant, as it is safer in terms of possible name conflicts between
+arguments of \verb+apclusterL()+ and arguments of the similarity function.
+
+Here is an example that makes use of a closure for defining the similarity
+measure:
+\setkeys{Gin}{width=0.55\textwidth}
+\begin{center}
+<<APClusterLevDataSet3,fig=TRUE,echo=TRUE,width=5,height=5>>=
+cl5 <- cbind(rnorm(100, 0.3, 0.05), rnorm(100, 0.7, 0.04))
+cl6 <- cbind(rnorm(100, 0.70, 0.04), rnorm(100, 0.4, 0.05))
+x3 <- rbind(cl5, cl6)
+apres3 <- apclusterL(s=negDistMat(r=2), x=x3, frac=0.1, sweeps=5, p=-0.2)
+apres3
+plot(apres3, x3)
+@
+\end{center}
+
+The function \verb+apclusterL()+ creates a result object of S4 class
+\verb+APResult+ that contains the same information as for standard AP.
+Additionally, the selected sample subset, the associated rectangular
+similarity matrix for the best sweep (provided that \verb+includeSim=TRUE+)
+and the net similarities of all sweeps are returned in this object.
+<<APClusterLevResultDataSet3>>=
+dim(apres3@sim)
+apres3@sel
+apres3@netsimLev
+@
+
+The APResult object returned by \verb+apclusterL()+ also contains the
+slot \verb+sel+ with the selected samples of the best run and the slot
+\verb+netsimLev+ which contains the net similarities of the individual
+sweeps. These slots are not displayed by the \verb+show()+ method. The
+result returned by leveraged affinity propagation can be used for
+further processing in the same way as a result object returned from
+\verb+apcluster()+, e.g., merging of clusters with agglomerative
+clustering can be performed.
+
+For heatmap plotting either the parameter \verb+includeSim=TRUE+ must be set
+in \verb+apcluster()+ or \verb+apclusterL()+ to make the similarity matrix
+available in the result object or the similarity matrix must be passed as
+second parameter to \verb+heatmap()+ explicitly. The heatmap for
+leveraged AP looks slightly different compared to the heatmap for
+affinity propagation because the number of samples is different in both
+dimensions.
+
+\setkeys{Gin}{width=0.55\textwidth}
+\begin{center}
+<<APClusterLevDataSet3Heat,fig=TRUE,echo=TRUE,width=5,height=5>>=
+heatmap(apres3)
+@
+\end{center}
+
+Often selected samples will be chosen as exemplars because, only for
+them, the full similarity information is available. This means that the
+fraction of samples should be selected in a way such that a
+considerable number of samples is available for each expected cluster.
+Please also note that a data set of the size used in this example can
+easily be clustered with regular affinity propagation. The data set was
+kept small to keep the package build time short and the amount of
+data output in the manual reasonable.
+
+For users requiring a higher degree of flexibility, e.g., for user-specific
+distance calculations or user-specific selection of the sample subset
+\verb+apclusterL()+ called with a rectangular similiarity matrix provides
+the possibility to perform affinity propagation on a rectangular similarity
+matrix. See the source code of \verb+apclusterL()+ with signature
+\verb+s=function+ and \verb+x=any+ for an example how to
+embed \verb+apclusterL()+ into a complete loop performing leveraged AP.
+The package-provided functions for distance calculation support the
+generation of rectangular similarity matrices (see Chapter \ref{sec:DistMat}).
+
+\section{A Toy Example with Biological Sequences}\label{sec:bioseq}
 
 As noted in the introduction above, one of the goals of this package is
 to leverage affinity propagation in bioinformatics applications.
@@ -570,7 +711,8 @@ In order to demonstrate the usage of the package in a biological application,
 we consider a small toy example here.
 
 The package comes with a toy data set \verb+ch22Promoters+ that consists of
-promoter regions of 150 random genes from the human chromosome no.\ 22
+sub-sequences of promoter regions of 150 random genes from the human
+chromosome no.\ 22
 (according to the human genome assembly hg18). Each sequence
 consists of the 1000 bases upstream of the transcription start site of each
 gene. Suppose we want to cluster these sequences in order to find out whether
@@ -602,11 +744,15 @@ promAP <- apcluster(promSim, q=0)
 promAP
 @
 So we obtain \Sexpr{length(promAP@exemplars)} clusters in total. The
-corresponding heatmap looks as follows:
+corresponding heatmap looks as follows (note that we have to supply the
+similarity matrix, as it is not included by default if \verb+apcluster()+
+is called with the similarity matrix; the reason is that, for large
+data sets, it is more memory-efficient not to make multiple copies of the
+similarity matrix; see also \ref{ssec:memeff}):
 \setkeys{Gin}{width=0.55\textwidth}
 \begin{center}
 <<HeatMapAPCh22Promoters,fig=TRUE,echo=TRUE,width=5,height=5>>=
-plot(promAP, promSim)
+heatmap(promAP, promSim)
 @
 \end{center}
 Let us now run agglomerative clustering to further join clusters.
@@ -629,7 +775,7 @@ prom5
 The final heatmap looks as follows:
 \begin{center}
 <<HeatMap5Ch22Promoters,fig=TRUE,echo=TRUE,width=5,height=5>>=
-plot(prom5, promSim)
+heatmap(prom5, promSim)
 @
 \end{center}
 
@@ -655,12 +801,12 @@ a (one-dimensional) sample.
 
 The function \verb+negDistMat()+, in line with Frey and Dueck, allows for
 computing negative distances for a given set of real-valued data samples.
-Above we have used the following:
-<<NegDistMatDataSet2,eval=FALSE>>=
-s2 <- negDistMat(x2, r=2)
+If called with the first argument \verb+x+, a similarity matrix with
+pairwise negative distances is returned:
+<<NegDistMatDataSet2>>=
+s <- negDistMat(x2)
 @
-This computes a matrix of negative squared distances from the data matrix
-\verb+x+. The function \texttt{negDistMat()} is a simple wrapper around the
+The function \texttt{negDistMat()} is a simple wrapper around the
 standard function \verb+dist()+, hence, it allows for a lot more different
 similarity measures. The user can make use of all variants implemented in
 \verb+dist()+ by
@@ -709,13 +855,14 @@ variants listed above and returns $-1$ times the $r$-th power of it, i.e.,
 s(\vec{x},\vec{y})=-d(\vec{x},\vec{y})^r.
 \end{equation}
 The exponent $r$ can be adjusted with the argument \verb+r+. The default is
-\verb+r=1+, hence, one has to supply \verb+r=2+ as in the above example to
-obtain squared distances.
+\verb+r=1+, hence, one has to supply \verb+r=2+ to
+obtain negative squared distances as in the examples in previous sections.
 
 Here are some examples. We use the corners of the two-dimensional unit square
 and its middle point $(\frac{1}{2},\frac{1}{2})$ as sample data:
 <<CreateToyData>>=
-ex <- matrix(c(0,0,1,0,0.5,0.5,0,1,1,1),5,2,byrow=TRUE)
+ex <- matrix(c(0, 0.5, 0.8, 1, 0, 0.2, 0.5, 0.7,
+               0.1, 0, 1, 0.3, 1, 0.8, 0.2), 5, 3,byrow=TRUE)
 ex
 @
 Standard Euclidean distance:
@@ -743,9 +890,18 @@ Minkowski distance for $p=3$ ($3$-norm):
 negDistMat(ex, method="minkowski", p=3)
 @
 
+If called without the data argument \verb+x+, a function object is returned that
+can be supplied to clustering functions --- as in the majority of the above
+examples:
+<<GetFunction>>=
+sim <- negDistMat(r=2)
+is.function(sim)
+apcluster(sim, x1)
+@
+
 \subsection{Other similarity measures}
 
-The package \APCluster\ offers three more functions for creating similarity
+The package \APCluster\ offers four more functions for creating similarity
 matrices for real-valued data:
 
 \begin{description}
@@ -773,6 +929,13 @@ s(\vec{x},\vec{y})=\max\left(1-\frac{d(\vec{x},\vec{y})}{w},0\right)
 \]
 which is also often interpreted as a {\em fuzzy equality/similarity relation}
 \cite{DeBaetsMesiar02}.
+\item[Correlation:]
+the function \verb+corSimMat()+ interprets the rows of its
+argument \verb+x+ (matrix or data frame) as multivariate observations and
+computes similarities as pairwise correlations. The function
+\verb+corSimMat()+ is actually a wrapper around the standard function
+\verb+cor()+. Consequently, the \verb+method+ argument allows for selecting
+the type of correlation to compute (Pearson, Spearman, or Kendall).
 \item[Linear kernel:] scalar products can also be interpreted as similarity
 measures, a view that is often adopted by kernel methods in machine learning.
 In order to provide the user with this option as well, the function
@@ -804,20 +967,133 @@ Laplace kernel:
 <<LaplaceKernelToyData>>=
 expSimMat(ex, r=1)
 @
+Pearson correlation coefficient:
+<<PearsonToyData>>=
+corSimMat(ex, method="pearson")
+@
+Spearman rank correlation coefficient:
+<<SpearmanToyData>>=
+corSimMat(ex, method="spearman")
+@
 Linear scaling of distances with truncation:
 <<TruncDistToyData>>=
 linSimMat(ex, w=1.2)
 @
-Linear kernel (we exclude $(0,0)$):
+Linear kernel:
 <<LinKernelToyData>>=
 linKernel(ex[2:5,])
 @
-Normalized linear kernel (we exclude $(0,0)$):
+Normalized linear kernel:
 <<NormLinKernelToyData>>=
 linKernel(ex[2:5,], normalize=TRUE)
 @
 
+All of these functions work in the same way as \verb+negDistMat()+: if called
+with argument \verb+x+, a similarity matrix is returned, otherwise a
+function is returned.
+
+\subsection{Rectangular similarity matrices}
+
+With the introduction of leveraged affinity propagation, distance
+calculations are entirely performed within the \APCluster\ package. The code is
+based on a customized version of the \verb+dist()+ function from the
+\verb+stats+ package. In the following example, a rectangular similarity
+matrix of all samples against a subset of the samples is computed:
+<<RectangularNegDistMatDataSet1>>=
+sel <- sort(sample(1:nrow(x1), ceiling(0.08 * nrow(x1))))
+sel
+s1r <- negDistMat(x1, sel, r=2)
+dim(s1r)
+s1r[1:7,]
+@
+
+The rows correspond to all samples, the columns to the sample subset.
+The \verb+sel+ parameter specifies the sample indices of the selected samples in
+increasing order. Rectangular similarity calculation is provided in all distance
+functions of the package. If the parameter \verb+sel+ is not specified,
+the quadratic similarity matrix of all sample pairs is computed.
+
+\subsection{Defining a custom similarity measure for leveraged affinity
+  propagation}
+
+As mentioned in Section~\ref{sec:lever} above, leveraged affinity propagation
+requires the definition of a similarity measure that is supplied as a
+function or function name to \verb+apclusterL()+. For vectorial data,
+the similarity measures supplied with the package (see above) may be
+sufficient. If other similarity measures are necessary or if the data
+are not vectorial, the user must supply his/her own similarity measure.
+The user can supply any function as argument \verb+s+ to
+\verb+apclusterL()+, but the following rules must be obeyed in order
+to avoid errors and to ensure meaningful results:
+\begin{enumerate}
+\item The data must be supplied as first argument, which must be named
+  \verb+x+.
+\item The second argument must be named \verb+sel+ and must be interpreted as a
+  vector of indices that select a subset of data items in \verb+x+.
+\item The function must return a numeric matrix with similarities.
+  If \verb+sel=NA+, the format of the matrix must be
+  \verb+length(x)+$\times$\verb+length(x)+. If \verb+sel+ is not \verb+NA+,
+  but contains indices selecting a subset, the format of the returned
+  similarity matrix must be  \verb+length(x)+$\times$\verb+length(sel)+.
+\item Although this is not a must, it is recommended to properly set
+  row and column names in the returned similarity matrix.
+\end{enumerate}
+
+As an example, let us revisit the sequence clustering example presented
+in Section~\ref{sec:bioseq}. Let us first define the function that implements
+the similarity measure:
+<<SimFunCh22Promoters>>=
+spectrumK6 <- function(x, sel=NA)
+{
+    if (any(is.na(sel)))
+    {
+        s <- kernelMatrix(stringdot(length=6, type="spectrum"), x)
+        rownames(s) <- names(x)
+        colnames(s) <- names(x)
+    }
+    else
+    {
+        s <- kernelMatrix(stringdot(length=6, type="spectrum"), x, x[sel])
+        rownames(s) <- names(x)
+        colnames(s) <- names(x)[sel]
+    }
+
+    s
+}
+@
+Now we run leveraged affinity propagation on the \verb+ch22Promoters+
+data set using this similarity measure
+<<APCh22Promoters>>=
+promAPL <- apclusterL(s=spectrumK6, ch22Promoters, frac=0.1, sweeps=10,
+                        p=promAP@p)
+promAPL
+@
+So we obtain \Sexpr{length(promAPL@exemplars)} clusters in total.
+
 \section{Miscellaneous}
+
+\subsection{Convenience vs.\ efficiency}\label{ssec:memeff}
+
+In most of the above examples, we called a clustering method by supplying
+it with a similarity function and the data to be clustered. This is undoubtedly
+a convenient approach. Since the resulting output objects (unless
+the option \verb+includeSim=FALSE+ is supplied) even includes the
+similarity matrix, we can plot heatmaps and produce a
+cluster hierarchy on the basis of the clustering result without the need to
+supply the similarity matrix explicitly.
+
+For large data sets, however, this convenient approach has some disadvantages:
+\begin{itemize}
+\item If the clustering algorithm is run several times on the same data set
+(e.g., for different parameters), the similarity matrix is recomputed every
+time.
+\item Every clustering result (depending on the option \verb+includeSim+)
+usually includes a copy of the similarity matrix.
+\end{itemize}
+For these reasons, depending on the actual application scenario, users
+should consider computing the similarity matrix beforehand. This strategy,
+however, requires some extra effort for subsequent processing, i.e.\ the
+similarity must be supplied as an extra argument in subsequent processing.
 
 \subsection{Clustering named objects}\label{ssec:names}
 
@@ -896,15 +1172,53 @@ if necessary, to use \verb+aggExCluster()+ to create a cluster hierarchy.
 \section{Future Extensions}
 
 We currently have no implementation that exploits sparsity of similarity
-matrices. The implementation of {\em sparse AP} and {\em leveraged AP} which
-are available as Matlab code from the AP Web page\footnotemark[1] is left
-for future extensions of the package. Presently, we only offer a function
-\verb+sparseToFull()+ that converts similarity matrices from sparse format into
-a full $l\times l$ matrix.
+matrices. The implementation of {\em sparse AP} which is available as Matlab
+code from the AP Web page\footnotemark[1] is left for future extensions of the
+package. Presently, we only offer a function \verb+sparseToFull()+ that
+converts similarity matrices from sparse format into a full $l\times l$ matrix.
+
+\section{Special Notes for Users Upgrading from Previous Versions}
+
+Version 1.3.0 has brought several fundamental changes to the architecture
+of the package. We tried to ensure backward compatibility with previous
+versions where possible. However, there are still some caveats the users
+should take into account:
+\begin{itemize}
+\item The functions \verb+apcluster()+, \verb+apclusterK()+, and
+  \verb+aggExCluster()+ have been re-implemented as S4 generics, therefore,
+  they do not have a fixed list of arguments anymore. For this reason,
+  users are recommended to name all optional parameters.
+\item Heatmap plotting has been shifted to the function \verb+heatmap()+
+  which has now been defined as an S4 generic method. Previous methods for
+  plotting heatmaps using \verb+plot()+ are partly still available, but
+  deprecated.
+\end{itemize}
 
 \section{Change Log}
 
 \begin{description}
+\item[Version 1.3.0:] \hfill
+  \begin{itemize}
+  \item added Leveraged Affinity Propagation Clustering
+  \item re-implementation of main functions as S4 generic methods in order to
+    facilitate the convenient internal computation of similarity matrices
+  \item for convenience, similarity matrices can be stored as part of clustering
+    results
+  \item heatmap plotting now done by \verb+heatmap()+ which has been
+    defined as S4 generic
+  \item extended interface to functions for computing similarity matrices
+  \item added function \verb+corSimMat()+
+  \item implementation of \verb+length()+ method for classes \verb+APResult+,
+    \verb+AggExResult+, and \verb+ExClust+
+  \item added accessor function to extract clustering levels from
+    \verb+AggExResult+ objects
+  \item correction of exemplars returned by \verb+apcluster+ for
+    \verb+details=TRUE+ in slot \verb+idxAll+ of returned \verb+APResult+ object
+  \item when using data stored in a data frame, categorical
+    columns are now explicitly omitted, thereby, avoiding warnings
+  \item all clustering methods now store their calls into the result objects
+  \item updates and extensions of help pages and vignette
+  \end{itemize}
 \item[Version 1.2.0:] \hfill
   \begin{itemize}
   \item reimplementation of \verb+apcluster()+ in C++ using the

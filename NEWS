@@ -1,6 +1,26 @@
 Change history of package apcluster:
 ====================================
 
+Version 1.3.0:
+- added Leveraged Affinity Propagation Clustering
+- re-implementation of main functions as S4 generic methods in order to
+  facilitate the convenient internal computation of similarity matrices
+- for convenience, similarity matrices can be stored as part of clustering
+  results
+- heatmap plotting now done by heatmap() which has been defined as S4 generic
+- extended interface to functions for computing similarity matrices
+- added function corSimMat()
+- implementation of length() method for classes APResult, AggExResult, and
+  ExClust
+- added accessor function to extract clustering levels from AggExResult
+  objects
+- correction of exemplars returned by apcluster() for details=TRUE in slot
+  idxAll of returned APResult object
+- when using data stored in a data frame, now categorical columns are
+  explicitly omitted, thereby, avoiding warnings
+- all clustering methods now store their calls into the result objects
+- updates and extensions of help pages and vignette
+
 Version 1.2.1:
 - added convenient accessor functions to extracting cluster indices from
   APResult and ExClust objects
