@@ -519,6 +519,16 @@ follows:
 plot(aggres2a)
 @
 \end{center}
+If one wants to see the original samples in the dendrogram of the cluster hierarchy,
+the \verb+showSamples=TRUE+ option can be used. In this case, it is reduce the font size of
+the labels via the \verb+nodePar+ parameter (see \verb+?plot.dendrogram+ and the examples
+therein):
+\begin{center}
+<<DendrogramAggExAPDataSet2b,fig=TRUE,echo=TRUE,width=5,height=5>>=
+plot(aggres2a, showSamples=TRUE, nodePar=list(pch=NA, lab.cex=0.4))
+@
+\end{center}
+
 The following heatmap coincides with the one shown in Section \ref{sec:ipref}
 above. This is not surprising, since the heatmap plot for an affinity
 propagation result uses \verb+aggExCluster()+ internally to arrange
@@ -752,7 +762,7 @@ similarity matrix; see also \ref{ssec:memeff}):
 \setkeys{Gin}{width=0.55\textwidth}
 \begin{center}
 <<HeatMapAPCh22Promoters,fig=TRUE,echo=TRUE,width=5,height=5>>=
-heatmap(promAP, promSim)
+heatmap(promAP, promSim, Rowv=FALSE, Colv=FALSE)
 @
 \end{center}
 Let us now run agglomerative clustering to further join clusters.
@@ -775,7 +785,7 @@ prom5
 The final heatmap looks as follows:
 \begin{center}
 <<HeatMap5Ch22Promoters,fig=TRUE,echo=TRUE,width=5,height=5>>=
-heatmap(prom5, promSim)
+heatmap(prom5, promSim, Rowv=FALSE, Colv=FALSE)
 @
 \end{center}
 
@@ -1150,6 +1160,49 @@ to the standard implementation of \verb+cutree()+ or the
 \verb+clusters+ field of the list returned by the standard function
 \verb+kmeans()+).
 
+\subsection{Customizing heatmaps}
+
+In Version 1.3.1, the implementation of heatmap plotting has changed significantly.
+The method now allows for many more customizations than before.
+Apart from changes in the argument list (see \verb+?heatmap+), the behavior
+of the method has changed as follows:
+\begin{itemize}
+  \item Dendrograms are always plotted if possible. To switch off plotting
+    of dendrograms, set \verb+Rowv+ and \verb+Colv+ to \verb+FALSE+ or \verb+NA+.
+    If a dendrogram should only appear to the left of the heatmap, set
+    \verb+Colv+ to \verb+FALSE+ or \verb+NA+. Analogously, set \verb+Rowv+ to
+    \verb+FALSE+ or \verb+NA+ if a dendrogram should only be plotted on top of the
+    plot (not possible if the similarity matrix is non-quadratic).
+  \item Previously, \verb+rainbow()+ was used internally to determine how the
+    bars illustrating the clusters are colored. Now users can determine the coloring
+    of the color bars using the \verb+sideColors+ argument. For \verb+sideColors=NULL+,
+    a meaningful color coding is determined automatically which still uses  \verb+rainbow()+,
+    but ensures that no similar colors are placed next to each other in the bar.
+  \item The default font sizes for displaying row/column labels have been changed to
+    make sure that they do not overlap. This can result in quite small labels if the number of
+    samples is larger. In any case, the user can override the sizes by making custom settings of
+    the parameters \verb+cexRow+ and \verb+cexCol+. Row and column labels can even be switched off
+    entirely by setting \verb+cexRow+ and \verb+cexCol+ to 0, respectively.
+\end{itemize}
+
+An example with vertical dendrogram switched off and an alternating color scheme:
+\begin{center}
+<<HeatmapResultAPClusterDataSetq08b,fig=TRUE,echo=TRUE,width=5,height=5>>=
+heatmap(apres2c, sideColors=c("darkgreen", "yellowgreen"),
+        col=terrain.colors(12), Rowv=FALSE, dendScale=0.6)
+@
+\end{center}
+
+The following example reverts to the default behavior prior to Version 1.3.1: consecutive
+rainbow colors, no dendrograms, and traditional sizing of row/column labels:
+\begin{center}
+<<HeatmapResultAPClusterDataSet2q08c,fig=TRUE,echo=TRUE,width=5,height=5>>=
+heatmap(apres2c, sideColors=rainbow(length(apres2c)), Rowv=FALSE, Colv=FALSE,
+        cexRow=(0.2 + 1 / log10(nrow(apres2c@sim))),
+        cexCol=(0.2 + 1 / log10(nrow(apres2c@sim))))
+@
+\end{center}
+
 \subsection{Implementation and performance issues}\label{ssec:perf}
 
 Prior to version 1.2.0, \verb+apcluster()+ was implemented in R. Starting with
@@ -1185,7 +1238,7 @@ versions where possible. However, there are still some caveats the users
 should take into account:
 \begin{itemize}
 \item The functions \verb+apcluster()+, \verb+apclusterK()+, and
-  \verb+aggExCluster()+ have been re-implemented as S4 generics, therefore,
+  \verb+aggExCluster()+ have been re-im\-ple\-ment\-ed as S4 generics, therefore,
   they do not have a fixed list of arguments anymore. For this reason,
   users are recommended to name all optional parameters.
 \item Heatmap plotting has been shifted to the function \verb+heatmap()+
@@ -1197,6 +1250,20 @@ should take into account:
 \section{Change Log}
 
 \begin{description}
+\item[Version 1.3.1:] \hfill
+  \begin{itemize}
+  \item re-implementation of verb+heatmap()+ method: dendrograms can now be plotted
+  even for \verb+APResult+ and \verb+ExClust+ objects as well as for cluster hierarchies
+  based on prior clusterings; color bars can now be switched off and colors
+  can be changed by user (by new \verb+sideColor+ argument); dendrograms can be
+  switched on and off (by \verb+Rowv+ and \verb+Colv+ arguments);
+  \item added \verb+as.hclust()+ and \verb+as.dendrogram()+ methods
+  \item added new arguments \verb+base+, \verb+showSamples+, and \verb+horiz+to the \verb+plot()+
+    method with signature \verb+(x="AggExResult", y="missing")+; moreover, parameters for
+    changing the appearance of the height axis are now respected as well
+  \item streamlining of methods (redundant definition of inherited methods removed)
+  \item various minor improvements of code and documentation
+  \end{itemize}
 \item[Version 1.3.0:] \hfill
   \begin{itemize}
   \item added Leveraged Affinity Propagation Clustering

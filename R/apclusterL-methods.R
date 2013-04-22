@@ -128,11 +128,11 @@ apclusterL.matrix <- function(s, x, sel, p=NA, q=NA, maxits=1000, convits=100,
             {
                 sc <- s[j,ee]
                 sc[which(j %in% sel[ee])] <- s[j, M + 1]
-                c[j] = which(I %in% sel[ee[which.max(sc)]])
+                c[j] <- which(I %in% sel[ee[which.max(sc)]])
             }
             else
             {
-                c[j] = which(I %in% sel[ee[which.max(s[j, ee])]])
+                c[j] <- which(I %in% sel[ee[which.max(s[j, ee])]])
             }
         }
 

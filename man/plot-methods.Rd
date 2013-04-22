@@ -3,8 +3,6 @@
 \alias{plot}
 \alias{plot-methods}
 \alias{plot,APResult,missing-method}
-\alias{plot,APResult,matrix-method}
-\alias{plot,APResult,data.frame-method}
 \alias{plot,ExClust,missing-method}
 \alias{plot,ExClust,matrix-method}
 \alias{plot,ExClust,data.frame-method}
@@ -16,22 +14,14 @@
   Functions for Visualizing Clustering Results
 }
 \usage{
-\S4method{plot}{APResult,missing}(x, y,
-             type=c("netsim", "dpsim", "expref"),
-             xlab="# Iterations",
-             ylab="Similarity", ...)
-\S4method{plot}{APResult,matrix}(x, y,
-              connect=TRUE, xlab="", ylab="", ...)
-\S4method{plot}{APResult,data.frame}(x, y,
-              connect=TRUE, xlab="", ylab="", ...)
+\S4method{plot}{APResult,missing}(x, y, type=c("netsim", "dpsim", "expref"),
+    xlab="# Iterations", ylab="Similarity", ...)
 \S4method{plot}{ExClust,missing}(x, y, ...)
-\S4method{plot}{ExClust,matrix}(x, y,
-              connect=TRUE, xlab="", ylab="", ...)
-\S4method{plot}{ExClust,data.frame}(x, y,
-              connect=TRUE, xlab="", ylab="", ...)
+\S4method{plot}{ExClust,matrix}(x, y, connect=TRUE, xlab="", ylab="", ...)
+\S4method{plot}{ExClust,data.frame}(x, y, connect=TRUE, xlab="", ylab="", ...)
 \S4method{plot}{AggExResult,missing}(x, y, main="Cluster dendrogram",
-              xlab="", ylab="Balanced avg. similarity to exemplar",
-              ticks=4, digits=2, ...)
+    xlab="", ylab="", ticks=4, digits=2, base=0.05, showSamples=FALSE,
+    horiz=FALSE, ...)
 \S4method{plot}{AggExResult,matrix}(x, y, k=NA, h=NA, ...)
 \S4method{plot}{AggExResult,data.frame}(x, y, k=NA, h=NA, ...)
 }
@@ -56,6 +46,16 @@
     plot (applies to dendrogram plots only, see below)}
   \item{digits}{number of digits used for the axis tickmarks on the left
     side of the plot (applies to dendrogram plots only, see below)}
+  \item{base}{fraction of height used for the very first join; defaults
+    to 0.05, i.e. the first join appears at 5\% of the total height of the
+    dendrogram.}
+  \item{showSamples}{if \code{TRUE}, a complete cluster hierarchy is
+    shown, otherwise, in case that \code{x} is a hierarchy of clusters,
+    the dendrogram of clusters is shown. For backward compatibility, the
+    default is \code{FALSE}.}
+  \item{horiz}{if \code{TRUE}, the dendrogram is plotted horizontally
+    (analogous to \code{\link[stats:plot.dendrogram]{plot.dendrogram}}).
+    The default is \code{FALSE}.}
   \item{k}{level to be selected when plotting a single clustering
     level of cluster hierarchy (i.e. the number of clusters; see
     \code{\link{cutree-methods}})}
@@ -90,45 +90,36 @@
       by a black square. If \code{connect} is \code{TRUE}, lines
       connecting the cluster members to their exemplars are drawn.
       This variant of \code{plot} does not return any value.}
-    \item{If the matrix \code{y} is quadratic for regular clustering or
-      rectangular for leveraged clustering, \code{y} is
+    \item{If the matrix \code{y} does not have two columns, \code{y} is
       interpreted as the similarity matrix that was used for
-      clustering. Then a heatmap of the similarity matrix is drawn, where
-      the clusters are grouped together and highlighted in
-      different colors. The order of clusters is determined by
-      running \code{\link{aggExCluster}} on the clustering result
-      \code{x}. This variant of \code{plot} returns an invisible
-      \code{\linkS4class{AggExResult}} object.}
+      clustering. Then a heatmap of the similarity matrix is plotted.
+      For details, see \code{\link{heatmap}}.}
   }
   
   If \code{plot} is called for an \code{\linkS4class{ExClust}} object
   along with a matrix or data frame as argument \code{y}, then
   \code{plot} behaves exactly the same as described in the previous
   paragraph. Calling \code{plot} for an \code{\linkS4class{ExClust}}
-  object without supplying argument \code{y} attempts to plot a heatmap.
+  object without supplying argument \code{y}, in any case,
+  attempts to plot a heatmap.
   If, in this case, no similarity matrix is available in \code{x},
   an error is displayed.
   
   If \code{plot} is called for an \code{\linkS4class{AggExResult}} object
   without specifying the second argument \code{y}, then a dendrogram
   plot is drawn. This variant returns an invisible
-  \code{\link{dendrogram}} object.
+  \code{\link{dendrogram}} object. The \code{showSamples} argument
+  determines whether a complete dendrogram or a dendrogram of clusters
+  is plotted (see above). If the option \code{horiz=TRUE} is used, the
+  dendrogram is rotated. Note that, in this case, the margin to the
+  right of the plot may not be wide enough to accommodate long
+  cluster/sample labels. In such a case, the figure margins have to
+  be widened before \code{plot} is called.
 
   If \code{plot} is called for an \code{\linkS4class{AggExResult}} object
-  along with a square matrix \code{y} for normal clustering or a 
-  rectangular matrix for leveraged clustering, \code{y} is again 
-  interpreted as similarity matrix. If \code{x@maxNoClusters} is less 
-  than \code{x@l}, \code{plot} produces the same kind of heatmap as
-  the variant for \code{\linkS4class{APResult}} and
-  \code{\linkS4class{ExClust}} objects described above -
-  with clusters grouped and highlighted
-  in different colors. This variant returns no value.
-  If \code{x@maxNoClusters} is equal to
-  \code{x@l}, a heatmap is shown too, but instead of a color coding of
-  clusters, the complete dendrogram of the cluster hierarchy is
-  shown on the top and the left of the heatmap. This variant of
-  \code{plot} returns a \code{\link[stats:dendrogram]{dendrogram}}
-  object containing the dendrogram computed internally.
+  along with a matrix \code{y} that does not have two columns, \code{y}
+  is again interpreted as a similarity matrix and a heatmap is plotted.
+  For details, see \code{\link{heatmap}}.
 
   If \code{plot} is called for an \code{\linkS4class{AggExResult}} object
   along with a two-column matrix or data frame \code{y}, \code{y} is
@@ -157,12 +148,7 @@
 Bodenhofer, U., Kothmeier, A., and Hochreiter, S. (2011)
 APCluster: an R package for affinity propagation clustering.
 \emph{Bioinformatics} \bold{27}, 2463-2464.
-DOI: \href{http://dx.doi.org/10.1093/bioinformatics/btr406}{10.1093/bioinformatics/btr406}.
-
-Frey, B. J. and Dueck, D. (2007) Clustering by passing messages
-between data points. \emph{Science} \bold{315}, 972-976.
-DOI: \href{http://dx.doi.org/10.1126/science.1136800}{10.1126/science.1136800}.
-}
+DOI: \href{http://dx.doi.org/10.1093/bioinformatics/btr406}{10.1093/bioinformatics/btr406}.}
 \seealso{\code{\linkS4class{APResult}},
   \code{\linkS4class{AggExResult}}, \code{\linkS4class{ExClust}},
   \code{\link{heatmap-methods}}, \code{\link{apcluster}}, 
@@ -186,8 +172,9 @@ plot(apres, x)
 ## perform agglomerative clustering of affinity propagation clusters
 aggres1 <- aggExCluster(x=apres)
 
-## show dendrogram
+## show dendrograms
 plot(aggres1)
+plot(aggres1, showSamples=TRUE)
 
 ## show clustering result for 4 clusters
 plot(aggres1, x, k=4)

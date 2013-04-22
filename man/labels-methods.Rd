@@ -9,7 +9,6 @@
   Generate a label vector from an clustering result
 }
 \usage{
-\S4method{labels}{APResult}(object, type="names")
 \S4method{labels}{ExClust}(object, type="names")
 }
 \arguments{

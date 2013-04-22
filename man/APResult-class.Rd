@@ -62,18 +62,26 @@ Class \code{"ExClust"}, directly.
 }
 \section{Methods}{
   \describe{
-    \item{plot}{\code{signature(x = "APResult")}: see
+    \item{plot}{\code{signature(x="APResult")}: see
        \code{\link{plot-methods}}}
-    \item{plot}{\code{signature(x = "APResult", y = "matrix")}: see
+    \item{plot}{\code{signature(x="ExClust", y="matrix")}: see
        \code{\link{plot-methods}}}
-    \item{show}{\code{signature(object = "APResult")}: see
+    \item{heatmap}{\code{signature(x="ExClust")}: see
+       \code{\link{heatmap-methods}}}
+    \item{heatmap}{\code{signature(x="ExClust", y="matrix")}: see
+       \code{\link{heatmap-methods}}}
+    \item{show}{\code{signature(object="APResult")}: see
        \code{\link{show-methods}}}
-    \item{labels}{\code{signature(object = "APResult")}: see
+    \item{labels}{\code{signature(object="APResult")}: see
        \code{\link{labels-methods}}}
-    \item{cutree}{\code{signature(object = "APResult")}: see
+    \item{cutree}{\code{signature(object="APResult")}: see
        \code{\link{cutree-methods}}}
-    \item{length}{\code{signature(x = "APResult")}: gives the number of
+    \item{length}{\code{signature(x="APResult")}: gives the number of
       clusters.}
+    \item{as.hclust}{\code{signature(x="ExClust")}: see
+       \code{\link{coerce-methods}}}
+    \item{as.dendrogram}{\code{signature(object="ExClust")}: see
+       \code{\link{coerce-methods}}}
     }
 }
 \section{Accessors}{
@@ -87,7 +95,7 @@ Class \code{"ExClust"}, directly.
       many components as the argument \code{i} has elements. A list is
       returned even if \code{i} is a single integer.
     }
-    \item{similarity}{\code{signature(x = "APResult")}: gives the similarity
+    \item{similarity}{\code{signature(x="APResult")}: gives the similarity
       matrix.
     }
   }

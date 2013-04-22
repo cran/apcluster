@@ -24,7 +24,7 @@ linKernel(x, sel=NA, normalize=FALSE)
     taken into account, whereas categorical features are neglected. If
     \code{x} is missing, all functions return a function that
     can be used as similarity measure, in particular, as
-    \code{similarity} argument for \code{\link{apclusterL}}.}
+    \code{s} argument for \code{\link{apclusterL}}.}
   \item{sel}{selected samples subset; vector of row indices
   	      for x in increasing order (see details below)}
   \item{r}{exponent (see details below)}

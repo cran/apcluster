@@ -55,16 +55,24 @@ The following slots are defined for \link{AggExResult} objects:
 }
 \section{Methods}{
   \describe{
-    \item{plot}{\code{signature(x = "AggExResult")}: see
+    \item{plot}{\code{signature(x="AggExResult")}: see
        \code{\link{plot-methods}}}
-    \item{plot}{\code{signature(x = "AggExResult", y = "matrix")}: see
+    \item{plot}{\code{signature(x="AggExResult", y="matrix")}: see
        \code{\link{plot-methods}}}
-    \item{show}{\code{signature(object = "AggExResult")}: see
+    \item{heatmap}{\code{signature(x="AggExResult")}: see
+       \code{\link{heatmap-methods}}}
+    \item{heatmap}{\code{signature(x="AggExResult", y="matrix")}: see
+       \code{\link{heatmap-methods}}}
+    \item{show}{\code{signature(object="AggExResult")}: see
        \code{\link{show-methods}}}
-    \item{cutree}{\code{signature(object = "AggExResult", k="ANY",
+    \item{cutree}{\code{signature(object="AggExResult", k="ANY",
 	h="ANY")}: see \code{\link{cutree-methods}}}
-    \item{length}{\code{signature(x = "AggExResult")}: gives the number of
+    \item{length}{\code{signature(x="AggExResult")}: gives the number of
       clustering levels in the clustering result.}
+    \item{as.hclust}{\code{signature(x="AggExResult")}: see
+       \code{\link{coerce-methods}}}
+    \item{as.dendrogram}{\code{signature(object="AggExResult")}: see
+       \code{\link{coerce-methods}}}
     }
 }
 \section{Accessors}{
@@ -79,7 +87,7 @@ The following slots are defined for \link{AggExResult} objects:
       So, the list has as many components as the argument \code{i} has
       elements. A list is returned even if \code{i} is a single level.
     }
-    \item{similarity}{\code{signature(x = "AggExResult")}: gives the similarity
+    \item{similarity}{\code{signature(x="AggExResult")}: gives the similarity
       matrix.
     }
   }

@@ -13,14 +13,14 @@
 }
 \usage{
 \S4method{apclusterK}{matrix,missing}(s, x, K, prc=10, bimaxit=20, exact=FALSE,
-          maxits=1000, convits=100, lam=0.9, includeSim=FALSE, details=FALSE,
-          nonoise=FALSE, seed=NA, verbose=TRUE)
+     maxits=1000, convits=100, lam=0.9, includeSim=FALSE, details=FALSE,
+     nonoise=FALSE, seed=NA, verbose=TRUE)
 \S4method{apclusterK}{function,ANY}(s, x, K, prc=10, bimaxit=20, exact=FALSE,
-          maxits=1000, convits=100, lam=0.9, includeSim=TRUE, details=FALSE,
-          nonoise=FALSE, seed=NA, verbose=TRUE, ...)
+     maxits=1000, convits=100, lam=0.9, includeSim=TRUE, details=FALSE,
+     nonoise=FALSE, seed=NA, verbose=TRUE, ...)
 \S4method{apclusterK}{character,ANY}(s, x, K, prc=10, bimaxit=20, exact=FALSE,
-          maxits=1000, convits=100, lam=0.9, includeSim=TRUE, details=FALSE,
-          nonoise=FALSE, seed=NA, verbose=TRUE, ...)
+     maxits=1000, convits=100, lam=0.9, includeSim=TRUE, details=FALSE,
+     nonoise=FALSE, seed=NA, verbose=TRUE, ...)
 }
 \arguments{
   \item{s}{an \eqn{l\times l}{lxl} similarity matrix or a similarity

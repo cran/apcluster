@@ -10,15 +10,15 @@
    Runs affinity propagation clustering
 }
 \usage{
-\S4method{apcluster}{matrix,missing}(s, x,
-          p=NA, q=NA, maxits=1000, convits=100, lam=0.9, 
-          includeSim=FALSE, details=FALSE, nonoise=FALSE, seed=NA)
-\S4method{apcluster}{character,ANY}(s, x, 
-          p=NA, q=NA, maxits=1000, convits=100, lam=0.9, 
-          includeSim=TRUE, details=FALSE, nonoise=FALSE, seed=NA, ...)
-\S4method{apcluster}{function,ANY}(s, x, 
-          p=NA, q=NA, maxits=1000, convits=100, lam=0.9, 
-          includeSim=TRUE, details=FALSE, nonoise=FALSE, seed=NA, ...)
+\S4method{apcluster}{matrix,missing}(s, x, p=NA, q=NA, maxits=1000,
+    convits=100, lam=0.9, includeSim=FALSE, details=FALSE,
+    nonoise=FALSE, seed=NA)
+\S4method{apcluster}{character,ANY}(s, x, p=NA, q=NA, maxits=1000,
+    convits=100, lam=0.9, includeSim=TRUE, details=FALSE,
+    nonoise=FALSE, seed=NA, ...)
+\S4method{apcluster}{function,ANY}(s, x, p=NA, q=NA, maxits=1000,
+    convits=100, lam=0.9, includeSim=TRUE, details=FALSE,
+    nonoise=FALSE, seed=NA, ...)
 }
 \arguments{
   \item{s}{an \eqn{l\times l}{l x l} similarity matrix or a similarity

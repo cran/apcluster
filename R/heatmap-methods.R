@@ -1,43 +1,9 @@
-heatmap.APResult <- function(x, y, ...)
-{
-    if(!identical(dim(x@sim), as.integer(c(1, 1))))
-    {
-        aggres <- heatmap(as(x, "ExClust"), x@sim, ...)
-        return(invisible(aggres))
-    }
-    else
-        stop("Similarity matrix is missing for heatmap plotting.\n",
-             "       Please use the apcluster or apclusterL argument\n",
-             "       includeSim=TRUE in order to add similarity data to\n",
-             "       the APResult object or pass externally computed\n",
-             "       similarity matrix as second parameter.")
-}
-
-setMethod("heatmap", signature(x="APResult", y="missing"), heatmap.APResult)
-
-
-heatmap.APResult.matrix <- function(x, y, ...)
-{
-    aggres <- heatmap(as(x, "ExClust"), y, ...)
-    return(invisible(aggres))
-}
-
-setMethod("heatmap", signature(x="APResult", y="matrix"),
-          heatmap.APResult.matrix)
-
-
 heatmap.ExClust <- function(x, y, ...)
 {
     if(!identical(dim(x@sim), as.integer(c(1, 1))))
-    {
-        aggres <- heatmap(x, x@sim, ...)
-        return(invisible(aggres))
-    }
+        return(invisible(heatmap(x, x@sim, ...)))
     else
-        stop("Similarity matrix is missing for heatmap plotting.\n",
-             "       Make sure that similarity data is part of\n",
-             "       the ExClust object or pass externally computed\n",
-             "       similarity matrix as second parameter.")
+        stop("Similarity matrix is missing for heatmap plotting.")
 }
 
 setMethod("heatmap", signature(x="ExClust", y="missing"), heatmap.ExClust)
@@ -67,82 +33,201 @@ heatmap.AggExResult <- function(x, y, ...)
     if(!identical(dim(x@sim), as.integer(c(1, 1))))
         heatmap(x, x@sim, ...)
     else
-        stop("Similarity matrix is missing for heatmap plotting.\n",
-             "       Use aggExCluster() argument includeSim=TRUE or pass\n",
-             "       externally computed similarity matrix as second\n",
-             "       parameter.")
+        stop("Similarity matrix is missing for heatmap plotting.")
 }
 
 setMethod("heatmap", signature(x="AggExResult", y="missing"),
           heatmap.AggExResult)
 
 
-heatmap.AggExResult.matrix <- function(x, y, ...)
+heatmap.AggExResult.matrix <- function(x, y, Rowv=TRUE, Colv=TRUE,
+                                       sideColors=NULL,
+                                       base=0.05, add.expr, margins=c(5, 5),
+                                       cexRow=max(min(35 / nrow(y), 1), 0.1),
+                                       cexCol=max(min(35 / ncol(y), 1), 0.1),
+                                       main=NULL, dendScale=1, barScale=1, ...)
 {
     if (identical(dim(y), as.integer(c(1, 1))))
         stop("y must be a nonempty matrix")
     else if (x@l != nrow(y))
         stop("size of clustering result does not fit to size of data set")
-    else if (length(x@sel)==0 && ncol(y) != nrow(y))
+    else if (length(x@sel) == 0 && ncol(y) != nrow(y))
         stop("y must be quadratic")
-    else if (x@maxNoClusters < 3 || x@maxNoClusters < x@l)
+    else if (length(x@sel) > 0 && ncol(y) != length(x@sel))
+        stop("no. of columns in y and no. of selected samples in x ",
+             "do not match")
+
+    rowInd <- unlist(x@clusters[[x@maxNoClusters]][x@order])
+
+    doRdend <- TRUE
+    doCdend <- TRUE
+
+    dend <- NULL
+
+    if (is.na(Rowv) || identical(Rowv, FALSE) || x@maxNoClusters < 3)
+        doRdend <- FALSE
+    else
     {
-        if (length(x@sel) > 0)
+        dend <- as.dendrogram(x, base=base, useNames=FALSE)
+        rowInd <- as.numeric(order.dendrogram(dend))
+    }
+
+    colInd <- rowInd
+
+    if (length(x@sel) > 0)
+    {
+        colInd <- rank(intersect(rowInd, x@sel))
+        doCdend <- FALSE
+    }
+    else if (is.na(Colv) || identical(Colv, FALSE) || x@maxNoClusters < 3)
+        doCdend <- FALSE
+    else if (!is.na(Colv) && !doRdend)
+    {
+        dend <- as.dendrogram(x, base=base, useNames=FALSE)
+        rowInd <- as.numeric(order.dendrogram(dend))
+        colInd <- rowInd
+    }
+
+    if ((doRdend || doCdend) && (!is.numeric(dendScale) ||
+                                 length(dendScale) != 1 || dendScale <= 0 ||
+                                 dendScale > 2))
+        stop("dendScale must be a single positive value not larger than 2")
+
+    if (is.null(sideColors))
+    {
+        if (length(x) != nrow(y))
         {
-            colInd <- c(rep(0, nrow(y)))
-            for (i in 1:length(x@sel))
-            colInd[x@sel[i]] <- i
+            lx <- length(x)
+            lx2 <- lx + if (lx %% 2) 1 else 0
+            ind <- as.vector(t(matrix(1:lx2, lx2 / 2)))[1:lx]
+            sideColors <- rainbow(lx)[ind]
         }
+    }
+    else if (any(is.na(sideColors)))
+        sideColors <- NULL
+    else if (!is.character(sideColors))
+        stop("argument 'sideColors' must be vector of colors, NA or NULL")
+    else
+    {
+        if (length(sideColors) < 2)
+            stop("use at least two different colors in 'sideColors' argument")
 
-        order <- unlist(x@clusters[[x@maxNoClusters]][x@order])
-        colVec <- rainbow(x@maxNoClusters)
-        colors <- unlist(lapply(1:x@maxNoClusters,
-                                function(i)
-                                rep(colVec[x@order[i]],
-                                    length(x@clusters[[x@maxNoClusters]]
-                                           [[x@order[i]]]))))
-
-        ver <- getRversion()
-        ver <- as.integer(c(ver[[c(1, 1)]], ver[[c(1, 2)]]))
-
-        rowColors <- colors
-        if (!(ver[1] > 2 || (ver[1] == 2 && ver[2] >= 15)))
-            rowColors <- rev(colors)
-
-        if (length(x@sel) > 0)
-        {
-            colColors <-
-            unlist(lapply(1:x@maxNoClusters,
-                          function(i)
-                          rep(colVec[x@order[i]],
-                              length(intersect(x@clusters[[x@maxNoClusters]]
-                                               [[x@order[i]]],
-                                               x@sel)))))
-
-            stats::heatmap(y[order, colInd[intersect(order, x@sel)]], Rowv=NA,
-                           Colv=NA, revC=TRUE, ColSideColors=colColors,
-                           RowSideColors=rowColors, ...)
-        }
+        if (length(sideColors) < length(x))
+            sideColors <- rep(sideColors, length.out=length(x))
         else
-            stats::heatmap(y[order, order], symm=TRUE, Rowv=NA, Colv=NA,
-                           revC=TRUE, ColSideColors=colors,
-                           RowSideColors=rowColors, ...)
+            sideColors <- sideColors[1:length(x)]
+    }
+
+    if (length(rownames(y)) == 0)
+    {
+        labRow <- as.character(rowInd)
+
+        if (length(x@sel) > 0)
+            labCol <- as.character(intersect(rowInd, x@sel))
     }
     else
     {
-        mini <- min(x@height)
-        maxi <- max(x@height)
-        auxH <- x@height <- 0.05 + 0.95 * (-x@height + maxi) / (maxi - mini)
+        labRow <- rownames(y)[rowInd]
 
-        hCl <- list(merge=x@merge, height=auxH, labels=x@labels,
-                    order=x@order)
-        class(hCl) <- "hclust"
-        dend <- as.dendrogram(hCl)
-
-        stats::heatmap(y, symm=TRUE, Rowv=dend, Colv=dend, revC=TRUE, ...)
-
-        return(invisible(dend))
+        if (length(x@sel) > 0)
+            labCol <- rownames(y)[intersect(rowInd, x@sel)]
     }
+
+    if (length(colnames(y)) == 0)
+        labCol <- as.character(colInd)
+    else
+        labCol <- colnames(y)[colInd]
+
+    lmat <- rbind(c(NA, 3), 2:1)
+    lwid <- c(if (doRdend) dendScale else 0.05, 4)
+    lhei <- c((if (doCdend) dendScale else 0.05) +
+              if (!is.null(main)) 0.2 else 0, 4)
+
+    if (length(sideColors) > 0)
+    {
+        if (!is.numeric(barScale) || length(barScale) != 1 || barScale <= 0 ||
+            barScale > 4)
+            stop("barScale must be a single positive value not larger than 4")
+
+        invIndex <- rep(0, nrow(y))
+        for (i in 1:x@maxNoClusters)
+            invIndex[x@clusters[[x@maxNoClusters]][[i]]] <- i
+
+        srtIndex <- unique(invIndex[rowInd])
+
+        rowColors <- rep(sideColors,
+                         sapply(x@clusters[[x@maxNoClusters]][srtIndex],
+                                length))
+
+        if (length(x@sel) > 0)
+            colColors <-
+                rep(sideColors, sapply(x@clusters[[x@maxNoClusters]][srtIndex],
+                                function(cl) length(intersect(cl, x@sel))))
+        else
+            colColors <- rowColors
+
+        lmat <- rbind(lmat[1, ] + 1, c(NA, 1), lmat[2, ] + 1)
+        lhei <- c(lhei[1L], 0.1 * barScale, lhei[2L])
+        lmat <- cbind(lmat[, 1] + 1, c(rep(NA, nrow(lmat) - 1), 1),
+                      lmat[, 2] + 1)
+        lwid <- c(lwid[1L], 0.1 * barScale, lwid[2L])
+    }
+
+    lmat[is.na(lmat)] <- 0
+
+    dev.hold()
+    on.exit(dev.flush())
+    op <- par(no.readonly=TRUE)
+    on.exit(par(op), add=TRUE)
+    layout(lmat, widths=lwid, heights=lhei, respect=TRUE)
+
+    if (length(sideColors) > 0)
+    {
+        par(mar=c(margins[1], 0, 0, 0.5))
+        image(rbind(1:nrow(y)), col=rev(rowColors), axes=FALSE)
+        par(mar=c(0.5, 0, 0, margins[2]))
+        image(cbind(1:ncol(y)), col=colColors, axes=FALSE)
+    }
+
+    par(mar=c(margins[1], 0, 0, margins[2]))
+
+    image(1:ncol(y), 1:nrow(y), t(y[rev(rowInd), colInd]),
+          xlim=(0.5 + c(0, ncol(y))), ylim=(0.5 + c(0, nrow(y))),
+          axes=FALSE, xlab="", ylab="", ...)
+
+    if (cexCol > 0)
+        axis(1, 1:ncol(y), labels=labCol, las=2, line=-0.5, tick=0,
+             cex.axis=cexCol)
+
+    if (cexRow > 0)
+        axis(4, 1:nrow(y), labels=rev(labRow), las=2, line=-0.5, tick=0,
+             cex.axis=cexRow)
+
+    if (!missing(add.expr))
+        eval(substitute(add.expr))
+
+    par(mar=c(margins[1], 0, 0, 0))
+
+    if (doRdend)
+        plot(revDend.local(dend), horiz=TRUE, axes=FALSE, yaxs="i",
+             leaflab="none")
+    else
+        frame()
+
+    par(mar=c(0, 0, if (!is.null(main)) 1 else 0, margins[2]))
+
+    if (doCdend)
+        plot(dend, axes=FALSE, xaxs="i", leaflab="none")
+    else if (!is.null(main))
+        frame()
+
+    if (!is.null(main))
+    {
+        par(xpd=NA)
+        title(main, cex.main=(1.5 * op[["cex.main"]]))
+    }
+
+    return(invisible(dend))
 }
 
 setMethod("heatmap", signature(x="AggExResult", y="matrix"),

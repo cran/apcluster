@@ -54,7 +54,7 @@ simpleDist <- function(x, sel, method="euclidean", p=2)
             dimnames(dm) <- list(seq_len(N), sel)
     }
     else
-        stop("invalid sel argument")
+        stop("invalid 'sel' argument")
 
     dm
 }
