@@ -4,9 +4,7 @@
 \alias{aggexcluster}
 \alias{aggExCluster-methods}
 \alias{aggExCluster,matrix,missing-method}
-\alias{aggExCluster,matrix,APResult-method}
 \alias{aggExCluster,matrix,ExClust-method}
-\alias{aggExCluster,missing,APResult-method}
 \alias{aggExCluster,missing,ExClust-method}
 \alias{aggExCluster,function,ANY-method}
 \alias{aggExCluster,character,ANY-method}
@@ -16,9 +14,7 @@
 }
 \usage{
 \S4method{aggExCluster}{matrix,missing}(s, x, includeSim=FALSE)
-\S4method{aggExCluster}{matrix,APResult}(s, x, includeSim=FALSE)
 \S4method{aggExCluster}{matrix,ExClust}(s, x, includeSim=FALSE)
-\S4method{aggExCluster}{missing,APResult}(s, x, includeSim=TRUE)
 \S4method{aggExCluster}{missing,ExClust}(s, x, includeSim=TRUE)
 \S4method{aggExCluster}{function,ANY}(s, x, includeSim=TRUE, ...)
 \S4method{aggExCluster}{character,ANY}(s, x, includeSim=TRUE, ...)
@@ -27,11 +23,11 @@
   \item{s}{an \eqn{l\times l}{lxl} similarity matrix or a similarity
   	      function either specified as the name of a package-provided
   	      similarity function as character string or a user provided
-  	      function object.} 
-  \item{x}{either a prior clustering of class \code{\linkS4class{APResult}} or
-    \code{\linkS4class{ExClust}} or, if called with \code{s} being a
+  	      function object} 
+  \item{x}{either a prior clustering of class \code{\linkS4class{ExClust}} (or
+    \code{\linkS4class{APResult}}) or, if called with \code{s} being a
     function or function name, input data to be clustered (see
-    \code{\link{apcluster}} for a detailed specification.}
+    \code{\link{apcluster}} for a detailed specification)}
   \item{includeSim}{if \code{TRUE}, the similarity matrix (either computed
     internally or passed via the \code{s} argument) is stored to the
     slot \code{sim} of the returned
@@ -39,7 +35,7 @@
     if \code{aggExCluster} has been called for a similarity matrix,
     otherwise the default is \code{TRUE}.}
   \item{...}{all other arguments are passed to the selected 
-             similarity function as they are}
+             similarity function as they are.}
 }
 \details{\code{aggExCluster} performs agglomerative clustering.
   Unlike other methods, e.g., the ones implemented in \code{\link{hclust}},
@@ -154,6 +150,7 @@ show(aggres2)
 
 ## plot dendrogram
 plot(aggres2)
+plot(aggres2, showSamples=TRUE)
 
 ## plot heatmap
 heatmap(aggres2)

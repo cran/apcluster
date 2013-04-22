@@ -26,10 +26,3 @@ setMethod("labels", signature(object="ExClust"),
         out
     }
 )
-
-setMethod("labels", signature(object="APResult"),
-    function(object, type="names")
-    {
-        labels(cutree(object), type)
-    }
-)

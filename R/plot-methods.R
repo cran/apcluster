@@ -28,14 +28,14 @@ setMethod("plot", signature(x="APResult", y="missing"),
 
         if (is.element("netsim", type))
         {
-            tmp = x@netsimAll[which(!is.nan(x@netsimAll))]
+            tmp <- x@netsimAll[which(!is.nan(x@netsimAll))]
 
             if (length(tmp) > 0)
             {
-                ymin <- min(tmp, ymin, na.rm = TRUE)
+                ymin <- min(tmp, ymin, na.rm=TRUE)
                 if (ymin == -Inf) ymin <- -.Machine$double.xmax
 
-                ymax <- max(tmp, ymax, na.rm = TRUE)
+                ymax <- max(tmp, ymax, na.rm=TRUE)
                 if (ymax == Inf) ymax <- .Machine$double.xmax
 
                 plotnetsim <- TRUE
@@ -47,14 +47,14 @@ setMethod("plot", signature(x="APResult", y="missing"),
 
         if (is.element("expref", type))
         {
-            tmp = x@exprefAll[which(!is.nan(x@exprefAll))]
+            tmp <- x@exprefAll[which(!is.nan(x@exprefAll))]
 
             if (length(tmp) > 0)
             {
-                ymin <- min(tmp, ymin, na.rm = TRUE)
+                ymin <- min(tmp, ymin, na.rm=TRUE)
                 if (ymin == -Inf) ymin <- -.Machine$double.xmax
 
-                ymax <- max(tmp, ymax, na.rm = TRUE)
+                ymax <- max(tmp, ymax, na.rm=TRUE)
                 if (ymax == Inf) ymax <- .Machine$double.xmax
 
                 plotexpref <- TRUE
@@ -66,14 +66,14 @@ setMethod("plot", signature(x="APResult", y="missing"),
 
         if (is.element("dpsim", type))
         {
-            tmp = x@dpsimAll[which(!is.nan(x@dpsimAll))]
+            tmp <- x@dpsimAll[which(!is.nan(x@dpsimAll))]
 
             if (length(tmp) > 0)
             {
-                ymin <- min(tmp, ymin, na.rm = TRUE)
+                ymin <- min(tmp, ymin, na.rm=TRUE)
                 if (ymin == -Inf) ymin <- -.Machine$double.xmax
 
-                ymax <- max(tmp, ymax, na.rm = TRUE)
+                ymax <- max(tmp, ymax, na.rm=TRUE)
                 if (ymax == Inf) ymax <- .Machine$double.xmax
 
                 plotdpsim <- TRUE
@@ -98,35 +98,11 @@ setMethod("plot", signature(x="APResult", y="missing"),
         else
         {
             stop("No valid data was found for plotting.\n",
-                 "       Please use the apcluster() argument details=TRUE in\n",
-                 "       order to add convergene details to the APResult object.")
+                 "     Please use the apcluster() argument details=TRUE in\n",
+                 "     order to add convergene details to the APResult object.")
         }
     }
 )
-
-# Plot clustering result along with data set
-setMethod("plot", signature(x="APResult", y="matrix"),
-    function(x, y, connect=TRUE, xlab="", ylab="", ...)
-    {
-        plot(as(x, "ExClust"), y, connect, xlab, ylab, ...)
-    }
-)
-
-# Plot clustering result along with data set
-setMethod("plot", signature(x="APResult", y="data.frame"),
-    function(x, y, connect=TRUE, xlab="", ylab="", ...)
-    {
-        y <- as.matrix(y[, sapply(y, is.numeric)])
-
-        if (ncol(y) != 2)
-            stop("number of numerical columns in data frame is not 2.\n",
-                 "Plotting clustering on original data only supported for 2D\n",
-                 "data.\n")
-
-        plot(as(x, "ExClust"), y, connect, xlab, ylab, ...)
-    }
-)
-
 
 setMethod("plot", signature("ExClust", "missing"), heatmap.ExClust)
 
@@ -161,11 +137,12 @@ setMethod("plot", signature(x="ExClust", y="matrix"),
 
                 if (connect)
                    segments(x0=y[, 1], y0=y[, 2],
-                            x1=y[x@idx, 1, drop=FALSE], y1=y[x@idx, 2, drop=FALSE],
+                            x1=y[x@idx, 1, drop=FALSE],
+                            y1=y[x@idx, 2, drop=FALSE],
                             col=cols)
 
-                points(y[x@exemplars,,drop=FALSE], col="black", type="p", pch=22,
-                       cex=1.5)
+                points(y[x@exemplars, , drop=FALSE], col="black", type="p",
+                       pch=22, cex=1.5)
            }
         }
         else if (nrow(y) == ncol(y) || length(x@sel) > 0)
@@ -200,26 +177,34 @@ setMethod("plot", signature(x="ExClust", y="data.frame"),
 
 # Plot clustering result
 setMethod("plot", signature(x="AggExResult", y="missing"),
-    function(x, y, main="Cluster dendrogram", xlab="",
-             ylab="Balanced avg. similarity to exemplar", ticks=4,
-             digits=2, ...)
+    function(x, y, main="Cluster dendrogram", xlab="", ylab="", ticks=4,
+             digits=2, base=0.05, showSamples=FALSE, horiz=FALSE, ...)
     {
-        if (x@maxNoClusters < 3)
-            stop("cannot plot dendrogram with less than 3 clusters")
+        if (x@maxNoClusters < 2)
+            stop("cannot plot dendrogram with less than 2 clusters")
 
-        mini <- min(x@height)
-        maxi <- max(x@height)
-        auxH <- x@height <- 0.05 + 0.95 * (-x@height + maxi) / (maxi - mini)
+        if (showSamples)
+            dend <- as.dendrogram(x, base=base)
+        else
+            dend <- as.dendrogram(as.hclust(x, base=base))
 
-        hCl <- list(merge=x@merge, height=auxH, labels=x@labels, order=x@order)
-        class(hCl) <- "hclust"
-        dend <- as.dendrogram(hCl)
+        plot(dend, axes=FALSE, xlab=xlab, ylab=ylab, main=main, horiz=horiz,
+             ...)
 
-        plot(dend, axes=FALSE, xlab=xlab, ylab=ylab, main=main, ...)
-
-        axis(side=2, at=seq(0.05, 1, length=ticks), tick=TRUE,
-             labels=as.character(format(seq(maxi, mini, length=ticks),
-                                        digits=digits)))
+        if (horiz)
+            suppressWarnings(
+                axis(side=1, at=seq(base, 1, length=ticks), tick=TRUE,
+                     labels=as.character(format(seq(max(x@height),
+                                                    min(x@height),
+                                                    length=ticks),
+                     digits=digits)), ...))
+        else
+            suppressWarnings(
+                axis(side=2, at=seq(base, 1, length=ticks), tick=TRUE,
+                     labels=as.character(format(seq(max(x@height),
+                                                    min(x@height),
+                                                    length=ticks),
+                     digits=digits)), ...))
 
         return(invisible(dend))
     }
@@ -250,62 +235,8 @@ setMethod("plot", signature(x="AggExResult", y="matrix"),
         }
         else if (length(x@sel)==0 && ncol(y) != nrow(y))
             stop("y must be quadratic or two-column")
-        else if (x@maxNoClusters < 3 || x@maxNoClusters < x@l)
-        {
-            if (length(x@sel) > 0)
-            {
-                colInd <- c(rep(0,nrow(y)))
-                for (i in 1:length(x@sel))
-                    colInd[x@sel[i]] <- i
-            }
-            order <- unlist(x@clusters[[x@maxNoClusters]][x@order])
-            colVec <- rainbow(x@maxNoClusters)
-            colors <- unlist(lapply(1:x@maxNoClusters,
-                function(i)
-                    rep(colVec[x@order[i]],
-                        length(x@clusters[[x@maxNoClusters]][[x@order[i]]]))))
-
-            ver <- getRversion()
-            ver <- as.integer(c(ver[[c(1, 1)]], ver[[c(1, 2)]]))
-
-            rowColors <- colors
-
-            if (!(ver[1] > 2 || (ver[1] == 2 && ver[2] >= 15)))
-                rowColors <- rev(colors)
-
-            if (length(x@sel) > 0)
-            {
-                colColors <-
-                    unlist(lapply(1:x@maxNoClusters,
-                                  function(i)
-                                  rep(colVec[x@order[i]],
-                                      length(intersect(x@clusters[[x@maxNoClusters]]
-                                                       [[x@order[i]]],x@sel)))))
-
-                heatmap(y[order, colInd[intersect(order, x@sel)]], Rowv=NA, Colv=NA,
-                        revC=TRUE, ColSideColors=colColors,
-                        RowSideColors=rowColors, ...)
-            }
-            else
-                heatmap(y[order, order], symm=TRUE, Rowv=NA, Colv=NA, revC=TRUE,
-                        ColSideColors=colors, RowSideColors=rowColors, ...)
-        }
         else
-        {
-            mini <- min(x@height)
-            maxi <- max(x@height)
-            auxH <- x@height <- 0.05 + 0.95 * (-x@height + maxi) / (maxi - mini)
-
-            hCl <- list(merge=x@merge, height=auxH, labels=x@labels,
-                        order=x@order)
-            class(hCl) <- "hclust"
-            dend <- as.dendrogram(hCl)
-
-            heatmap(y, symm=TRUE, Rowv=dend,
-                    Colv=dend, revC=TRUE, ...)
-
-            return(invisible(dend))
-        }
+            return(invisible(heatmap(x, y, ...)))
     }
 )
 

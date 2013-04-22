@@ -209,7 +209,6 @@ aggExCluster.matrix <- function(s, x, includeSim=FALSE)
 }
 
 setMethod("aggExCluster", signature("matrix", "missing" ), aggExCluster.matrix)
-setMethod("aggExCluster", signature("matrix", "APResult"), aggExCluster.matrix)
 setMethod("aggExCluster", signature("matrix", "ExClust" ), aggExCluster.matrix)
 
 
@@ -228,7 +227,6 @@ aggExCluster.Clust <- function(s, x, includeSim=TRUE)
     AggResultObj
 }
 
-setMethod("aggExCluster", signature("missing" , "APResult"), aggExCluster.Clust)
 setMethod("aggExCluster", signature("missing" , "ExClust" ), aggExCluster.Clust)
 
 

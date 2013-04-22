@@ -81,7 +81,7 @@ corSimMat <- function(x, sel=NA, r=1, signed=TRUE, method="pearson")
             dimnames(mat) <- list(seq_len(N), sel)
     }
     else
-        stop("invalid sel argument")
+        stop("invalid 'sel' argument")
 
     if (signed)
     {
@@ -148,7 +148,7 @@ linKernel <- function(x, sel=NA, normalize=FALSE)
             dimnames(mat) <- list(seq_len(N), sel)
     }
     else
-        stop("invalid sel argument")
+        stop("invalid 'sel' argument")
 
     mat
 }

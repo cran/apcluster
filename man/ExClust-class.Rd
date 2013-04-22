@@ -39,16 +39,26 @@ The following slots are defined for \link{ExClust} objects:
 }
 \section{Methods}{
   \describe{
-    \item{plot}{\code{signature(x = "ExClust", y = "matrix")}: see
+    \item{plot}{\code{signature(x="ExClust")}: see
        \code{\link{plot-methods}}}
-    \item{show}{\code{signature(object = "ExClust")}: see
+    \item{plot}{\code{signature(x="ExClust", y="matrix")}: see
+       \code{\link{plot-methods}}}
+    \item{heatmap}{\code{signature(x="ExClust")}: see
+       \code{\link{heatmap-methods}}}
+    \item{heatmap}{\code{signature(x="ExClust", y="matrix")}: see
+       \code{\link{heatmap-methods}}}
+    \item{show}{\code{signature(object="ExClust")}: see
        \code{\link{show-methods}}}
-    \item{labels}{\code{signature(object = "ExClust")}: see
+    \item{labels}{\code{signature(object="ExClust")}: see
        \code{\link{labels-methods}}}
-    \item{cutree}{\code{signature(object = "ExClust", k="ANY", h="ANY")}: see
+    \item{cutree}{\code{signature(object="ExClust", k="ANY", h="ANY")}: see
        \code{\link{cutree-methods}}}
-    \item{length}{\code{signature(x = "ExClust")}: gives the number of
+    \item{length}{\code{signature(x="ExClust")}: gives the number of
       clusters.}
+    \item{as.hclust}{\code{signature(x="ExClust")}: see
+       \code{\link{coerce-methods}}}
+    \item{as.dendrogram}{\code{signature(object="ExClust")}: see
+       \code{\link{coerce-methods}}}
     }
 }
 \section{Accessors}{
@@ -62,7 +72,7 @@ The following slots are defined for \link{ExClust} objects:
       many components as the argument \code{i} has elements. A list is
       returned even if \code{i} is a single integer.
     }
-    \item{similarity}{\code{signature(x = "ExClust")}: gives the similarity
+    \item{similarity}{\code{signature(x="ExClust")}: gives the similarity
       matrix.
     }
   }
