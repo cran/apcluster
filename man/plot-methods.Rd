@@ -17,8 +17,10 @@
 \S4method{plot}{APResult,missing}(x, y, type=c("netsim", "dpsim", "expref"),
     xlab="# Iterations", ylab="Similarity", ...)
 \S4method{plot}{ExClust,missing}(x, y, ...)
-\S4method{plot}{ExClust,matrix}(x, y, connect=TRUE, xlab="", ylab="", ...)
-\S4method{plot}{ExClust,data.frame}(x, y, connect=TRUE, xlab="", ylab="", ...)
+\S4method{plot}{ExClust,matrix}(x, y, connect=TRUE, xlab="", ylab="",
+labels=NA, limitNo=15, ...)
+\S4method{plot}{ExClust,data.frame}(x, y, connect=TRUE, xlab="",
+ylab="", labels=NA, limitNo=15, ...)
 \S4method{plot}{AggExResult,missing}(x, y, main="Cluster dendrogram",
     xlab="", ylab="", ticks=4, digits=2, base=0.05, showSamples=FALSE,
     horiz=FALSE, ...)
@@ -36,8 +38,24 @@
               which can be used in any combination or order;
               all other strings are ignored (for the meaning see
               \code{\linkS4class{APResult}})}
-  \item{xlab}{label for x axis of plot; irrelevant for heatmaps}
-  \item{ylab}{label for y axis of plot; irrelevant for heatmaps}
+  \item{xlab, ylab}{labels for axes of 2D plots; ignored if \code{y} has
+  more than two columns}
+  \item{labels}{names used for variables in scatter plot matrix
+    (displayed if \code{y} has more than two columns). If \code{NA}
+    (default), column names are used. If no column names are available,
+    labels such as \code{x[, 2]} are displayed.}
+  \item{limitNo}{if the number of columns/features in \code{y} is too large,
+    problems may occur when attempting to plot a scatter plot matrix.
+    To avoid problems, the \code{plot} method throws an error if the
+    number of columns exceeds \code{limitNo}. For special applications,
+    users can increase the value (15 by default). If \code{limitNo}
+    is set to \code{NA} or any other non-numeric value, the limit is
+    ignored entirely. Please note that attempting to plot scatter plot
+    matrices with too many features may corrupt the graphics device.
+    So users are making changes at their own risk. If plotting of many
+    features is necessary, make sure that the graphics device is large
+    enough to accommodate the plot (e.g. by using a sufficiently large
+    graphics file device).}
   \item{connect}{used only if clustering is plotted on original data,
     ignored otherwise. If \code{connect} is \code{TRUE}, lines are
     drawn connecting exemplars with their cluster members.}
@@ -90,10 +108,12 @@
       by a black square. If \code{connect} is \code{TRUE}, lines
       connecting the cluster members to their exemplars are drawn.
       This variant of \code{plot} does not return any value.}
-    \item{If the matrix \code{y} does not have two columns, \code{y} is
-      interpreted as the similarity matrix that was used for
-      clustering. Then a heatmap of the similarity matrix is plotted.
-      For details, see \code{\link{heatmap}}.}
+    \item{If \code{y} has more than two columns, clustering results are
+      superimposed in a sort of scatter plot matrix. The variant
+      that \code{y} is interpreted as similarity matrix if it is
+      quadratic has been removed in version 1.3.2. Use
+      \code{\link{heatmap}} instead.}
+    \item{If \code{y} has only one column, an error is displayed.}
   }
   
   If \code{plot} is called for an \code{\linkS4class{ExClust}} object
@@ -190,6 +210,11 @@ heatmap(aggres2)
 
 ## show clustering result for 2 clusters
 plot(aggres2, x, k=2)
+
+## cluster iris data set
+data(iris)
+apIris <- apcluster(negDistMat(r=2), iris, q=0)
+plot(apIris, iris)
 }
 \keyword{cluster}
 \keyword{methods}

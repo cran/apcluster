@@ -24,7 +24,7 @@ apclusterL.matrix <- function(s, x, sel, p=NA, q=NA, maxits=1000, convits=100,
     if (max(sel) > N || min(sel) < 1)
         stop("sample index in sel must be between one and number of samples")
 
-    if (!is.na(p) && (!is.numeric(p) || !is.vector(p)))
+    if (!is.na(p[1]) && (!is.numeric(p) || !is.vector(p)))
         stop("p must be a number or vector")
 
     if (length(p) > 1)
@@ -35,7 +35,7 @@ apclusterL.matrix <- function(s, x, sel, p=NA, q=NA, maxits=1000, convits=100,
             p <- p[1:N] # truncate unnecessarily long p
     }
 
-    if (is.na(p) && !is.na(q) && !is.numeric(q))
+    if (any(is.na(p)) && !is.na(q) && !is.numeric(q))
         stop("q must be a number")
 
     if (lam > 0.9)
@@ -44,7 +44,7 @@ apclusterL.matrix <- function(s, x, sel, p=NA, q=NA, maxits=1000, convits=100,
                 "a larger value of convits.")
 
     # If argument p is not given, p is set to median of s
-    if (is.na(p))
+    if (any(is.na(p)))
     {
         if (is.na(q))
             p <- median(s[setdiff(which(s > -Inf), (1:M-1) * N + sel)])
@@ -81,16 +81,11 @@ apclusterL.matrix <- function(s, x, sel, p=NA, q=NA, maxits=1000, convits=100,
     # Append preferences as additional column to s
     s <- cbind(s, p)
 
-    # Numerical stability -- replace -Inf with -realmax
-    infelem <- which(s < -.Machine$double.xmax)
+    # replace -Inf (for numerical stability) and NA with -realmax
+    infelem <- which(s < -.Machine$double.xmax | is.na(s))
 
     if (length(infelem) > 0)
-    {
-        warning("-Inf similarities detected: changing to -realmax ",
-                " to ensure numerical stability")
-
         s[infelem] <- -.Machine$double.xmax
-    }
 
     infelem <- which(s > .Machine$double.xmax)
 
