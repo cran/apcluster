@@ -108,11 +108,16 @@ setMethod("plot", signature("ExClust", "missing"), heatmap.ExClust)
 
 
 setMethod("plot", signature(x="ExClust", y="matrix"),
-    function(x, y, connect=TRUE, xlab="", ylab="", ...)
+    function(x, y, connect=TRUE, xlab="", ylab="", labels=NA,
+             limitNo=15, ...)
     {
         if (x@l != nrow(y))
             stop("size of clustering result does not fit to size of data set")
-        else if (ncol(y) == 2)
+
+        if (ncol(y) < 2)
+            stop("cannot plot 1D data set")
+
+        if (ncol(y) == 2)
         {
             xlim <- c(min(y[,1]), max(y[,1]))
             ylim <- c(min(y[,2]), max(y[,2]))
@@ -145,32 +150,80 @@ setMethod("plot", signature(x="ExClust", y="matrix"),
                        pch=22, cex=1.5)
            }
         }
-        else if (nrow(y) == ncol(y) || length(x@sel) > 0)
-        {
-            aggres <- aggExCluster(y, x)
-
-            heatmap(aggres, y, ...)
-
-            return(invisible(aggres))
-        }
         else
-            stop("y must be quadratic or two-column")
+        {
+            if (is.numeric(limitNo) && ncol(y) > limitNo)
+                stop(paste("cannot plot more than", limitNo,
+                           "features at once"))
+
+            res <- x
+            num <- length(res@exemplars)
+
+            if (num <= 0)
+            {
+                warning("No exemplars defined in clustering result. Plotting ",
+                        "data set as it is.")
+                clustCol <- "black"
+                connect <- FALSE
+            }
+            else
+                clustCol <- rainbow(length(res@exemplars))[labels(x,
+                                                                  type="enum")]
+
+            clustPanel <-  function(x, y, ...)
+            {
+                points(x, y, col=clustCol, pch=19, cex=0.8)
+
+                if (connect)
+                    segments(x0=x, y0=y,
+                             x1=x[res@idx],
+                             y1=y[res@idx],
+                             col=clustCol)
+
+                if (num > 0)
+                    points(x[res@exemplars], y[res@exemplars], col="black",
+                           type="p",
+                           pch=22, cex=1.5)
+            }
+
+            if (any(is.na(labels)))
+            {
+                yname <- deparse(substitute(y, env = parent.frame()))
+
+                if (length(colnames(y)) > 0)
+                    labels <- colnames(y)
+                else
+                    labels <- paste(yname, "[, ", 1:ncol(y), "]", sep="")
+            }
+
+            pairs(y, labels, lower.panel=clustPanel, upper.panel=clustPanel,
+                  ...)
+        }
     }
 )
 
 
 # Plot clustering result along with data set
 setMethod("plot", signature(x="ExClust", y="data.frame"),
-    function(x, y, connect=TRUE, xlab="", ylab="", ...)
+    function(x, y, connect=TRUE, xlab="", ylab="", labels=NA, limitNo=15, ...)
     {
-        y <- as.matrix(y[, sapply(y, is.numeric)])
+        sel <- which(sapply(y, is.numeric))
 
-        if (ncol(y) != 2)
-            stop("number of numerical columns in data frame is not 2.\n",
-                 "Plotting clustering on original data only supported for 2D\n",
-                 "data.\n")
+        if (length(sel) < 2)
+            stop("cannot plot 1D data set")
 
-        plot(x, y, connect, xlab, ylab, ...)
+        if (any(is.na(labels)))
+        {
+            yname <- deparse(substitute(y, env = parent.frame()))
+
+            if (length(colnames(y)) > 0)
+                labels <- colnames(y)[sel]
+            else
+                labels <- paste(yname, "[, ", sel, "]", sep="")
+        }
+
+        plot(x, as.matrix(y[, sel, drop=FALSE]), connect, xlab, ylab,
+             labels, limitNo=limitNo, ...)
     }
 )
 

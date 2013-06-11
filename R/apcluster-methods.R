@@ -11,7 +11,7 @@ apcluster.matrix <- function(s, x, p=NA, q=NA, maxits=1000, convits=100,
     #
     # check input data
     #
-    if (!is.na(p) && (!is.numeric(p) || !is.vector(p)))
+    if (!is.na(p[1]) && (!is.numeric(p) || !is.vector(p)))
         stop("p must be a number or vector")
 
     if (length(dim(s)) != 2 || ncol(s) != nrow(s))
@@ -27,6 +27,9 @@ apcluster.matrix <- function(s, x, p=NA, q=NA, maxits=1000, convits=100,
             p <- p[1:N] # truncate unnecessarily long p
     }
 
+    if (any(is.na(p)) && !is.na(q) && !is.numeric(q))
+        stop("q must be a number")
+
     if (lam > 0.9)
         warning("Large damping factor in use. Turn on details\n",
                 "and call plot() to monitor net similarity. The\n",
@@ -34,12 +37,12 @@ apcluster.matrix <- function(s, x, p=NA, q=NA, maxits=1000, convits=100,
                 "a larger value of convits.")
 
     # If argument p is not given, p is set to median of s
-    if (is.na(p))
+    if (any(is.na(p)))
     {
         if (is.na(q))
-             p <- median(s[setdiff(which(s > -Inf), 0:(N-1) * N + 1:N)])
+            p <- median(s[setdiff(which(s > -Inf), 0:(N - 1) * N + 1:N)])
         else
-            p <- quantile(s[setdiff(which(s > -Inf), 0:(N-1) * N + 1:N)], q)
+            p <- quantile(s[setdiff(which(s > -Inf), 0:(N - 1) * N + 1:N)], q)
     }
 
     apresultObj@l <- N
@@ -49,7 +52,7 @@ apcluster.matrix <- function(s, x, p=NA, q=NA, maxits=1000, convits=100,
     # input similarities
     if (!nonoise)
     {
-        randomMat <- matrix(rnorm(N*N),N)
+        randomMat <- matrix(rnorm(N * N),N)
 
         s <- s + (.Machine$double.eps * s + .Machine$double.xmin * 100) *
                  randomMat
@@ -63,16 +66,11 @@ apcluster.matrix <- function(s, x, p=NA, q=NA, maxits=1000, convits=100,
     # store p into result object for future reference
     apresultObj@p <- p
 
-    # Numerical stability -- replace -Inf with -realmax
-    infelem <- which(s < -.Machine$double.xmax)
+    # replace -Inf (for numerical stability) and NA with -realmax
+    infelem <- which(s < -.Machine$double.xmax | is.na(s))
 
     if (length(infelem) > 0)
-    {
-        warning("-Inf similarities detected: changing to -realmax ",
-                " to ensure numerical stability")
-
         s[infelem] <- -.Machine$double.xmax
-    }
 
     infelem <- which(s > .Machine$double.xmax)
 

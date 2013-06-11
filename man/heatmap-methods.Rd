@@ -161,7 +161,8 @@ apres2 <- apcluster(s=apres@sim, q=0.6)
 heatmap(apres2, apres@sim)
 
 ## with alternate heatmap coloring, alternating color bars, and no dendrograms
-heatmap(apres2, apres@sim, Rowv=NA, Colv=NA, sideColors=c("darkgreen", "yellowgreen"), col=terrain.colors(12))
+heatmap(apres2, apres@sim, Rowv=NA, Colv=NA,
+        sideColors=c("darkgreen", "yellowgreen"), col=terrain.colors(12))
 
 ## perform agglomerative clustering of affinity propagation clusters
 aggres1 <- aggExCluster(apres@sim, apres2)

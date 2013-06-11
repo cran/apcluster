@@ -132,42 +132,33 @@ package, therefore, is to enter the following command into your \R\ session:
 <<InstallAPCluster,eval=FALSE>>=
 install.packages("apcluster")
 @
+If you use R on Windows or Mac OS, you can also conveniently use the package
+installation menu of your R GUI.
 
-\subsection{Manual installation}
+\subsection{Manual installation from source}
 
-If, for what reason ever, you prefer to install the package manually, download
-the package file suitable for your computer system and copy it to your harddisk.
-Open the package's page at CRAN%
+Under special circumstances, e.g. if you want to compile
+the C++ code included in the package with some custom options,
+you may prefer to install the package manually from source.
+To this end, open the package's page at CRAN%
 \footnote{\url{http://cran.r-project.org/web/packages/apcluster/index.html}} and
-then proceed as follows.
-
-\subsubsection*{Manual installation under Windows}
-
-\begin{enumerate}
-\item Download \texttt{apcluster\_\APClusterVer.zip}
-and save it to your harddisk
-\item Open the \R\ GUI and select the menu entry
-\begin{quote}
-\ttfamily Packages | Install package(s) from local zip files...
-\end{quote}
-(if you use \R\ in a different language, search for the analogous
-menu entry).
-In the file dialog that opens, go to the folder where you placed
-{\ttfamily apcluster\_\APClusterVer.zip} and select this file. The
-package should be installed now.
-\end{enumerate}
-
-\subsubsection*{Manual installation under Linux/UNIX/MacOS}
+then proceed as follows:
 \begin{enumerate}
 \item Download \texttt{apcluster\_\APClusterVer.tar.gz}
 and save it to your harddisk.
-\item Open a shell window and change to the directory where you put
+\item Open a shell/terminal/command prompt window and change to the directory where you put
   {\ttfamily apcluster\_\APClusterVer.tar.gz}. Enter
 \begin{quote}
 \ttfamily R CMD INSTALL apcluster\_\APClusterVer.tar.gz
 \end{quote}
 to install the package.
 \end{enumerate}
+Note that this might require additional software on some platforms. Windows requires
+Rtools\footnote{\url{http://cran.r-project.org/bin/windows/Rtools/}} to be installed and
+to be available in the default search path (environment variable \verb+PATH+).
+Mac OS X requires Xcode developer tools%
+\footnote{\url{https://developer.apple.com/technologies/tools/}} (make sure that
+you have the command line tools installed with Xcode).
 
 \subsection{Compatibility issues}
 
@@ -251,7 +242,7 @@ clustering result:
 <<ShowResultAPClusterDataSet1>>=
 apres1a
 @
-For two-dimensional data sets, the \APCluster\ package allows for plotting the
+The \APCluster\ package allows for plotting the
 original data set along with a clustering result:
 \begin{center}
 <<PlotResultAPClusterDataSet1,fig=TRUE,echo=TRUE,width=5,height=5>>=
@@ -290,7 +281,7 @@ to \verb+apcluster()+:
 apres1c <- apcluster(s1, details=TRUE)
 @
 This option tells the algorithm to keep a detailed log about its progress.
-For example, this allows us to plot the three performance measures that AP
+For example, this allows for plotting the three performance measures that AP
 uses internally for each iteration:
 \begin{center}
 <<PlotAPClusterDataSet1Details,fig=TRUE,echo=TRUE,width=6,height=4>>=
@@ -441,6 +432,57 @@ plot(apres2d, x2)
 @
 \end{center}
 
+Now let us quickly consider a simple data set with more than two features. The
+notorious example is Fisher's iris data set:
+\setkeys{Gin}{width=\textwidth}
+<<IrisData1>>=
+data(iris)
+apIris1 <- apcluster(negDistMat(r=2), iris)
+apIris1
+@
+AP has identified \Sexpr{length(apIris1)} clusters. Since Version 1.3.2, the
+package also allows for superimposing clustering results in scatter plot matrices:
+\begin{center}
+<<IrisDataPlot1,fig=TRUE,echo=TRUE,width=10,height=10>>=
+plot(apIris1, iris)
+@
+\end{center}
+The heatmap looks as follows:
+\setkeys{Gin}{width=0.55\textwidth}
+\begin{center}
+<<IrisDataHeatmap1,fig=TRUE,echo=TRUE,width=5,height=5>>=
+heatmap(apIris1)
+@
+\end{center}
+
+Now let us try to obtain fewer clusters by using the minimum of off-diagonal similarities:
+<<IrisData2>>=
+data(iris)
+apIris2 <- apcluster(negDistMat(r=2), iris, q=0)
+apIris2
+@
+AP has identified \Sexpr{length(apIris2)} clusters. If we again superimpose them in
+the scatter plot matrix, we obtain the following:
+\setkeys{Gin}{width=\textwidth}
+\begin{center}
+<<IrisDataPlot,fig=TRUE,echo=TRUE,width=10,height=10>>=
+plot(apIris2, iris)
+@
+\end{center}
+Finally, the heatmap looks as follows:
+\setkeys{Gin}{width=0.55\textwidth}
+\begin{center}
+<<IrisDataHeatmap2,fig=TRUE,echo=TRUE,width=5,height=5>>=
+heatmap(apIris2)
+@
+\end{center}
+So, looking at the heatmap, the \Sexpr{length(apIris2)} clusters seem quite reasonable,
+at least in the light of the fact that there are three species in the data
+set, {\em Iris setosa}, {\em Iris versicolor}, and {\em Iris virginica}, where
+{\em Iris setosa}
+is very clearly separated from each other (first cluster in the heatmap) and the two others
+are partly overlapping.
+
 \section{Exemplar-based Agglomerative Clustering}\label{sec:agglo}
 
 The function \verb+aggExCluster()+ realizes what can best be
@@ -520,7 +562,8 @@ plot(aggres2a)
 @
 \end{center}
 If one wants to see the original samples in the dendrogram of the cluster hierarchy,
-the \verb+showSamples=TRUE+ option can be used. In this case, it is reduce the font size of
+the \verb+showSamples=TRUE+ option can be used. In this case, it is recommended to
+reduce the font size of
 the labels via the \verb+nodePar+ parameter (see \verb+?plot.dendrogram+ and the examples
 therein):
 \begin{center}
@@ -669,12 +712,7 @@ dim(apres3@sim)
 apres3@sel
 apres3@netsimLev
 @
-
-The APResult object returned by \verb+apclusterL()+ also contains the
-slot \verb+sel+ with the selected samples of the best run and the slot
-\verb+netsimLev+ which contains the net similarities of the individual
-sweeps. These slots are not displayed by the \verb+show()+ method. The
-result returned by leveraged affinity propagation can be used for
+The result returned by leveraged affinity propagation can be used for
 further processing in the same way as a result object returned from
 \verb+apcluster()+, e.g., merging of clusters with agglomerative
 clustering can be performed.
@@ -703,12 +741,12 @@ easily be clustered with regular affinity propagation. The data set was
 kept small to keep the package build time short and the amount of
 data output in the manual reasonable.
 
-For users requiring a higher degree of flexibility, e.g., for user-specific
-distance calculations or user-specific selection of the sample subset
-\verb+apclusterL()+ called with a rectangular similiarity matrix provides
-the possibility to perform affinity propagation on a rectangular similarity
+For users requiring a higher degree of flexibility, e.g., for
+a customized selection of the sample subset,
+\verb+apclusterL()+ called with a rectangular similiarity matrix performs
+affinity propagation on a rectangular similarity
 matrix. See the source code of \verb+apclusterL()+ with signature
-\verb+s=function+ and \verb+x=any+ for an example how to
+\verb+s=function+ and \verb+x=ANY+ for an example how to
 embed \verb+apclusterL()+ into a complete loop performing leveraged AP.
 The package-provided functions for distance calculation support the
 generation of rectangular similarity matrices (see Chapter \ref{sec:DistMat}).
@@ -816,13 +854,11 @@ pairwise negative distances is returned:
 <<NegDistMatDataSet2>>=
 s <- negDistMat(x2)
 @
-The function \texttt{negDistMat()} is a simple wrapper around the
-standard function \verb+dist()+, hence, it allows for a lot more different
-similarity measures. The user can make use of all variants implemented in
-\verb+dist()+ by
-using the options \verb+method+ (selects a distance measure) and \verb+p+
-(specifies the exponent for the Minkowski distance, otherwise it is void) that
-are passed on to \verb+dist()+. Presently, \verb+dist()+ provides the following
+The function \texttt{negDistMat()} provides the same set of distance measures
+and parameters as the standard function \verb+dist()+
+(except for \verb+method="binary"+ which makes little sense for
+real-valued data).
+Presently, \verb+negDistMat()+ provides the following
 variants of computing the distance $d(\vec{x},\vec{y})$ of two data samples
 $\vec{x}=(x_1,\dots,x_n)$ and $\vec{y}=(y_1,\dots,y_n)$:
 \begin{description}
@@ -856,10 +892,8 @@ use \verb+method="minkowski"+ and specify $p$ using the additional argument
 $\verb+p+$ (default is \verb+p=2+, resulting in the standard Euclidean
 distance);
 \end{description}
-We do not consider \verb+method="binary"+ here, since it is irrelevant for
-real-valued data.
 
-The function \verb+negDistMat()+ takes the distances computed with one of the
+The function \verb+negDistMat()+ then takes the distances computed with one of the
 variants listed above and returns $-1$ times the $r$-th power of it, i.e.,
 \begin{equation}\label{eq:negDistMat}
 s(\vec{x},\vec{y})=-d(\vec{x},\vec{y})^r.
@@ -868,8 +902,7 @@ The exponent $r$ can be adjusted with the argument \verb+r+. The default is
 \verb+r=1+, hence, one has to supply \verb+r=2+ to
 obtain negative squared distances as in the examples in previous sections.
 
-Here are some examples. We use the corners of the two-dimensional unit square
-and its middle point $(\frac{1}{2},\frac{1}{2})$ as sample data:
+Here are some examples:
 <<CreateToyData>>=
 ex <- matrix(c(0, 0.5, 0.8, 1, 0, 0.2, 0.5, 0.7,
                0.1, 0, 1, 0.3, 1, 0.8, 0.2), 5, 3,byrow=TRUE)
@@ -889,11 +922,11 @@ negDistMat(ex, method="maximum")
 @
 Sum of absolute distances (aka Manhattan distance):
 <<NegManhattanDistToyData>>=
-negDistMat(ex,method="manhattan")
+negDistMat(ex, method="manhattan")
 @
 Canberra distance:
 <<NegCanberraDistToyData>>=
-negDistMat(ex,method="canberra")
+negDistMat(ex, method="canberra")
 @
 Minkowski distance for $p=3$ ($3$-norm):
 <<NegMinkowskiDistToyData>>=
@@ -916,7 +949,7 @@ matrices for real-valued data:
 
 \begin{description}
 \item[Exponential transformation of distances:] the function \verb+expSimMat()+
-is another wrapper around the standard function \verb+dist()+. The difference is
+works in the same way as the function \verb+negDistMat()+. The difference is
 that, instead of the transformation \eqref{eq:negDistMat}, it uses the
 following transformation:
 \[
@@ -955,9 +988,9 @@ $\vec{y}=(y_1,\dots,y_n)$, it computes the similarity as
 \[
 s(\vec{x},\vec{y})=\sum\limits_{i=1}^n x_i\cdot y_i.
 \]
-The function has one additional argument, \verb+normalize+ (by default
-\verb+FALSE+). If \verb+normalize=TRUE+, values are normalized to the range
-$[-1,+1]$ in the following way:
+The function has one additional argument, \verb+normalize+ (default:
+\verb+FALSE+). If \verb+normalize+ is set to \verb+TRUE+, values are
+normalized to the range $[-1,+1]$ in the following way:
 \[
 s(\vec{x},\vec{y})=\frac{\sum_{i=1}^n x_i\cdot y_i}%
 {\sqrt{\big(\sum_{i=1}^n x_i^2\big)\cdot%
@@ -1026,15 +1059,15 @@ the quadratic similarity matrix of all sample pairs is computed.
 \subsection{Defining a custom similarity measure for leveraged affinity
   propagation}
 
-As mentioned in Section~\ref{sec:lever} above, leveraged affinity propagation
+As mentioned in Section \ref{sec:lever} above, leveraged affinity propagation
 requires the definition of a similarity measure that is supplied as a
 function or function name to \verb+apclusterL()+. For vectorial data,
 the similarity measures supplied with the package (see above) may be
 sufficient. If other similarity measures are necessary or if the data
 are not vectorial, the user must supply his/her own similarity measure.
 The user can supply any function as argument \verb+s+ to
-\verb+apclusterL()+, but the following rules must be obeyed in order
-to avoid errors and to ensure meaningful results:
+\verb+apcluster()+, \verb+apclusterK()+, or \verb+apclusterL()+, but the
+following rules must be obeyed in order to avoid errors and to ensure meaningful results:
 \begin{enumerate}
 \item The data must be supplied as first argument, which must be named
   \verb+x+.
@@ -1050,7 +1083,7 @@ to avoid errors and to ensure meaningful results:
 \end{enumerate}
 
 As an example, let us revisit the sequence clustering example presented
-in Section~\ref{sec:bioseq}. Let us first define the function that implements
+in Section \ref{sec:bioseq}. Let us first define the function that implements
 the similarity measure:
 <<SimFunCh22Promoters>>=
 spectrumK6 <- function(x, sel=NA)
@@ -1118,7 +1151,7 @@ s3 <- negDistMat(x3, r=2)
 @
 So we see that the \verb+names+ attribute must be used if a vector of
 named one-dimensional samples is to be clustered. If the data are not
-one-dimensional (a matrix instead), object names must be stored in the row
+one-dimensional (a matrix or data frame), object names must be stored in the row
 names of the data matrix.
 
 All functions for computing similarity matrices recognize the object names. The
@@ -1155,14 +1188,14 @@ The first choice, \verb+"names"+ (default), uses names of exemplars as labels
 (if names are available, otherwise an error message is displayed). The second
 choice, \verb+"exemplars"+, uses indices of exemplars (enumerated as in the
 original data set). The third choice, \verb+"enum"+, uses indices of clusters
-(consecutively numbered as stored in the slot \verb+clusters+; analogous
+(consecutively numbered as stored in the slot \verb+clusters+ --- analogous
 to the standard implementation of \verb+cutree()+ or the
 \verb+clusters+ field of the list returned by the standard function
 \verb+kmeans()+).
 
 \subsection{Customizing heatmaps}
 
-In Version 1.3.1, the implementation of heatmap plotting has changed significantly.
+With Version 1.3.1, the implementation of heatmap plotting has changed significantly.
 The method now allows for many more customizations than before.
 Apart from changes in the argument list (see \verb+?heatmap+), the behavior
 of the method has changed as follows:
@@ -1179,9 +1212,10 @@ of the method has changed as follows:
     a meaningful color coding is determined automatically which still uses  \verb+rainbow()+,
     but ensures that no similar colors are placed next to each other in the bar.
   \item The default font sizes for displaying row/column labels have been changed to
-    make sure that they do not overlap. This can result in quite small labels if the number of
-    samples is larger. In any case, the user can override the sizes by making custom settings of
-    the parameters \verb+cexRow+ and \verb+cexCol+. Row and column labels can even be switched off
+    make sure that they do not overlap. This can result in quite small labels if the
+    number of samples is larger. In any case, the user can override the sizes by making
+    custom settings of the parameters \verb+cexRow+ and \verb+cexCol+. Row and column
+    labels can even be switched off
     entirely by setting \verb+cexRow+ and \verb+cexCol+ to 0, respectively.
 \end{itemize}
 
@@ -1203,9 +1237,46 @@ heatmap(apres2c, sideColors=rainbow(length(apres2c)), Rowv=FALSE, Colv=FALSE,
 @
 \end{center}
 
+\subsection{Adding a legend to plots of clustering results}
+
+As shown above, \verb+plot()+ called for an \verb+APResult+ object as first and a
+matrix or data frame as second argument plots the clustering result superimposed on
+a scatter plot (or a scatter plot matrix if the number of columns in the second argument
+exceeds 2). The clusters are shown in different colors, but it may not be clear which
+cluster is shown in which color. Therefore, it may be useful to show a legend along
+with the plot. The current implementation of \verb+plot()+ does not show a legend, since
+it is hard to determine where to actually place the legend such that no important
+cluster information gets occluded by the legend. Therefore, the user has to add legends
+manually. Actually, colors are always chosen according to a simple rule: \verb+plot()+
+uses \verb+rainbow()+ to create a vector of colors that is exactly as long as the
+number of clusters in the \verb+APResult+ object. The following example shows how to
+plot a legend manually (with the clusters enumerated in the same way as in the \verb+APResult+
+object):
+\begin{center}
+<<PlotAddLegend,fig=TRUE>>=
+plot(apres2a, x2)
+legend("bottomleft", legend=paste("Cluster", 1:length(apres2a)),
+       col=rainbow(length(apres2a)), pch=19)
+@
+\end{center}
+Note that this method is only meaningful for plotting clustering results superimposed
+on a 2D data set. For scatter plot matrices, this does not work in a meaningful way.
+In such a case, the user is rather recommended to create a legend separately
+(in a separate graphics device/file) and to display it along with the scatter plot matrix.
+To create only the legend, code like the following could be used:
+\begin{center}
+<<PlotOnlyLegend,fig=TRUE>>=
+plot.new()
+par(oma=rep(0, 4), mar=rep(0, 4))
+legend("center", legend=paste("Cluster", 1:length(apres2c)),
+       col=rainbow(length(apres2c)), pch=19)
+@
+\end{center}
+It still may be necessary to strip off white margins for further usage of the legend.
+
 \subsection{Implementation and performance issues}\label{ssec:perf}
 
-Prior to version 1.2.0, \verb+apcluster()+ was implemented in R. Starting with
+Prior to Version 1.2.0, \verb+apcluster()+ was implemented in R. Starting with
 version 1.2.0, the main iteration loop of  \verb+apcluster()+ has been
 implemented in C++ using the Rcpp package  \cite{EddelbuettelFrancois11},
 which has led to a speedup in the range of a factor or 9--10.
@@ -1243,16 +1314,28 @@ should take into account:
   users are recommended to name all optional parameters.
 \item Heatmap plotting has been shifted to the function \verb+heatmap()+
   which has now been defined as an S4 generic method. Previous methods for
-  plotting heatmaps using \verb+plot()+ are partly still available, but
-  deprecated.
+  plotting heatmaps using \verb+plot()+ have been partly available in Versions
+  1.3.0 and 1.3.1. Since Version 1.3.2, they are no longer available.
 \end{itemize}
 
 \section{Change Log}
 
 \begin{description}
+\item[Version 1.3.2:] \hfill
+\begin{itemize}
+  \item plotting of clustering results extended to data sets with more than
+  two dimensions (resulting in the clustering result being superimposed
+  in a scatterplot matrix); the variant that \verb+plot()+ can be used to
+  draw a heatmap has been removed. From now on, \verb+heatmap()+ must always
+  be used.
+  \item improved \verb+NA+ handling
+  \item correction of input check in \verb+apcluster()+ and \verb+apclusterL()+
+    (previously, both functions issued a warning whenever argument \verb+p+ had length $> 1$)
+  \item corresponding updates and further improvements of help pages and vignette
+\end{itemize}
 \item[Version 1.3.1:] \hfill
   \begin{itemize}
-  \item re-implementation of verb+heatmap()+ method: dendrograms can now be plotted
+  \item re-implementation of \verb+heatmap()+ method: dendrograms can now be plotted
   even for \verb+APResult+ and \verb+ExClust+ objects as well as for cluster hierarchies
   based on prior clusterings; color bars can now be switched off and colors
   can be changed by user (by new \verb+sideColor+ argument); dendrograms can be
