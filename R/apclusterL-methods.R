@@ -288,9 +288,9 @@ apclusterL.function <- function(s, x, frac, sweeps, p=NA, q=NA,
                 apresultObj@sim <- matrix(NA, 1, 1)
         }
 
-        sel <- sort(unique(apresultObj@idx))
+        sel <- sort(unique(apresultObj@idx)) ## CHECK!!!
 
-        if (nsel - length(sel) > 0)
+        if (nsel - length(sel) > 0) ## CHECK!!!
         {
             otherSamples <- setdiff(1:N, sel)
             sel <- sort(c(sel, sample(otherSamples, nsel - length(sel))))

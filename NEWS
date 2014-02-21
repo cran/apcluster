@@ -1,6 +1,10 @@
 Change history of package apcluster:
 ====================================
 
+Version 1.3.3:
+- adapted dependencies and linking to Rcpp version 0.11.0
+- cleared up package dependencies
+
 Version 1.3.2:
 - plotting of clustering results extended to data sets with more than
   two dimensions (resulting in the clustering result being superimposed
