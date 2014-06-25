@@ -5,7 +5,7 @@ setMethod("labels", signature(object="ExClust"),
         if (type == "names")
         {
             if (length(names(object@idx)) == 0)
-                stop("No names available, use other type")
+                stop("no names available, use other type")
             else
                 out <- names(object@idx)
         }
@@ -19,7 +19,7 @@ setMethod("labels", signature(object="ExClust"),
                 out[which(object@idx == object@exemplars[i])] <- i
         }
         else
-            stop("type ", type, " unknown")
+            stop("type '", type, "' unknown")
 
         attributes(out) <- NULL
 

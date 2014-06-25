@@ -6,27 +6,27 @@ setMethod("cutree", signature(tree="AggExResult", k="ANY", h="ANY"),
         if (!missing(k))
         {
             if (!is.finite(k) || floor(k) != ceiling(k))
-                stop("k is not an integer number")
+                stop("'k' is not an integer number")
             else if (k < 1)
-                stop("k < 1 does not make sense")
+                stop("'k' smaller than 1 does not make sense")
             else if (k > tree@maxNoClusters)
-                stop("k exceeds maximum number of clusters")
+                stop("'k' exceeds maximum number of clusters")
         }
         else if (!missing(h))
         {
             if (!is.finite(h))
-                stop("h must be numeric")
+                stop("'h' must be numeric")
             else if (h < min(tree@height) ||
                      h > max(tree@height))
-                stop(paste("h exceeds range of values in AggExResult object",
-                     "\nthe range is from", max(tree@height), "(=> 1 cluster)",
-                     "to", min(tree@height), "(=>", tree@maxNoClusters,
-                     "clusters)"))
+                stop("'h' exceeds range of values in 'AggExResult' object",
+                     "\nthe range is from ", max(tree@height), " (=> 1 cluster) to ",
+                     min(tree@height), " (=> ", tree@maxNoClusters,
+                     "clusters)")
             else
                 k <- max(which(tree@height >= h))
         }
         else if (missing(k))
-            stop("provide either k or h")
+            stop("provide either 'k' or 'h'")
 
         outObj@l         <- tree@l
         outObj@exemplars <- tree@exemplars[[k]]

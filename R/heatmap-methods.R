@@ -3,7 +3,7 @@ heatmap.ExClust <- function(x, y, ...)
     if(!identical(dim(x@sim), as.integer(c(1, 1))))
         return(invisible(heatmap(x, x@sim, ...)))
     else
-        stop("Similarity matrix is missing for heatmap plotting.")
+        stop("similarity matrix is missing for heatmap plotting")
 }
 
 setMethod("heatmap", signature(x="ExClust", y="missing"), heatmap.ExClust)
@@ -12,7 +12,7 @@ setMethod("heatmap", signature(x="ExClust", y="missing"), heatmap.ExClust)
 heatmap.ExClust.matrix <- function(x, y, ...)
 {
     if (identical(dim(y), as.integer(c(1, 1))))
-        stop("y must be a nonempty similarity matrix")
+        stop("'y' must be a non-empty similarity matrix")
     else if (x@l != nrow(y))
         stop("size of clustering result does not fit to size of data set")
     else if (nrow(y) != ncol(y) && length(x@sel) == 0)
@@ -33,7 +33,7 @@ heatmap.AggExResult <- function(x, y, ...)
     if(!identical(dim(x@sim), as.integer(c(1, 1))))
         heatmap(x, x@sim, ...)
     else
-        stop("Similarity matrix is missing for heatmap plotting.")
+        stop("similarity matrix is missing for heatmap plotting")
 }
 
 setMethod("heatmap", signature(x="AggExResult", y="missing"),
@@ -48,13 +48,13 @@ heatmap.AggExResult.matrix <- function(x, y, Rowv=TRUE, Colv=TRUE,
                                        main=NULL, dendScale=1, barScale=1, ...)
 {
     if (identical(dim(y), as.integer(c(1, 1))))
-        stop("y must be a nonempty matrix")
+        stop("'y' must be a non-empty matrix")
     else if (x@l != nrow(y))
         stop("size of clustering result does not fit to size of data set")
     else if (length(x@sel) == 0 && ncol(y) != nrow(y))
-        stop("y must be quadratic")
+        stop("'y' must be quadratic")
     else if (length(x@sel) > 0 && ncol(y) != length(x@sel))
-        stop("no. of columns in y and no. of selected samples in x ",
+        stop("no. of columns in 'y' and no. of selected samples in 'x' ",
              "do not match")
 
     rowInd <- unlist(x@clusters[[x@maxNoClusters]][x@order])
@@ -91,7 +91,7 @@ heatmap.AggExResult.matrix <- function(x, y, Rowv=TRUE, Colv=TRUE,
     if ((doRdend || doCdend) && (!is.numeric(dendScale) ||
                                  length(dendScale) != 1 || dendScale <= 0 ||
                                  dendScale > 2))
-        stop("dendScale must be a single positive value not larger than 2")
+        stop("'dendScale' must be a single positive value not larger than 2")
 
     if (is.null(sideColors))
     {
@@ -106,7 +106,7 @@ heatmap.AggExResult.matrix <- function(x, y, Rowv=TRUE, Colv=TRUE,
     else if (any(is.na(sideColors)))
         sideColors <- NULL
     else if (!is.character(sideColors))
-        stop("argument 'sideColors' must be vector of colors, NA or NULL")
+        stop("'sideColors' must be vector of colors, NA or NULL")
     else
     {
         if (length(sideColors) < 2)
@@ -147,7 +147,7 @@ heatmap.AggExResult.matrix <- function(x, y, Rowv=TRUE, Colv=TRUE,
     {
         if (!is.numeric(barScale) || length(barScale) != 1 || barScale <= 0 ||
             barScale > 4)
-            stop("barScale must be a single positive value not larger than 4")
+            stop("'barScale' must be a single positive value not larger than 4")
 
         invIndex <- rep(0, nrow(y))
         for (i in 1:x@maxNoClusters)

@@ -12,29 +12,29 @@ apcluster.matrix <- function(s, x, p=NA, q=NA, maxits=1000, convits=100,
     # check input data
     #
     if (!is.na(p[1]) && (!is.numeric(p) || !is.vector(p)))
-        stop("p must be a number or vector")
+        stop("'p' must be a number or vector")
 
     if (length(dim(s)) != 2 || ncol(s) != nrow(s))
-        stop("s must be a square matrix")
+        stop("'s' must be a square matrix")
 
     N <- nrow(s)
 
     if (length(p) > 1)
     {
         if (length(p) < N)
-            stop("vector p is shorter than number of samples")
+            stop("vector 'p' is shorter than number of samples")
         else if (length(p) > N)
             p <- p[1:N] # truncate unnecessarily long p
     }
 
     if (any(is.na(p)) && !is.na(q) && !is.numeric(q))
-        stop("q must be a number")
+        stop("'q' must be a number")
 
     if (lam > 0.9)
-        warning("Large damping factor in use. Turn on details\n",
+        warning("large damping factor in use; turn on details\n",
                 "and call plot() to monitor net similarity. The\n",
                 "algorithm will change decisions slowly, so consider using\n",
-                "a larger value of convits.")
+                "a larger value of 'convits'.")
 
     # If argument p is not given, p is set to median of s
     if (any(is.na(p)))
@@ -76,7 +76,7 @@ apcluster.matrix <- function(s, x, p=NA, q=NA, maxits=1000, convits=100,
 
     if (length(infelem) > 0)
         stop("+Inf similarities detected: change to a large positive value,",
-             " but smaller than realmax")
+             " but smaller than ", .Machine$double.xmax)
 
     res <- .Call("apclusterC", s, as.integer(maxits),
                  as.integer(convits), as.double(lam), as.logical(details))
@@ -117,7 +117,6 @@ apcluster.matrix <- function(s, x, p=NA, q=NA, maxits=1000, convits=100,
         c[I] <- 1:K
 
         tmpidx <- I[c]
-
 
         tmpdpsim <- sum(s[sub2ind(N, notI, tmpidx[notI])])
         tmpexpref <- sum(diag(s)[I])
@@ -166,10 +165,11 @@ apcluster.matrix <- function(s, x, p=NA, q=NA, maxits=1000, convits=100,
     }
 
     if (res$unconv)
-        warning("Algorithm did not converge. Turn on details\n",
+        warning("algorithm did not converge; turn on details\n",
                 "and call plot() to monitor net similarity. Consider\n",
-                "increasing maxits and convits, and, if oscillations occur\n",
-                "also increasing damping factor lam.")
+                "increasing 'maxits' and 'convits', and, ",
+                "if oscillations occur\n",
+                "also increasing damping factor 'lam'.")
 
     if (includeSim)
         apresultObj@sim <- s
@@ -199,7 +199,7 @@ apcluster.function <- function(s, x, p=NA, q=NA, maxits=1000, convits=100,
     if (!is.function(s))
     {
         if (!is.character(s) || !exists(s, mode="function"))
-            stop("Invalid distance function")
+            stop("invalid distance function")
 
         s <- match.fun(s)
     }
@@ -207,7 +207,7 @@ apcluster.function <- function(s, x, p=NA, q=NA, maxits=1000, convits=100,
     sim <- s(x=x, ...)
 
     if (!is.matrix(sim) || (nrow(sim) != N) || ncol(sim) != N)
-        stop("Computation of similarity matrix failed")
+        stop("computation of similarity matrix failed")
 
     apres <- apcluster(s=sim, p=p, q=q, maxits=maxits, convits=convits, lam=lam,
                        details=details, nonoise=nonoise)

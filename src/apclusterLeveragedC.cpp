@@ -20,49 +20,45 @@ RcppExport SEXP apclusterLeveragedC(SEXP sR, SEXP selR, SEXP maxitsR,
     IntegerVector se(N);
     NumericMatrix A(M, N);
     NumericMatrix R(M, N);
-    IntegerVector cMap(N);
     NumericVector auxsum(M - 1);
 
 
     bool dn = false, unconverged = false;
 
-    int i = 0, j, ii, K; 
-
-    // set up vector for reverse addressing of selected samples
-    for (ii = 0; ii < N; ii++)
-        cMap[ii] = -1;
-
-    for (ii = 0; ii < M - 1; ii++) 
-        cMap[(int)sel[ii]] = ii;
+    int i = 0, j, ii, K;
 
     while (!dn)
     {
         // first, compute responsibilities        
         for (ii = 0; ii < N; ii++)
-        {            
-            NumericVector AS = A(_, ii) + s(ii, _);
-
-            if (cMap[ii] > -1)
-                AS[cMap[ii]] = -DBL_MAX;  // diag is in last column
-
+        {
             double max1 = -DBL_MAX, max2 = -DBL_MAX;
+            double avsim;
             int yMax;
 
             // determine largest and second largest element of AS
             for (j = 0; j < M; j++)
             {
-                if (AS[j] > max1)
+                if (sel[j] == ii)
+                    continue;
+
+                avsim = A(j, ii) + s(ii, j);
+
+                if (avsim > max1)
                 {
                     max2 = max1;
-                    max1 = AS[j];
+                    max1 = avsim;
                     yMax = j;
                 }
-                else if (AS[j] > max2)
-                    max2 = AS[j];
+                else if (avsim > max2)
+                    max2 = avsim;
             }
 
             for (j = 0; j < M; j++) // R update including self responsibilities
             {
+                if (sel[j] == ii)
+                    continue;
+
                 double newVal = (1 - lam) * (s(ii, j) -
                                 (j == yMax ? max2 : max1)) + lam * R(j, ii);
                 R(j, ii) = (newVal > DBL_MAX ? DBL_MAX : newVal);
@@ -70,23 +66,14 @@ RcppExport SEXP apclusterLeveragedC(SEXP sR, SEXP selR, SEXP maxitsR,
                 if (R(j, ii) > 0 && j < M - 1) 
                     auxsum[j] = auxsum[j] + R(j, ii);
             }
-
-            if (cMap[ii] > -1)
-            {
-                //correct auxsum
-                if (R(cMap[ii], ii) > 0)
-                    auxsum[cMap[ii]] = auxsum[cMap[ii]] - R(cMap[ii], ii); 
-                R(cMap[ii], ii) = 0;
-            }
         }
 
-        //correct auxsum with diag elements
-        for (ii = 0; ii < M - 1; ii++) 
-            auxsum[ii] = auxsum[ii] + R(M - 1, sel[ii]);
-
+        // correct auxsum with diag elements
+        for (ii = 0; ii < M - 1; ii++)
+                auxsum[ii] = auxsum[ii] + R(M - 1, sel[ii]);
 
         // secondly, compute availabilities        
-        for (ii = 0; ii < M-1; ii++)
+        for (ii = 0; ii < M - 1; ii++)
         {
             for (j = 0; j < N; j++)
             {
@@ -98,8 +85,8 @@ RcppExport SEXP apclusterLeveragedC(SEXP sR, SEXP selR, SEXP maxitsR,
                 if (sel[ii]==j) 
                 {
                     // update diagonal element back in last col
-                    A(M-1, j) = (1 - lam) * (newVal - R(M - 1, j)) + 
-                                lam * A(M-1, j);
+                    A(M - 1, j) = (1 - lam) * (newVal - R(M - 1, j)) + 
+                                  lam * A(M-1, j);
                     newVal = 0; // set real diag elmenent to 0 - oldval is 0
                 }
                 else 
@@ -119,7 +106,7 @@ RcppExport SEXP apclusterLeveragedC(SEXP sR, SEXP selR, SEXP maxitsR,
 
         for (j = 0; j < N; j++)
         {
-            int ex = (A(M-1, j) + R(M-1, j) > 0 ? 1 : 0);
+            int ex = (A(M - 1, j) + R(M - 1, j) > 0 ? 1 : 0);
             se[j] = se[j] - e(j, i % convits) + ex;
             if (se[j] > 0 && se[j] < convits)
                 unconverged = true;

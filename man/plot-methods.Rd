@@ -16,7 +16,6 @@
 \usage{
 \S4method{plot}{APResult,missing}(x, y, type=c("netsim", "dpsim", "expref"),
     xlab="# Iterations", ylab="Similarity", ...)
-\S4method{plot}{ExClust,missing}(x, y, ...)
 \S4method{plot}{ExClust,matrix}(x, y, connect=TRUE, xlab="", ylab="",
 labels=NA, limitNo=15, ...)
 \S4method{plot}{ExClust,data.frame}(x, y, connect=TRUE, xlab="",
@@ -89,12 +88,7 @@ ylab="", labels=NA, limitNo=15, ...)
   a plot is created that displays graphs of performance
   measures over execution time of the affinity propagation run.
   This only works if \code{\link{apcluster}} was called with
-  \code{details=TRUE}. If no details are available and if
-  the slot \code{sim} contains a similarity matrix, then a
-  \code{\link{heatmap}} of the clustering result is displayed.
-  If neither details nor a similarity matrix are available in
-  \code{x}, an error message is displayed.
-  This variant of \code{plot} does not return any value.
+  \code{details=TRUE}.
 
   If \code{plot} is called for an \code{\linkS4class{APResult}} object
   along with a matrix or data frame as argument \code{y}, then the dimensions of
@@ -119,11 +113,7 @@ ylab="", labels=NA, limitNo=15, ...)
   If \code{plot} is called for an \code{\linkS4class{ExClust}} object
   along with a matrix or data frame as argument \code{y}, then
   \code{plot} behaves exactly the same as described in the previous
-  paragraph. Calling \code{plot} for an \code{\linkS4class{ExClust}}
-  object without supplying argument \code{y}, in any case,
-  attempts to plot a heatmap.
-  If, in this case, no similarity matrix is available in \code{x},
-  an error is displayed.
+  paragraph.
   
   If \code{plot} is called for an \code{\linkS4class{AggExResult}} object
   without specifying the second argument \code{y}, then a dendrogram
@@ -137,12 +127,7 @@ ylab="", labels=NA, limitNo=15, ...)
   be widened before \code{plot} is called.
 
   If \code{plot} is called for an \code{\linkS4class{AggExResult}} object
-  along with a matrix \code{y} that does not have two columns, \code{y}
-  is again interpreted as a similarity matrix and a heatmap is plotted.
-  For details, see \code{\link{heatmap}}.
-
-  If \code{plot} is called for an \code{\linkS4class{AggExResult}} object
-  along with a two-column matrix or data frame \code{y}, \code{y} is
+  along with a matrix or data frame \code{y}, \code{y} is
   again interpreted
   as original data set. If one of the two arguments \code{k} or
   \code{h} is present, a clustering is cut out from the cluster hierarchy 
@@ -150,13 +135,6 @@ ylab="", labels=NA, limitNo=15, ...)
   original data set as described above. This variant of
   \code{plot} returns an invisible \code{\linkS4class{ExClust}} object
   containing the extracted clustering.
-  
-  Starting with package version 1.3.0 the package function \code{heatmap} 
-  is available for plotting of heatmaps. For backward compatibility 
-  plotting of heatmaps via \code{plot} is still supported, but the user
-  is advised not to rely on the implicit behavior described above, but,
-  instead, to explicitly call \code{\link{heatmap}} when he/she wants to
-  display a heatmap.
 }
 \value{
   see details above

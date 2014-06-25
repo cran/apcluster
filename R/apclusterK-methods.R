@@ -9,13 +9,13 @@ apclusterK.matrix <- function(s, x, K, prc=10, bimaxit=20, exact=FALSE,
     # check input data
     #
     if (length(dim(s)) != 2 || ncol(s) != nrow(s))
-        stop("s must be a square matrix")
+        stop("'s' must be a square matrix")
 
     N <- nrow(s)
 
     if (K < 2 || K >= N)
-        stop("Number of data samples is ", N, ".\n",
-             "       Meaningful range for K: 2 to ", N - 1)
+        stop("number of data samples is ", N, ".\n",
+             "\tmeaningful range for K: 2 to ", N - 1)
 
     pminmax <- preferenceRange(s, exact)
 
@@ -25,7 +25,7 @@ apclusterK.matrix <- function(s, x, K, prc=10, bimaxit=20, exact=FALSE,
     hik    <- N
 
     if (is.na(lopref))
-        stop("Could not find numeric entries in matrix")
+        stop("could not find numeric entries in matrix")
 
     # In case user did not remove degeneracies from the input similarities,
     # avoid degenerate solutions by adding a small amount of noise to the
@@ -111,7 +111,7 @@ apclusterK.matrix <- function(s, x, K, prc=10, bimaxit=20, exact=FALSE,
         cat("\nNumber of clusters:", tmpk, "for p =", tmppref, "\n")
 
     if ((abs(tmpk - K) * 100 / K) > prc)
-        warning("Number of clusters not in desired range. Increase bimaxit",
+        warning("number of clusters not in desired range; Increase 'bimaxit'",
                 " to improve accuracy of bisection.")
 
     apresultObj@call <- deparse(sys.call(-1))
@@ -146,7 +146,7 @@ apclusterK.function <- function(s, x, K, prc=10, bimaxit=20, exact=FALSE,
     if (!is.function(s))
     {
         if (!is.character(s) || !exists(s, mode="function"))
-            stop("Invalid distance function")
+            stop("invalid distance function")
 
         s <- match.fun(s)
     }
@@ -154,7 +154,7 @@ apclusterK.function <- function(s, x, K, prc=10, bimaxit=20, exact=FALSE,
     sim <- s(x=x, ...)
 
     if (!is.matrix(sim) || (nrow(sim) != N) || ncol(sim) != N)
-        stop("Computation of similarity matrix failed")
+        stop("computation of similarity matrix failed")
 
     apres <- apclusterK(s=sim, K=K, prc=prc, bimaxit=bimaxit, exact=exact,
                         maxits=maxits, convits=convits, lam=lam,

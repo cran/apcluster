@@ -42,14 +42,14 @@ simpleDist <- function(x, sel, method="euclidean", p=2)
     else if (is.numeric(sel) && length(sel) > 0)
     {
         if (max(sel) > N || min(sel) < 1)
-            stop("sel is no subset of x")
+            stop("'sel' is no subset of '1:nrow(x)'")
 
         d <- .Call("CdistR", x, as.integer(sel - 1), method, p)
 
         dm <- matrix(d, N, length(sel))
 
         if (length(rownames(x)) > 0)
-            dimnames(dm) <- list(rownames(x), rownames(x)[sel]) 
+            dimnames(dm) <- list(rownames(x), rownames(x)[sel])
         else
             dimnames(dm) <- list(seq_len(N), sel)
     }

@@ -5,16 +5,8 @@ setMethod("plot", signature(x="APResult", y="missing"),
              ylab="Similarity", ...)
     {
         if (length(x@netsimAll) <= 1)
-        {
-            if(!identical(dim(x@sim), as.integer(c(1, 1))))
-            {
-                aggres <- heatmap(x, ...)
-                return(invisible(aggres))
-            }
-            else
-                stop("Details are not available in x and similarity matrix is ",
-                     "not\nincluded either.")
-        }
+            stop("no valid data was found for plotting; call apcluster() ",
+                 "with 'details=TRUE' in order to compute convergence details")
 
         plotnetsim <- FALSE
         plotexpref <- FALSE
@@ -96,15 +88,10 @@ setMethod("plot", signature(x="APResult", y="missing"),
             legend(x="bottomright", legend=legtxt, col=legcol, lwd=1)
         }
         else
-        {
-            stop("No valid data was found for plotting.\n",
-                 "     Please use the apcluster() argument details=TRUE in\n",
-                 "     order to add convergene details to the APResult object.")
-        }
+            stop("no valid data was found for plotting; call apcluster() ",
+                 "with 'details=TRUE' in order to compute convergence details")
     }
 )
-
-setMethod("plot", signature("ExClust", "missing"), heatmap.ExClust)
 
 
 setMethod("plot", signature(x="ExClust", y="matrix"),
@@ -129,7 +116,7 @@ setMethod("plot", signature(x="ExClust", y="matrix"),
 
             if (num <= 0)
             {
-                warning("No exemplars defined in clustering result. Plotting ",
+                warning("no exemplars defined in clustering result; plotting ",
                         "data set as it is.")
 
                 points(y, col="black", pch=19, cex=0.8)
@@ -153,15 +140,14 @@ setMethod("plot", signature(x="ExClust", y="matrix"),
         else
         {
             if (is.numeric(limitNo) && ncol(y) > limitNo)
-                stop(paste("cannot plot more than", limitNo,
-                           "features at once"))
+                stop("cannot plot more than ", limitNo, " features at once")
 
             res <- x
             num <- length(res@exemplars)
 
             if (num <= 0)
             {
-                warning("No exemplars defined in clustering result. Plotting ",
+                warning("no exemplars defined in clustering result; plotting ",
                         "data set as it is.")
                 clustCol <- "black"
                 connect <- FALSE
@@ -268,28 +254,20 @@ setMethod("plot", signature(x="AggExResult", y="missing"),
 setMethod("plot", signature(x="AggExResult", y="matrix"),
     function(x, y, k=NA, h=NA, ...)
     {
-        if (length(dim(y)) != 2)
-            stop("y must be a matrix")
-        else if (x@l != nrow(y))
+        if (x@l != nrow(y))
             stop("size of clustering result does not fit to size of data set")
-        else if (ncol(y) == 2)
-        {
-            if (is.na(k) || !is.numeric(k) || k > x@maxNoClusters)
-                k <- x@maxNoClusters
 
-            if (k< 1)
-                k <- 1
+        if (is.na(k) || !is.numeric(k) || k > x@maxNoClusters)
+            k <- x@maxNoClusters
 
-            excl <- cutree(x, k, h)
+        if (k< 1)
+            k <- 1
 
-            plot(excl, y, ...)
+        excl <- cutree(x, k, h)
 
-            return(invisible(excl))
-        }
-        else if (length(x@sel)==0 && ncol(y) != nrow(y))
-            stop("y must be quadratic or two-column")
-        else
-            return(invisible(heatmap(x, y, ...)))
+        plot(excl, y, ...)
+
+        return(invisible(excl))
     }
 )
 
@@ -299,11 +277,6 @@ setMethod("plot", signature(x="AggExResult", y="data.frame"),
     function(x, y, k=NA, h=NA, ...)
     {
         y <- as.matrix(y[, sapply(y, is.numeric)])
-
-        if (ncol(y) != 2)
-            stop("number of numerical columns in data frame is not 2.\n",
-                 "Plotting clustering on original data only supported for 2D\n",
-                 "data.\n")
 
         plot(x, y, k=k, h=h,  ...)
     }

@@ -24,7 +24,11 @@
   	matrix or a similarity function either specified as the name of 
   	a package provided similarity function as character string or a 
   	user provided function object for similarity calculation.
-  	For a package or user provided similarity function additional 
+	If \code{s} is supplied as a similarity matrix, the columns
+	must correspond to the same sub-selection of samples as
+	specified in the \code{sel} argument and must be in the same
+	increasing order.
+  	For a package- or user-defined similarity function, additional 
   	parameters can be specified as appropriate for the chosen method 
   	and are passed on to the similarity function via the \code{...} 
   	argument (see below). See the package vignette for a non-trivial 
@@ -43,8 +47,7 @@
   	with changing randomly selected subset of samples.}
   \item{sel}{selected sample indices; a vector containing the 
   	sample indices of the sample subset used for leveraged 
-  	AP clustering in the same order as the samples in the
-  	rows of the similarity matrix s.}
+  	AP clustering in increasing order.}
   \item{p}{input preference; can be a vector that specifies
     individual preferences for each data point. If scalar,
     the same value is used for all data points. If \code{NA},
@@ -142,7 +145,7 @@ DOI: \href{http://dx.doi.org/10.1093/bioinformatics/btr406}{10.1093/bioinformati
   \code{\link{apclusterK}}}
 \examples{
 ## define percentage of samples to be used for clustering
-frac=0.2
+frac <- 0.2
 sweeps <- 3
 
 ## create two Gaussian clouds

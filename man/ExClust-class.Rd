@@ -55,6 +55,8 @@ The following slots are defined for \link{ExClust} objects:
        \code{\link{cutree-methods}}}
     \item{length}{\code{signature(x="ExClust")}: gives the number of
       clusters.}
+    \item{sort}{\code{signature(x="ExClust")}: see
+       \code{\link{sort-methods}}}
     \item{as.hclust}{\code{signature(x="ExClust")}: see
        \code{\link{coerce-methods}}}
     \item{as.dendrogram}{\code{signature(object="ExClust")}: see

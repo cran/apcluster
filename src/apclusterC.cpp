@@ -43,28 +43,28 @@ RcppExport SEXP apclusterC(SEXP sR, SEXP maxitsR, SEXP convitsR,
         
         for (ii = 0; ii < N; ii++)
         {
-            NumericVector AS = A(ii, _) + s(ii, _);
-            
-            double max1 = -DBL_MAX, max2 = -DBL_MAX;
+            double max1 = -DBL_MAX, max2 = -DBL_MAX, avsim;
             int yMax;
             
             for (j = 0; j < N; j++) // determine second-largest element of AS
             {
-                if (AS[j] > max1)
+		avsim = A(ii, j) + s(ii, j);
+
+                if (avsim > max1)
                 {
                     max2 = max1;
-                    max1 = AS[j];
+                    max1 = avsim;
                     yMax = j;
                 }
-                else if (AS[j] > max2)
-                    max2 = AS[j];
+                else if (avsim > max2)
+                    max2 = avsim;
             }
             
             for (j = 0; j < N; j++) // perform update
             {
                 double oldVal = R(ii, j);
                 double newVal = (1 - lam) * (s(ii, j) -
-                                             (j == yMax ? max2 : max1)) + lam * oldVal;
+                                (j == yMax ? max2 : max1)) + lam * oldVal;
                 R(ii, j) = (newVal > DBL_MAX ? DBL_MAX : newVal);
             }
         }

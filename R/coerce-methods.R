@@ -2,10 +2,10 @@ setMethod("as.hclust", signature("AggExResult"),
           function(x, base=0.05)
           {
               if (x@maxNoClusters < 2)
-                  stop("cannot create hclust object with less than 2 objects")
+                  stop("cannot create 'hclust' object with less than 2 objects")
 
               if (base < 0 || base >= 1)
-                  stop("base must be at least 0 and smaller than 1")
+                  stop("'base' must be at least 0 and smaller than 1")
 
               mini <- min(x@height)
               maxi <- max(x@height)
@@ -32,10 +32,10 @@ setMethod("as.dendrogram", signature("AggExResult"),
           function(object, base=0.05, useNames=TRUE)
           {
               if (object@maxNoClusters < 2)
-                  stop("cannot create hclust object with less than 2 objects")
+                  stop("cannot create 'hclust' object with less than 2 objects")
 
               if (base < 0 || base >= 1)
-                  stop("base must be at least 0 and smaller than 1")
+                  stop("'base' must be at least 0 and smaller than 1")
 
               obj <- as.hclust(object, base=base)
 

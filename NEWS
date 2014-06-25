@@ -1,6 +1,21 @@
 Change history of package apcluster:
 ====================================
 
+Version 1.3.4:
+- added sort() function to rearrange clusters according to
+  sort criterion; note that this is an S3 method (see help
+  page for explanation)
+- improvements and bug fixes of apclusterL() method for
+  signature 'matrix,missing'
+- performance optimizations of apcluster() and apclusterL()
+- plotting of clustering results superimposed in scatter plot
+  matrices now also works for 'AggExResult' objects
+- improvements of consistency of error and warning messages 
+- according adaptations of documentation and vignette
+- adapted dependency and linking to Rcpp version 0.11.1
+  (to avoid issues on Mac OS)
+- minor correction of package namespace
+
 Version 1.3.3:
 - adapted dependencies and linking to Rcpp version 0.11.0
 - cleared up package dependencies

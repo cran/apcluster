@@ -15,4 +15,3 @@ setGeneric(name="heatmap",
 
 setGeneric(name="similarity",
            def=function(x, ...) standardGeneric("similarity"))
-

@@ -1,6 +1,7 @@
 negDistMat <- function(x, sel=NA, r=1, method="euclidean", p=2)
 {
-    if (r <= 0) stop("r must be positive")
+    if (r <= 0)
+        stop("'r' must be positive")
 
     if (missing(x))
         return(function(x, sel=NA) negDistMat(x, sel, r=r, method=method, p=p))
@@ -19,7 +20,8 @@ negDistMat <- function(x, sel=NA, r=1, method="euclidean", p=2)
 
 expSimMat <- function(x, sel=NA, r=2, w=1, method="euclidean", p=2)
 {
-    if (r <= 0) stop("r must be positive")
+    if (r <= 0)
+        stop("'r' must be positive")
 
     if (missing(x))
         return(function(x, sel=NA) expSimMat(x, sel, r=r, w=w,
@@ -35,7 +37,8 @@ expSimMat <- function(x, sel=NA, r=2, w=1, method="euclidean", p=2)
 
 linSimMat <- function(x, sel=NA, w=1, method="euclidean", p=2)
 {
-    if (w <= 0) stop("w must be positive")
+    if (w <= 0)
+        stop("'w' must be positive")
 
     if (missing(x))
         return(function(x, sel=NA) linSimMat(x, sel, w=w,

@@ -78,6 +78,8 @@ Class \code{"ExClust"}, directly.
        \code{\link{cutree-methods}}}
     \item{length}{\code{signature(x="APResult")}: gives the number of
       clusters.}
+    \item{sort}{\code{signature(x="ExClust")}: see
+       \code{\link{sort-methods}}}
     \item{as.hclust}{\code{signature(x="ExClust")}: see
        \code{\link{coerce-methods}}}
     \item{as.dendrogram}{\code{signature(object="ExClust")}: see

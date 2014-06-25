@@ -5,14 +5,15 @@ setMethod("show", signature(object="APResult"),
         cat("\nAPResult object\n")
 
         if (!is.finite(object@l) || !is.finite(object@it))
-            stop("Object is not result of an affinity propagation run.",
-                 "It is pointless to create APResult objects yourself.")
+            stop("object is not result of an affinity propagation run; ",
+                 "it is pointless to create 'APResult' objects yourself.")
 
         cat("\nNumber of samples     = ", object@l, "\n")
         if (length(object@sel) > 0)
         {
-            cat("Number of sel samples = ", length(object@sel), 
-                paste("   (", round(100*length(object@sel)/object@l,1), "%)\n", sep=""))
+            cat("Number of sel samples = ", length(object@sel),
+                paste("   (", round(100*length(object@sel)/object@l,1),
+                      "%)\n", sep=""))
             cat("Number of sweeps      = ", object@sweeps, "\n")
         }
         cat("Number of iterations  = ", object@it, "\n")
@@ -21,7 +22,7 @@ setMethod("show", signature(object="APResult"),
         cat("Sum of preferences    = ", object@expref, "\n")
         cat("Net similarity        = ", object@netsim, "\n")
         cat("Number of clusters    = ", length(object@exemplars), "\n\n")
-        
+
         if (length(object@exemplars) > 0)
         {
             if (length(names(object@exemplars)) == 0)
@@ -64,8 +65,8 @@ setMethod("show", signature(object="ExClust"),
         cat("\nExClust object\n")
 
         if (!is.finite(object@l))
-            stop("Object is not result of an exemplar-based clustering.",
-                 "It is pointless to create ExClust objects yourself.")
+            stop("object is not result of an exemplar-based clustering; ",
+                 "it is pointless to create 'ExClust' objects yourself.")
 
         cat("\nNumber of samples   = ", object@l, "\n")
         cat("Number of clusters  = ", length(object@exemplars), "\n\n")
@@ -113,8 +114,8 @@ setMethod("show", signature(object="AggExResult"),
         cat("\nAggExResult object\n")
 
         if (!is.finite(object@l) || !is.finite(object@maxNoClusters))
-            stop("Object is not result of agglomerative clustering.",
-                 "It is pointless to create AggExResult objects yourself.")
+            stop("object is not result of agglomerative clustering; ",
+                 "it is pointless to create 'AggExResult' objects yourself.")
 
         cat("\nNumber of samples          = ", object@l, "\n")
         cat("Maximum number of clusters = ", object@maxNoClusters, "\n")

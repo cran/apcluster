@@ -3,7 +3,7 @@ aggExCluster.matrix <- function(s, x, includeSim=FALSE)
     noPriorClustering <- (missing(x) || is.null(x))
 
     if (length(dim(s)) != 2 || (ncol(s) != nrow(s) && noPriorClustering))
-        stop("s must be a square matrix")
+        stop("'s' must be a square matrix")
 
     AggResultObj <- new("AggExResult")
 
@@ -33,14 +33,14 @@ aggExCluster.matrix <- function(s, x, includeSim=FALSE)
     else ## prior clustering
     {
         if (x@l != nrow(s))
-            stop("data set sizes of s and x do not match")
+            stop("data set sizes of 's' and 'x' do not match")
 
         AggResultObj@sel <- x@sel
 
         K <- length(x@exemplars)
 
         if (K < 1)
-            stop("x empty or corrupted")
+            stop("'x' empty or corrupted")
 
         AggResultObj@maxNoClusters <- K
         AggResultObj@clusters[[K]] <- x@clusters
@@ -100,10 +100,10 @@ aggExCluster.matrix <- function(s, x, includeSim=FALSE)
                     ## joining not possible - no similarities available
                     # exeMat[i,j] <- 0
                     # objMat[i,j] <- -Inf
-                    stop("Clusters cannot be joined because of missing ",
-                         "similarity values,\n       maybe increasing the ",
+                    stop("clusters cannot be joined because of missing ",
+                         "similarity values;\n       maybe increasing the ",
                          "cluster size through decreasing\n",
-                         "       the self similarity p helps.")
+                         "       the self similarity 'p' helps.")
                 }
             }
             else
@@ -181,7 +181,7 @@ aggExCluster.matrix <- function(s, x, includeSim=FALSE)
                     ## joining not possible - no similarities available
                     # exeMat[i,j] <- 0
                     # objMat[i,j] <- -Inf
-                    stop("Clusters cannot be joined because of missing ",
+                    stop("clusters cannot be joined because of missing ",
                          "similarity values")
                 }
             }
@@ -245,7 +245,7 @@ aggExCluster.function <- function(s, x, includeSim=TRUE, ...)
     if (!is.function(s))
     {
         if (!is.character(s) || !exists(s, mode="function"))
-            stop("Invalid distance function")
+            stop("invalid distance function")
 
         s <- match.fun(s)
     }
@@ -253,7 +253,7 @@ aggExCluster.function <- function(s, x, includeSim=TRUE, ...)
     sim <- s(x=x, ...)
 
     if (!is.matrix(sim) || (nrow(sim) != N) || ncol(sim) != N)
-        stop("Computation of similarity matrix failed")
+        stop("computation of similarity matrix failed")
 
     AggResultObj <- aggExCluster(sim)
 
