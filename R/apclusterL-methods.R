@@ -73,11 +73,8 @@ apclusterL.matrix <- function(s, x, sel, p=NA, q=NA, maxits=1000, convits=100,
         stop("+Inf similarities detected: change to a large positive value,",
              " but smaller than ", .Machine$double.xmax)
 
-    # convert to C sample indices
-    selC <- sel - 1
-
-    res <- .Call("apclusterLeveragedC", s, selC, as.integer(maxits),
-                 as.integer(convits), as.double(lam))
+    res <- .Call("apclusterLeveragedC", s, as.integer(sel - 1),
+                 as.integer(maxits), as.integer(convits), as.double(lam))
 
     K <- res$K
 
@@ -191,8 +188,8 @@ setMethod("apclusterL", signature(s="matrix", x="missing"),
                   stop("no. of columns of 's' may not be larger than ",
                        "number of rows")
 
-              if (!is.vector(sel) || !is.numeric(sel))
-                  stop("'sel' must be a numeric vector")
+              if (!is.vector(sel) || !is.numeric(sel) || any(round(sel) != sel))
+                  stop("'sel' must be a numeric vector of whole numbers")
 
               if (length(sel) != M)
                   stop("vector 'sel' is shorter or longer than number of ",

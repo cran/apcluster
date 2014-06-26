@@ -10,7 +10,7 @@ RcppExport SEXP apclusterLeveragedC(SEXP sR, SEXP selR, SEXP maxitsR,
                                     SEXP convitsR, SEXP lamR)
 {
     NumericMatrix s(sR);
-    NumericVector sel(selR);
+    IntegerVector sel(selR);
     int maxits = as<int>(maxitsR);
     int convits = as<int>(convitsR);
     double lam = as<double>(lamR);
@@ -21,8 +21,6 @@ RcppExport SEXP apclusterLeveragedC(SEXP sR, SEXP selR, SEXP maxitsR,
     NumericMatrix A(M, N);
     NumericMatrix R(M, N);
     NumericVector auxsum(M - 1);
-
-
     bool dn = false, unconverged = false;
 
     int i = 0, j, ii, K;
@@ -36,10 +34,10 @@ RcppExport SEXP apclusterLeveragedC(SEXP sR, SEXP selR, SEXP maxitsR,
             double avsim;
             int yMax;
 
-            // determine largest and second largest element of AS
+            // determine largest and second largest element of A + S
             for (j = 0; j < M; j++)
             {
-                if (sel[j] == ii)
+                if (j < M - 1 && sel[j] == ii)
                     continue;
 
                 avsim = A(j, ii) + s(ii, j);
@@ -56,7 +54,7 @@ RcppExport SEXP apclusterLeveragedC(SEXP sR, SEXP selR, SEXP maxitsR,
 
             for (j = 0; j < M; j++) // R update including self responsibilities
             {
-                if (sel[j] == ii)
+                if (j < M - 1 && sel[j] == ii)
                     continue;
 
                 double newVal = (1 - lam) * (s(ii, j) -
@@ -82,7 +80,7 @@ RcppExport SEXP apclusterLeveragedC(SEXP sR, SEXP selR, SEXP maxitsR,
                 if (R(ii, j) > 0)
                     newVal -= R(ii, j);
 
-                if (sel[ii]==j) 
+                if (sel[ii] == j)
                 {
                     // update diagonal element back in last col
                     A(M - 1, j) = (1 - lam) * (newVal - R(M - 1, j)) + 

@@ -1,6 +1,10 @@
 Change history of package apcluster:
 ====================================
 
+Version 1.3.5:
+- memory access fixes in C++ code called from apclusterL()
+- minor updates of vignette
+
 Version 1.3.4:
 - added sort() function to rearrange clusters according to
   sort criterion; note that this is an S3 method (see help

@@ -162,11 +162,9 @@ you have the command line tools installed with Xcode).
 
 \subsection{Compatibility issues}
 
-Both the Windows and the Linux/UNIX/MacOS version available from
-CRAN have been built using the latest version, \R\
+All versions downloadable from CRAN have been built using the latest version, \R\
 \Sexpr{R.version$major}.\Sexpr{R.version$minor}.
-However, the package should work
-without severe problems on \R\ versions $\geq$2.10.1.
+However, the package should work without severe problems on \R\ versions $\geq$3.0.0.
 
 \section{Getting Started}
 
@@ -1322,21 +1320,26 @@ should take into account:
 
 \subsection{Upgrading to Version 1.3.3 or newer}
 
-Users who upgrade to Version 1.3.3 or 1.3.4 from an older version should be
-aware that the package now requires Rcpp Version 0.11.0 or 0.11.1 (or newer).
+Users who upgrade to Version 1.3.3 (or newer) from an older version should be
+aware that the package now requires a newer version of Rcpp.
 This issue can simply be solved by re-installing Rcpp from CRAN using
 \verb+install.packages("Rcpp")+.
 
 \section{Change Log}
 
 \begin{description}
+\item[Version 1.3.5:] \hfill
+\begin{itemize}
+  \item memory access fixes in C++ code called from \verb+apclusterL()+
+  \item minor updates of vignette
+\end{itemize}
 \item[Version 1.3.4:] \hfill
 \begin{itemize}
   \item added \verb+sort()+ function to rearrange clusters according to
     sort criterion; note that this is an S3 method (see help
     page for explanation)
   \item improvements and bug fixes of \verb+apclusterL()+ method for
-    signature `\verb+matrix,missing+'
+    signature (\verb+s="matrix"+, \verb+x="missing"+)
   \item performance optimizations of \verb+apcluster()+ and \verb+apclusterL()+
   \item plotting of clustering results superimposed in scatter plot
     matrices now also works for `\verb+AggExResult+' objects
@@ -1372,7 +1375,7 @@ This issue can simply be solved by re-installing Rcpp from CRAN using
   switched on and off (by \verb+Rowv+ and \verb+Colv+ arguments);
   \item added \verb+as.hclust()+ and \verb+as.dendrogram()+ methods
   \item added new arguments \verb+base+, \verb+showSamples+, and \verb+horiz+to the \verb+plot()+
-    method with signature \verb+(x="AggExResult", y="missing")+; moreover, parameters for
+    method with signature (\verb+x="AggExResult"+, \verb+y="missing"+); moreover, parameters for
     changing the appearance of the height axis are now respected as well
   \item streamlining of methods (redundant definition of inherited methods removed)
   \item various minor improvements of code and documentation

@@ -144,17 +144,13 @@ DOI: \href{http://dx.doi.org/10.1093/bioinformatics/btr406}{10.1093/bioinformati
   \code{\link{preferenceRange}}, \code{\link{apcluster-methods}},
   \code{\link{apclusterK}}}
 \examples{
-## define percentage of samples to be used for clustering
-frac <- 0.2
-sweeps <- 3
-
 ## create two Gaussian clouds
 cl1 <- cbind(rnorm(150,0.2,0.05),rnorm(150,0.8,0.06))
 cl2 <- cbind(rnorm(100,0.7,0.08),rnorm(100,0.3,0.05))
 x <- rbind(cl1,cl2)
 
 ## leveraged apcluster
-apres <- apclusterL(negDistMat(r=2), x, frac, sweeps, p=-0.2)
+apres <- apclusterL(negDistMat(r=2), x, frac=0.2, sweeps=3, p=-0.2)
 
 ## show details of leveraged clustering results
 show(apres)
