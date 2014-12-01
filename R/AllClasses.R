@@ -7,7 +7,7 @@ setClass("ExClust",
         exemplars = "numeric",
         clusters  = "list",
         idx       = "numeric",
-        sim       = "matrix",
+        sim       = "mMatrix",
         call      = "character"
     ),
     prototype = prototype
@@ -17,7 +17,7 @@ setClass("ExClust",
         exemplars = numeric(0),
         clusters  = list(),
         idx       = numeric(0),
-        sim       = matrix(NA, 1, 1),
+        sim       = matrix(nrow=0, ncol=0),
         call      = character(0)
     )
 )
@@ -50,7 +50,7 @@ setClass("APResult",
         netsimAll = NaN,
         dpsimAll  = NaN,
         exprefAll = NaN,
-        idxAll    = matrix(NA, 1, 1)
+        idxAll    = matrix(nrow=0, ncol=0)
     ),
     contains = "ExClust"
 )

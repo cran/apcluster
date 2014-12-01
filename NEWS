@@ -1,6 +1,32 @@
 Change history of package apcluster:
 ====================================
 
+Version 1.4.0:
+- added apcluster() method for sparse similarity matrices;
+  as a consequence, the package now imports the 'Matrix' package
+  and is now also able to handle non-sparse matrix classes
+  defined by the 'Matrix' package. Moreover, similarity functions
+  supplied to the apcluster() method may now also return any
+  matrix type defined by the 'Matrix' package.
+- fix of apcluster() for dense matrices to better support -Inf
+  similarities
+- added apclusterK() method for sparse similarity matrices
+- preferenceRange() is now an S4 generic; re-implementation in
+  C++ to speed up function; changed handling of -Inf similarities
+  for consistency with sparse version
+- added preferenceRange() methods for sparse matrices and dense
+  matrix objects from the 'Matrix' package
+- new conversion methods implemented for converting dense similarity
+  matrices to sparse ones and vice versa; consequently,
+  sparseToFull() is marked as deprecated.
+- adaptation of heatmap() function for improved handling of -Inf
+  similarities
+- adaptations of signatures of '[' and '[[' accessor methods
+- renamed help page of methods for computing similarity matrices
+  to 'similarities' in order to avoid confusion with the accessor
+  method 'similarity'
+- corresponding updates of help pages and vignette
+
 Version 1.3.5:
 - memory access fixes in C++ code called from apclusterL()
 - minor updates of vignette

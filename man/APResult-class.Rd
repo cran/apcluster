@@ -4,8 +4,8 @@
 \alias{APResult}
 \alias{apresult}
 \alias{similarity}
-\alias{[,APResult-method}
-\alias{[[,APResult-method}
+\alias{[,APResult,index,missing,missing-method}
+\alias{[[,APResult,index,missing-method}
 \alias{length,APResult-method}
 \alias{similarity,APResult-method}
 

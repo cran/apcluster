@@ -4,6 +4,8 @@
 \alias{heatmap-methods}
 \alias{heatmap,ExClust,missing-method}
 \alias{heatmap,ExClust,matrix-method}
+\alias{heatmap,ExClust,Matrix-method}
+\alias{heatmap,ExClust,sparseMatrix-method}
 \alias{heatmap,AggExResult,missing-method}
 \alias{heatmap,AggExResult,matrix-method}
 \alias{heatmap,missing,matrix-method}
@@ -15,6 +17,8 @@
 \usage{
 \S4method{heatmap}{ExClust,missing}(x, y, ...)
 \S4method{heatmap}{ExClust,matrix}(x, y, ...)
+\S4method{heatmap}{ExClust,Matrix}(x, y, ...)
+\S4method{heatmap}{ExClust,sparseMatrix}(x, y, ...)
 \S4method{heatmap}{AggExResult,missing}(x, y, ...)
 \S4method{heatmap}{AggExResult,matrix}(x, y, Rowv=TRUE, Colv=TRUE,
     sideColors=NULL, base=0.05,  add.expr, margins=c(5, 5),
@@ -125,6 +129,10 @@
   \code{\link[stats:heatmap]{heatmap}} function with the aim to provide
   compatibility with this standard case.
 }
+\note{Similarity matrices can be supplied in dense or sparse
+  format. Note, however, that sparse matrices are converted to full
+  dense matrices before plotting heatmaps which may lead to memory and/or
+  performance bottlenecks for larger data sets.}
 \value{
   see details above
 }

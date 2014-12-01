@@ -3,8 +3,8 @@
 \alias{ExClust-class}
 \alias{ExClust}
 \alias{exclust}
-\alias{[,ExClust-method}
-\alias{[[,ExClust-method}
+\alias{[,ExClust,index,missing,missing-method}
+\alias{[[,ExClust,index,missing-method}
 \alias{length,ExClust-method}
 \alias{similarity,ExClust-method}
 

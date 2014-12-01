@@ -292,7 +292,35 @@ heatmap(apres3)
 
 
 ###################################################
-### code chunk number 43: LoadCh22Promoters
+### code chunk number 43: SparseEx1
+###################################################
+dsim <- negDistMat(x2, r=2)
+ssim <- as.SparseSimilarityMatrix(dsim, lower=-0.2)
+str(ssim)
+
+
+###################################################
+### code chunk number 44: SparseEx1Run
+###################################################
+sapres <- apcluster(ssim, q=0)
+plot(sapres, x2)
+
+
+###################################################
+### code chunk number 45: SparseEx1Run2
+###################################################
+preferenceRange(ssim)
+apclusterK(ssim, K=2)
+
+
+###################################################
+### code chunk number 46: SparseEx1RunHeatmap
+###################################################
+heatmap(sapres, ssim)
+
+
+###################################################
+### code chunk number 47: LoadCh22Promoters
 ###################################################
 data(ch22Promoters)
 names(ch22Promoters)[1:5]
@@ -300,7 +328,7 @@ substr(ch22Promoters[1:5], 951, 1000)
 
 
 ###################################################
-### code chunk number 44: SimCh22Promoters
+### code chunk number 48: SimCh22Promoters
 ###################################################
 library(kernlab)
 promSim <- kernelMatrix(stringdot(length=6, type="spectrum"), ch22Promoters)
@@ -309,51 +337,51 @@ colnames(promSim) <- names(ch22Promoters)
 
 
 ###################################################
-### code chunk number 45: APCh22Promoters
+### code chunk number 49: APCh22Promoters
 ###################################################
 promAP <- apcluster(promSim, q=0)
 promAP
 
 
 ###################################################
-### code chunk number 46: HeatMapAPCh22Promoters
+### code chunk number 50: HeatMapAPCh22Promoters
 ###################################################
 heatmap(promAP, promSim, Rowv=FALSE, Colv=FALSE)
 
 
 ###################################################
-### code chunk number 47: aggExCh22Promoters
+### code chunk number 51: aggExCh22Promoters
 ###################################################
 promAgg <- aggExCluster(promSim, promAP)
 
 
 ###################################################
-### code chunk number 48: DendrogramAPCh22Promoters
+### code chunk number 52: DendrogramAPCh22Promoters
 ###################################################
 plot(promAgg)
 
 
 ###################################################
-### code chunk number 49: ExtractAggCh22Promoters
+### code chunk number 53: ExtractAggCh22Promoters
 ###################################################
 prom5 <- cutree(promAgg, k=5)
 prom5
 
 
 ###################################################
-### code chunk number 50: HeatMap5Ch22Promoters
+### code chunk number 54: HeatMap5Ch22Promoters
 ###################################################
 heatmap(prom5, promSim, Rowv=FALSE, Colv=FALSE)
 
 
 ###################################################
-### code chunk number 51: NegDistMatDataSet2
+### code chunk number 55: NegDistMatDataSet2
 ###################################################
 s <- negDistMat(x2)
 
 
 ###################################################
-### code chunk number 52: CreateToyData
+### code chunk number 56: CreateToyData
 ###################################################
 ex <- matrix(c(0, 0.5, 0.8, 1, 0, 0.2, 0.5, 0.7,
                0.1, 0, 1, 0.3, 1, 0.8, 0.2), 5, 3,byrow=TRUE)
@@ -361,43 +389,43 @@ ex
 
 
 ###################################################
-### code chunk number 53: NegEuclDistMatToyData
+### code chunk number 57: NegEuclDistMatToyData
 ###################################################
 negDistMat(ex)
 
 
 ###################################################
-### code chunk number 54: NegSqEuclDistMatToyData
+### code chunk number 58: NegSqEuclDistMatToyData
 ###################################################
 negDistMat(ex, r=2)
 
 
 ###################################################
-### code chunk number 55: NegMaxDistToyData
+### code chunk number 59: NegMaxDistToyData
 ###################################################
 negDistMat(ex, method="maximum")
 
 
 ###################################################
-### code chunk number 56: NegManhattanDistToyData
+### code chunk number 60: NegManhattanDistToyData
 ###################################################
 negDistMat(ex, method="manhattan")
 
 
 ###################################################
-### code chunk number 57: NegCanberraDistToyData
+### code chunk number 61: NegCanberraDistToyData
 ###################################################
 negDistMat(ex, method="canberra")
 
 
 ###################################################
-### code chunk number 58: NegMinkowskiDistToyData
+### code chunk number 62: NegMinkowskiDistToyData
 ###################################################
 negDistMat(ex, method="minkowski", p=3)
 
 
 ###################################################
-### code chunk number 59: GetFunction
+### code chunk number 63: GetFunction
 ###################################################
 sim <- negDistMat(r=2)
 is.function(sim)
@@ -405,49 +433,49 @@ apcluster(sim, x1)
 
 
 ###################################################
-### code chunk number 60: RBFKernelToyData
+### code chunk number 64: RBFKernelToyData
 ###################################################
 expSimMat(ex)
 
 
 ###################################################
-### code chunk number 61: LaplaceKernelToyData
+### code chunk number 65: LaplaceKernelToyData
 ###################################################
 expSimMat(ex, r=1)
 
 
 ###################################################
-### code chunk number 62: PearsonToyData
+### code chunk number 66: PearsonToyData
 ###################################################
 corSimMat(ex, method="pearson")
 
 
 ###################################################
-### code chunk number 63: SpearmanToyData
+### code chunk number 67: SpearmanToyData
 ###################################################
 corSimMat(ex, method="spearman")
 
 
 ###################################################
-### code chunk number 64: TruncDistToyData
+### code chunk number 68: TruncDistToyData
 ###################################################
 linSimMat(ex, w=1.2)
 
 
 ###################################################
-### code chunk number 65: LinKernelToyData
+### code chunk number 69: LinKernelToyData
 ###################################################
 linKernel(ex[2:5,])
 
 
 ###################################################
-### code chunk number 66: NormLinKernelToyData
+### code chunk number 70: NormLinKernelToyData
 ###################################################
 linKernel(ex[2:5,], normalize=TRUE)
 
 
 ###################################################
-### code chunk number 67: RectangularNegDistMatDataSet1
+### code chunk number 71: RectangularNegDistMatDataSet1
 ###################################################
 sel <- sort(sample(1:nrow(x1), ceiling(0.08 * nrow(x1))))
 sel
@@ -457,7 +485,7 @@ s1r[1:7,]
 
 
 ###################################################
-### code chunk number 68: SimFunCh22Promoters
+### code chunk number 72: SimFunCh22Promoters
 ###################################################
 spectrumK6 <- function(x, sel=NA)
 {
@@ -479,7 +507,7 @@ spectrumK6 <- function(x, sel=NA)
 
 
 ###################################################
-### code chunk number 69: APCh22Promoters
+### code chunk number 73: APCh22Promoters
 ###################################################
 promAPL <- apclusterL(s=spectrumK6, ch22Promoters, frac=0.1, sweeps=10,
                         p=promAP@p)
@@ -487,7 +515,20 @@ promAPL
 
 
 ###################################################
-### code chunk number 70: CreateLabeledToyData
+### code chunk number 74: CustomSimSparse
+###################################################
+sparseSim <- function(x)
+{
+    as.SparseSimilarityMatrix(negDistMat(x, r=2), lower=-0.2)
+}
+
+sapres2 <- apcluster(sparseSim, x2, q=0)
+sapres2
+str(similarity(sapres2))
+
+
+###################################################
+### code chunk number 75: CreateLabeledToyData
 ###################################################
 x3 <- c(1, 2, 3, 7, 8, 9)
 names(x3) <- c("a", "b", "c", "d", "e", "f")
@@ -495,14 +536,14 @@ s3 <- negDistMat(x3, r=2)
 
 
 ###################################################
-### code chunk number 71: ShowToyDataLabels
+### code chunk number 76: ShowToyDataLabels
 ###################################################
 s3
 colnames(s3)
 
 
 ###################################################
-### code chunk number 72: ClusterLabeledToyData
+### code chunk number 77: ClusterLabeledToyData
 ###################################################
 apres3a <-apcluster(s3)
 apres3a
@@ -511,7 +552,7 @@ apres3a@clusters
 
 
 ###################################################
-### code chunk number 73: ExtractLabelsFromClusterToyData
+### code chunk number 78: ExtractLabelsFromClusterToyData
 ###################################################
 apres3a@exemplars
 labels(apres3a, type="names")
@@ -520,14 +561,14 @@ labels(apres3a, type="enum")
 
 
 ###################################################
-### code chunk number 74: HeatmapResultAPClusterDataSetq08b
+### code chunk number 79: HeatmapResultAPClusterDataSetq08b
 ###################################################
 heatmap(apres2c, sideColors=c("darkgreen", "yellowgreen"),
         col=terrain.colors(12), Rowv=FALSE, dendScale=0.6)
 
 
 ###################################################
-### code chunk number 75: HeatmapResultAPClusterDataSet2q08c
+### code chunk number 80: HeatmapResultAPClusterDataSet2q08c
 ###################################################
 heatmap(apres2c, sideColors=rainbow(length(apres2c)), Rowv=FALSE, Colv=FALSE,
         cexRow=(0.2 + 1 / log10(nrow(apres2c@sim))),
@@ -535,7 +576,7 @@ heatmap(apres2c, sideColors=rainbow(length(apres2c)), Rowv=FALSE, Colv=FALSE,
 
 
 ###################################################
-### code chunk number 76: PlotAddLegend
+### code chunk number 81: PlotAddLegend
 ###################################################
 plot(apres2a, x2)
 legend("bottomleft", legend=paste("Cluster", 1:length(apres2a)),
@@ -543,7 +584,7 @@ legend("bottomleft", legend=paste("Cluster", 1:length(apres2a)),
 
 
 ###################################################
-### code chunk number 77: PlotOnlyLegend
+### code chunk number 82: PlotOnlyLegend
 ###################################################
 plot.new()
 par(oma=rep(0, 4), mar=rep(0, 4))
@@ -552,7 +593,7 @@ legend("center", legend=paste("Cluster", 1:length(apres2c)),
 
 
 ###################################################
-### code chunk number 78: GetBibTeX (eval = FALSE)
+### code chunk number 83: GetBibTeX (eval = FALSE)
 ###################################################
 ## toBibtex(citation("apcluster"))
 

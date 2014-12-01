@@ -3,6 +3,9 @@
 \alias{apclusterK}
 \alias{apclusterK-methods}
 \alias{apclusterK,matrix,missing-method}
+\alias{apclusterK,Matrix,missing-method}
+\alias{apclusterK,dgTMatrix,missing-method}
+\alias{apclusterK,sparseMatrix,missing-method}
 \alias{apclusterK,character,ANY-method}
 \alias{apclusterK,function,ANY-method}
 \title{Affinity Propagation for Pre-defined Number of Clusters}
@@ -15,6 +18,11 @@
 \S4method{apclusterK}{matrix,missing}(s, x, K, prc=10, bimaxit=20, exact=FALSE,
      maxits=1000, convits=100, lam=0.9, includeSim=FALSE, details=FALSE,
      nonoise=FALSE, seed=NA, verbose=TRUE)
+\S4method{apclusterK}{Matrix,missing}(s, x, K, ...)
+\S4method{apclusterK}{dgTMatrix,missing}(s, x, K, prc=10, bimaxit=20,
+     exact=FALSE, maxits=1000, convits=100, lam=0.9, includeSim=FALSE,
+     details=FALSE, nonoise=FALSE, seed=NA, verbose=TRUE)
+\S4method{apclusterK}{sparseMatrix,missing}(s, x, K, ...)
 \S4method{apclusterK}{function,ANY}(s, x, K, prc=10, bimaxit=20, exact=FALSE,
      maxits=1000, convits=100, lam=0.9, includeSim=TRUE, details=FALSE,
      nonoise=FALSE, seed=NA, verbose=TRUE, ...)
@@ -23,17 +31,18 @@
      nonoise=FALSE, seed=NA, verbose=TRUE, ...)
 }
 \arguments{
-  \item{s}{an \eqn{l\times l}{lxl} similarity matrix or a similarity
-  	      function either specified as the name of a package-provided
-  	      similarity function as character string or a user provided
-  	      function object.} 
+  \item{s}{an \eqn{l\times l}{lxl} similarity matrix in sparse or dense
+    format or a similarity
+    function either specified as the name of a package-provided
+    similarity function as character string or a user provided
+    function object.} 
   \item{x}{input data to be clustered; if \code{x} is a matrix or data
-          frame, rows are interpreted as samples and columns are 
-          interpreted as features; apart from matrices or data frames, 
-          \code{x} may be any other structured data type that
-          contains multiple data items - provided that an appropriate
-          \code{\link[base:length]{length}} function is available that
-          returns the number of items}
+    frame, rows are interpreted as samples and columns are 
+    interpreted as features; apart from matrices or data frames, 
+    \code{x} may be any other structured data type that
+    contains multiple data items - provided that an appropriate
+    \code{\link[base:length]{length}} function is available that
+    returns the number of items}
   \item{K}{desired number of clusters}
   \item{prc}{the algorithm stops if the number of clusters does not
     deviate more than prc percent from desired value K; set to 0 if you
@@ -68,8 +77,13 @@
     the seed remains unchanged}
   \item{verbose}{flag indicating whether status information should be
 	         displayed during bisection}
-  \item{...}{all other arguments are passed to the selected 
-             similarity function as they are}
+  \item{...}{for the methods with signatures \code{character,ANY} and
+    \code{function,ANY}, all other arguments are passed to the selected 
+    similarity function as they are; for the methods with signatures
+    \code{Matrix,missing} and \code{sparseMatrix,missing}, further
+    arguments are passed on to the \code{apclusterK} methods with
+    signatures \code{Matrix,missing} and \code{dgTMatrix,missing},
+    respectively.}
 }
 \details{
   \code{apclusterK} first runs \code{\link{preferenceRange}} to determine
@@ -125,6 +139,17 @@ show(apres)
 
 ## plot clustering result
 plot(apres, x)
+
+## create sparse similarity matrix
+cl1 <- cbind(rnorm(20, 0.2, 0.05), rnorm(20, 0.8, 0.06))
+cl2 <- cbind(rnorm(20, 0.7, 0.08), rnorm(20, 0.3, 0.05))
+x <- rbind(cl1, cl2)
+sim <- negDistMat(x, r=2)
+ssim <- as.SparseSimilarityMatrix(sim, lower=-0.2)
+
+## run apcluster() on the sparse similarity matrix
+apres <- apclusterK(ssim, K=2)
+apres
 }
 \keyword{cluster}
 

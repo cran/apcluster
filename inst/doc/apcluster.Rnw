@@ -11,7 +11,7 @@
 
 \title{{\Huge APCluster}\\[5mm]
   An R Package for Affinity Propagation Clustering}
-\author{Ulrich Bodenhofer, Andreas Kothmeier, and Johannes Palme}
+\author{Ulrich Bodenhofer, Johannes Palme, Chrats Melkonian, and Andreas Kothmeier}
 \affiliation{Institute of Bioinformatics, Johannes Kepler University
 Linz\\Altenberger Str. 69, 4040 Linz, Austria\\
 \email{apcluster@bioinf.jku.at}}
@@ -749,6 +749,62 @@ embed \verb+apclusterL()+ into a complete loop performing leveraged AP.
 The package-provided functions for distance calculation support the
 generation of rectangular similarity matrices (see Chapter \ref{sec:DistMat}).
 
+\section{Sparse Affinity Propagation}\label{sec:sparse}
+
+Starting with Version 1.4.0 of the \APCluster\ package, the functions \verb+apcluster()+,
+\verb+apclusterK()+, and \verb+preferenceRange()+ can also handle similarity matrices as
+defined by the \verb+Matrix+ package. While all dense matrix formats are converted to standard
+R matrices, sparse matrices are converted internally to \verb+dgTMatrix+ objects.
+For these sparse matrices, special implementations of the \verb+apcluster()+,
+\verb+apclusterK()+, and \verb+preferenceRange()+ are available that fully exploit the
+sparseness of the matrices and may require much less operations if the matrix is
+sufficiently sparse.
+
+In order to demonstrate that, consider the following example:
+<<SparseEx1>>=
+dsim <- negDistMat(x2, r=2)
+ssim <- as.SparseSimilarityMatrix(dsim, lower=-0.2)
+str(ssim)
+@
+The function \verb+as.SparseSimilarityMatrix()+ converts the dense similarity matrix
+\verb+dsim+ into a sparse similarity matrix by removing all pairwise similarities that
+are -0.2 or lower. Note that this is only for demonstration purposes. If the size of
+data permits that, it is advisable to use the entire dense similarity matrix. Anyway,
+let us run sparse AP on this similarity matrix:
+\begin{center}
+<<SparseEx1Run,fig=TRUE,echo=TRUE,width=5,height=5>>=
+sapres <- apcluster(ssim, q=0)
+plot(sapres, x2)
+@
+\end{center}
+
+The functions \verb+preferenceRange()+ and \verb+apclusterK()+ work in the same way as for
+dense similarity matrices:
+<<SparseEx1Run2>>=
+preferenceRange(ssim)
+apclusterK(ssim, K=2)
+@
+
+The functions \verb+aggExCluster()+ and \verb+heatmap()+ have been extended to be able
+to handle sparse matrices. Note, however, that these functions are not yet exploiting
+sparsity properly. Instead, they convert all inputs to dense matrices before processing
+them, which may lead to memory and/or performance issues for large data sets.
+\begin{center}
+<<SparseEx1RunHeatmap,fig=TRUE,echo=TRUE,width=5,height=5>>=
+heatmap(sapres, ssim)
+@
+\end{center}
+The above heatmap illustrates that values that are not stored in the sparse similarity matrix
+are filled up with low values (see the red areas between some pairs of samples that belong
+to different clusters). Actually, each missing value is replaced with
+\[
+\min(s)-(\max(s)-\min(s))=2\cdot\min(s)-\max(s),
+\]
+where $\min(s)$ and $\max(s)$ denote the smallest and the largest similarity value specified
+in the sparse similarity matrix $s$, respectively. The same replacement takes place when
+\verb+aggExCluster()+ converts sparse similarity matrices to dense ones.
+
+
 \section{A Toy Example with Biological Sequences}\label{sec:bioseq}
 
 As noted in the introduction above, one of the goals of this package is
@@ -1055,7 +1111,7 @@ functions of the package. If the parameter \verb+sel+ is not specified,
 the quadratic similarity matrix of all sample pairs is computed.
 
 \subsection{Defining a custom similarity measure for leveraged affinity
-  propagation}
+  propagation}\label{ssec:leverSim}
 
 As mentioned in Section \ref{sec:lever} above, leveraged affinity propagation
 requires the definition of a similarity measure that is supplied as a
@@ -1110,6 +1166,25 @@ promAPL <- apclusterL(s=spectrumK6, ch22Promoters, frac=0.1, sweeps=10,
 promAPL
 @
 So we obtain \Sexpr{length(promAPL@exemplars)} clusters in total.
+
+\subsection{Defining a custom similarity measure that creates a sparse similarity matrix}
+
+Since Version 1.4.0, similarity matrices may also be sparse (cf.~Section~\ref{sec:sparse}).
+Correspondingly, the similarity measures passed to \verb+apcluster()+ and \verb+apclusterK()+
+may also return sparse similarity matrices:
+<<CustomSimSparse>>=
+sparseSim <- function(x)
+{
+    as.SparseSimilarityMatrix(negDistMat(x, r=2), lower=-0.2)
+}
+
+sapres2 <- apcluster(sparseSim, x2, q=0)
+sapres2
+str(similarity(sapres2))
+@
+Note that similarity measures passed to \verb+apclusterL()+ may not return sparse matrices.
+Instead, they must accept a \verb+sel+ argument and return a rectangular dense matrix
+(see Subsection~\ref{ssec:leverSim} above).
 
 \section{Miscellaneous}
 
@@ -1291,14 +1366,6 @@ For real-world data sets, in particular,
 if they are large, we recommend to use affinity propagation first and then,
 if necessary, to use \verb+aggExCluster()+ to create a cluster hierarchy.
 
-\section{Future Extensions}
-
-We currently have no implementation that exploits sparsity of similarity
-matrices. The implementation of {\em sparse AP} which is available as Matlab
-code from the AP Web page\footnotemark[1] is left for future extensions of the
-package. Presently, we only offer a function \verb+sparseToFull()+ that
-converts similarity matrices from sparse format into a full $l\times l$ matrix.
-
 \section{Special Notes for Users Upgrading from Previous Versions}
 
 \subsection{Upgrading from a version older than 1.3.0}
@@ -1325,9 +1392,42 @@ aware that the package now requires a newer version of Rcpp.
 This issue can simply be solved by re-installing Rcpp from CRAN using
 \verb+install.packages("Rcpp")+.
 
+\subsection{Upgrading to Version 1.4.0}
+
+The function \verb+sparseToFull()+ has been deprecated. A fully compatible
+function \verb+as.DenseSimilarityMatrix()+ is available that replaces
+and extends \verb+sparseToFull()+.
+
 \section{Change Log}
 
 \begin{description}
+\item[Version 1.4.0:] \hfill
+\begin{itemize}
+\item added \verb+apcluster()+ method for sparse similarity matrices;
+  as a consequence, the package now imports the \verb+Matrix+ package
+  and is now also able to handle non-sparse matrix classes
+  defined by the \verb+Matrix+ package. Moreover, similarity functions
+  supplied to the \verb+apcluster()+ method may now also return any
+  matrix type defined by the \verb+Matrix+ package.
+\item fix of \verb+apcluster()+ for dense matrices to better support
+  \verb+-Inf+ similarities
+\item added \verb+apclusterK()+ method for sparse similarity matrices
+\item \verb+preferenceRange()+ is now an S4 generic; re-implementation in
+  C++ to speed up function; changed handling of \verb+-Inf+ similarities
+  for consistency with sparse version.
+\item added \verb+preferenceRange()+ methods for sparse matrices and dense
+  matrix objects from the \verb+Matrix+ package.
+\item new conversion methods implemented for converting dense similarity
+  matrices to sparse ones and vice versa; consequently,
+  \verb+sparseToFull()+ is marked as deprecated.
+\item adaptation of \verb+heatmap()+ function for improved handling of
+  \verb+-Inf+ similarities
+\item adaptations of signatures of \verb+[+ and \verb+[[+ accessor methods
+\item renamed help page of methods for computing similarity matrices
+  to `similarities' in order to avoid confusion with the accessor
+  method \verb+similarity()+.
+\item corresponding updates of help pages and vignette
+\end{itemize}
 \item[Version 1.3.5:] \hfill
 \begin{itemize}
   \item memory access fixes in C++ code called from \verb+apclusterL()+

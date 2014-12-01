@@ -1,14 +1,22 @@
 \name{preferenceRange}
 \alias{preferenceRange}
+\alias{preferenceRange-methods}
+\alias{preferenceRange,matrix-method}
+\alias{preferenceRange,Matrix-method}
+\alias{preferenceRange,dgTMatrix-method}
+\alias{preferenceRange,sparseMatrix-method}
 \title{Determine Meaningful Ranges for Input Preferences}
 \description{
    Determines meaningful ranges for affinity propagation input preference
 }
 \usage{
-preferenceRange(s, exact=FALSE)
+\S4method{preferenceRange}{matrix}(s, exact=FALSE)
+\S4method{preferenceRange}{Matrix}(s, exact=FALSE)
+\S4method{preferenceRange}{dgTMatrix}(s, exact=FALSE)
+\S4method{preferenceRange}{sparseMatrix}(s, exact=FALSE)
 }
 \arguments{
-  \item{s}{an \eqn{l\times l}{lxl} similarity matrix}
+  \item{s}{an \eqn{l\times l}{lxl} similarity matrix in sparse or dense format}
   \item{exact}{flag indicating whether exact ranges should be computed,
     which is relatively slow; if bounds are sufficient,
     supply \code{FALSE} (default)}
@@ -16,12 +24,24 @@ preferenceRange(s, exact=FALSE)
 \details{Affinity Propagation clustering relies on an appropriate choice
   of input preferences. This function helps in finding a good choice by
   determining meaningful lower and upper bounds.
+
+  If the similarity matrix \code{s} is sparse or if it contains
+  \code{-Inf} similarities, only the similarities are taken into account
+  that are specified in \code{s} and larger than \code{-Inf}. In such
+  cases, the lower bound returned by \code{preferenceRange} need not
+  correspond to one or two clusters. Moreover, it may also happen in
+  degenerate cases that the lower bound exceeds the upper bound.
+  In such a case, no warning or error is issued, so it is the user's
+  responsibility to ensure a proper interpretation of the results.
+  The method \code{\link{apclusterK}} makes use of this function
+  internally and checks the plausibility of the result
+  returned by \code{preferenceRange}.
 }
 \value{
   returns a vector with two entries, the first of which is the minimal
   input preference (which would lead to 1 or 2 clusters) and the second
   of which is the maximal input prefence (which would lead to as many
-  clusters as data samples)
+  clusters as data samples).
 }
 \author{Ulrich Bodenhofer & Andreas Kothmeier
 \email{apcluster@bioinf.jku.at}}

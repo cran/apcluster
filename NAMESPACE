@@ -10,13 +10,17 @@ importFrom("stats",
 
 importFrom("Rcpp", "evalCpp")
 
+import("Matrix")
+
 export("apclusterDemo", "negDistMat", "expSimMat", "corSimMat", "linSimMat",
-       "linKernel", "preferenceRange", "sparseToFull")
+       "linKernel", "sparseToFull")
 
 exportClasses("APResult", "AggExResult", "ExClust")
 
 exportMethods("show", "plot", "heatmap", "labels", "cutree", "[", "[[",
               "similarity", "as.hclust", "as.dendrogram", "length",
-              "apcluster", "apclusterL", "apclusterK", "aggExCluster")
+              "apcluster", "apclusterL", "apclusterK", "aggExCluster",
+              "preferenceRange", "as.SparseSimilarityMatrix",
+              "as.DenseSimilarityMatrix")
 
 S3method("sort", "ExClust")

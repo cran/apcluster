@@ -6,7 +6,7 @@ sort.ExClust <- function(x, decreasing=FALSE,
 
     if (sortBy == "aggExCluster")
     {
-        if (identical(dim(x@sim), as.integer(c(1, 1))))
+        if (all(dim(x@sim) <= 1))
             stop("cannot sort by agglomerative clustering\n",
                  "because similarity matrix not included in object")
         else

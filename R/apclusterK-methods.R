@@ -1,9 +1,10 @@
-apclusterK.matrix <- function(s, x, K, prc=10, bimaxit=20, exact=FALSE,
-                              maxits=1000, convits=100, lam=0.9,
-                              includeSim=FALSE, details=FALSE, nonoise=FALSE,
-                              seed=NA, verbose=TRUE)
+apclusterK.matrixOrDgT <- function(s, x, K, prc=10, bimaxit=20, exact=FALSE,
+                                   maxits=1000, convits=100, lam=0.9,
+                                   includeSim=FALSE, details=FALSE,
+                                   nonoise=FALSE, seed=NA, verbose=TRUE)
 {
-    if (!is.na(seed)) set.seed(seed)
+    if (!is.na(seed))
+        set.seed(seed)
 
     #
     # check input data
@@ -24,8 +25,11 @@ apclusterK.matrix <- function(s, x, K, prc=10, bimaxit=20, exact=FALSE,
     lok    <- 1
     hik    <- N
 
-    if (is.na(lopref))
-        stop("could not find numeric entries in matrix")
+    if (is.na(lopref) || is.nan(lopref) || is.infinite(lopref))
+        stop("could not determine lower bound for preference")
+    else if (lopref >= hipref)
+        stop("preferenceRange() yielded invalid result: lower bound larger ",
+             "than upper bound")
 
     # In case user did not remove degeneracies from the input similarities,
     # avoid degenerate solutions by adding a small amount of noise to the
@@ -33,10 +37,13 @@ apclusterK.matrix <- function(s, x, K, prc=10, bimaxit=20, exact=FALSE,
     # to have deterministic behavior during bisection
     if (!nonoise)
     {
-        randomMat <- matrix(rnorm(N*N),N)
-
-        s <- s + (.Machine$double.eps * s + .Machine$double.xmin * 100) *
-                 randomMat
+        if (is(s, "matrix"))
+            s <- s + ((.Machine$double.eps * s +
+                       .Machine$double.xmin * 100) *
+                      matrix(rnorm(N * N), N, N))
+        else if (is(s, "dgTMatrix"))
+            s@x <- s@x + ((.Machine$double.eps * s@x +
+                           .Machine$double.xmin * 100) * rnorm(length(s@x)))
     }
 
     # try to guess better lower bound  before starting with bisection
@@ -52,25 +59,21 @@ apclusterK.matrix <- function(s, x, K, prc=10, bimaxit=20, exact=FALSE,
 
         apresultObj <- apcluster(s, p=tmppref, nonoise=TRUE)
 
-        tmpk <- length(apresultObj@exemplars)
+        tmpk <- length(apresultObj)
 
         if (verbose)
             cat("   Number of clusters:", tmpk, "\n");
 
-        if (tmpk < K)
+        if (tmpk < K && tmpk > 0)
         {
             lok <- tmpk
             lopref <- tmppref
             dn <- TRUE
         }
         else if (ex == -1)
-        {
             dn <- TRUE
-        }
         else
-        {
             ex <- ex + 1
-        }
     }
 
     # now do bisection (if still necessary)
@@ -122,7 +125,38 @@ apclusterK.matrix <- function(s, x, K, prc=10, bimaxit=20, exact=FALSE,
     apresultObj
 }
 
-setMethod("apclusterK", signature(s="matrix", x="missing"), apclusterK.matrix)
+setMethod("apclusterK", signature(s="matrix", x="missing"),
+          apclusterK.matrixOrDgT)
+setMethod("apclusterK", signature(s="dgTMatrix", x="missing"),
+          apclusterK.matrixOrDgT)
+
+
+apclusterK.otherSparse <- function(s, x, K, ...)
+{
+    s <- try(as(as(s, "TsparseMatrix"), "dgTMatrix"))
+
+    if (class(s) == "try-error")
+        stop("cannot cast 's' (class '", class(s), "') to class 'dgTMatrix'")
+
+    apclusterK.matrixOrDgT(s=s, K=K, ...)
+}
+
+setMethod("apclusterK", signature(s="sparseMatrix", x="missing"),
+          apclusterK.otherSparse)
+
+
+apclusterK.otherDense <- function(s, x, K, ...)
+{
+    s <- try(as(s, "matrix"))
+
+    if (class(s) == "try-error")
+        stop("cannot cast 's' (class '", class(s), "') to class 'matrix'")
+
+    apclusterK.matrixOrDgT(s=s, K=K, ...)
+}
+
+setMethod("apclusterK", signature(s="Matrix", x="missing"),
+          apclusterK.otherDense)
 
 
 apclusterK.function <- function(s, x, K, prc=10, bimaxit=20, exact=FALSE,
@@ -153,7 +187,7 @@ apclusterK.function <- function(s, x, K, prc=10, bimaxit=20, exact=FALSE,
 
     sim <- s(x=x, ...)
 
-    if (!is.matrix(sim) || (nrow(sim) != N) || ncol(sim) != N)
+    if (!is(sim, "mMatrix") || (nrow(sim) != N) || ncol(sim) != N)
         stop("computation of similarity matrix failed")
 
     apres <- apclusterK(s=sim, K=K, prc=prc, bimaxit=bimaxit, exact=exact,

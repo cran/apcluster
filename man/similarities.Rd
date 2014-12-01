@@ -1,4 +1,5 @@
-\name{similarity}
+\name{similarities}
+\alias{similarities}
 \alias{negDistMat}
 \alias{expSimMat}
 \alias{linSimMat}

@@ -1,6 +1,6 @@
 heatmap.ExClust <- function(x, y, ...)
 {
-    if(!identical(dim(x@sim), as.integer(c(1, 1))))
+    if (!all(dim(x@sim) <= 1))
         return(invisible(heatmap(x, x@sim, ...)))
     else
         stop("similarity matrix is missing for heatmap plotting")
@@ -11,12 +11,19 @@ setMethod("heatmap", signature(x="ExClust", y="missing"), heatmap.ExClust)
 
 heatmap.ExClust.matrix <- function(x, y, ...)
 {
-    if (identical(dim(y), as.integer(c(1, 1))))
+    if (all(dim(y) <= 1))
         stop("'y' must be a non-empty similarity matrix")
     else if (x@l != nrow(y))
         stop("size of clustering result does not fit to size of data set")
     else if (nrow(y) != ncol(y) && length(x@sel) == 0)
         stop("similarity matrix must be quadratic")
+
+    if (any(y == -Inf))
+    {
+        rng <- range(y[which(y > -Inf)])
+        fill <- 2 * rng[1] - rng[2]
+        y[which(y == -Inf)] <- fill
+    }
 
     aggres <- aggExCluster(y, x)
 
@@ -28,9 +35,44 @@ heatmap.ExClust.matrix <- function(x, y, ...)
 setMethod("heatmap", signature(x="ExClust", y="matrix"), heatmap.ExClust.matrix)
 
 
+heatmap.ExClust.sparseMatrix <- function(x, y, ...)
+{
+    if (all(dim(y) <= 1))
+        stop("'y' must be a non-empty similarity matrix")
+    else if (x@l != nrow(y))
+        stop("size of clustering result does not fit to size of data set")
+    else if (nrow(y) != ncol(y))
+        stop("similarity matrix must be quadratic")
+
+    aggres <- aggExCluster(y, x, includeSim=TRUE)
+
+    heatmap(aggres, aggres@sim, ...)
+
+    aggres@sim <- matrix(ncol=0, nrow=0)
+
+    return(invisible(aggres))
+}
+
+setMethod("heatmap", signature(x="ExClust", y="sparseMatrix"),
+          heatmap.ExClust.sparseMatrix)
+
+
+heatmap.ExClust.Matrix <- function(x, y, ...)
+{
+    y <- try(as(y, "matrix"))
+
+    if (class(y) == "try-error")
+        stop("cannot cast 'y' (class '", class(y), "') to class 'matrix'")
+
+    return(invisible(heatmap(x, y, ...)))
+}
+
+setMethod("heatmap", signature(x="ExClust", y="Matrix"), heatmap.ExClust.Matrix)
+
+
 heatmap.AggExResult <- function(x, y, ...)
 {
-    if(!identical(dim(x@sim), as.integer(c(1, 1))))
+    if (!all(dim(x@sim) <= 1))
         heatmap(x, x@sim, ...)
     else
         stop("similarity matrix is missing for heatmap plotting")
@@ -47,7 +89,7 @@ heatmap.AggExResult.matrix <- function(x, y, Rowv=TRUE, Colv=TRUE,
                                        cexCol=max(min(35 / ncol(y), 1), 0.1),
                                        main=NULL, dendScale=1, barScale=1, ...)
 {
-    if (identical(dim(y), as.integer(c(1, 1))))
+    if (all(dim(y) <= 1))
         stop("'y' must be a non-empty matrix")
     else if (x@l != nrow(y))
         stop("size of clustering result does not fit to size of data set")
@@ -232,6 +274,7 @@ heatmap.AggExResult.matrix <- function(x, y, Rowv=TRUE, Colv=TRUE,
 
 setMethod("heatmap", signature(x="AggExResult", y="matrix"),
           heatmap.AggExResult.matrix)
+
 
 setMethod("heatmap", signature(x="matrix", y="missing"),
           function(x, y, ...) stats::heatmap(x=x, ...))

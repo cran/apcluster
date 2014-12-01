@@ -22,7 +22,7 @@ setMethod("as.hclust", signature("AggExResult"),
 setMethod("as.hclust", signature("ExClust"),
           function(x, base=0.05, ...)
           {
-              if (identical(dim(x@sim), as.integer(c(1, 1))))
+              if (all(dim(x@sim) <= 1))
                   stop("similarity matrix not included in object")
 
               as.hclust(aggExCluster(x@sim, x, ...))
@@ -140,7 +140,7 @@ setMethod("as.dendrogram", signature("AggExResult"),
 setMethod("as.dendrogram", signature("ExClust"),
           function(object, base=0.05, useNames=TRUE, ...)
           {
-              if (identical(dim(object@sim), as.integer(c(1, 1))))
+              if (all(dim(x@sim) <= 1))
                   stop("similarity matrix not included in object")
 
               as.dendrogram(aggExCluster(object@sim, object, ...), base=base,

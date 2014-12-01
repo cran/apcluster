@@ -5,6 +5,8 @@
 \alias{aggExCluster-methods}
 \alias{aggExCluster,matrix,missing-method}
 \alias{aggExCluster,matrix,ExClust-method}
+\alias{aggExCluster,Matrix,missing-method}
+\alias{aggExCluster,Matrix,ExClust-method}
 \alias{aggExCluster,missing,ExClust-method}
 \alias{aggExCluster,function,ANY-method}
 \alias{aggExCluster,character,ANY-method}
@@ -15,6 +17,8 @@
 \usage{
 \S4method{aggExCluster}{matrix,missing}(s, x, includeSim=FALSE)
 \S4method{aggExCluster}{matrix,ExClust}(s, x, includeSim=FALSE)
+\S4method{aggExCluster}{Matrix,missing}(s, x, includeSim=FALSE)
+\S4method{aggExCluster}{Matrix,ExClust}(s, x, includeSim=FALSE)
 \S4method{aggExCluster}{missing,ExClust}(s, x, includeSim=TRUE)
 \S4method{aggExCluster}{function,ANY}(s, x, includeSim=TRUE, ...)
 \S4method{aggExCluster}{character,ANY}(s, x, includeSim=TRUE, ...)
@@ -102,6 +106,10 @@
   for a prior clustering, then labels are set to \sQuote{Cluster 1},
   \sQuote{Cluster 2}, etc.
 }
+\note{Similarity matrices can be supplied in dense or sparse
+  format. Note, however, that sparse matrices are converted to full
+  dense matrices before clustering which may lead to memory and/or
+  performance bottlenecks for larger data sets.}
 \value{
   Upon successful completion, the function returns an
   \code{\linkS4class{AggExResult}} object.

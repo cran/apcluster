@@ -15,3 +15,12 @@ setGeneric(name="heatmap",
 
 setGeneric(name="similarity",
            def=function(x, ...) standardGeneric("similarity"))
+
+setGeneric(name="preferenceRange",
+           def=function(s, ...) standardGeneric("preferenceRange"))
+
+setGeneric(name="as.SparseSimilarityMatrix",
+           def=function(s, ...) standardGeneric("as.SparseSimilarityMatrix"))
+
+setGeneric(name="as.DenseSimilarityMatrix",
+           def=function(s, ...) standardGeneric("as.DenseSimilarityMatrix"))

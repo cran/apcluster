@@ -3,8 +3,8 @@
 \alias{AggExResult-class}
 \alias{AggExResult}
 \alias{aggexresult}
-\alias{[,AggExResult-method}
-\alias{[[,AggExResult-method}
+\alias{[,AggExResult,index,missing,missing-method}
+\alias{[[,AggExResult,index,missing-method}
 \alias{length,AggExResult-method}
 \alias{similarity,AggExResult-method}
 

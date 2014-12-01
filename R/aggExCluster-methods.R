@@ -212,9 +212,36 @@ setMethod("aggExCluster", signature("matrix", "missing" ), aggExCluster.matrix)
 setMethod("aggExCluster", signature("matrix", "ExClust" ), aggExCluster.matrix)
 
 
+aggExCluster.Matrix <- function(s, x, includeSim=FALSE)
+{
+    if (is(s, "sparseMatrix"))
+    {
+        s <- as.SparseSimilarityMatrix(s)
+
+        rng <- range(s@x)
+
+        fill <- 2 * rng[1] - rng[2]
+
+        s <- as.DenseSimilarityMatrix(s, fill=fill)
+    }
+    else
+        s <- as.DenseSimilarityMatrix(s)
+
+    if (missing(x))
+        res <- aggExCluster(s, includeSim=includeSim)
+    else
+        res <- aggExCluster(s, x, includeSim=includeSim)
+
+    res
+}
+
+setMethod("aggExCluster", signature("Matrix", "missing" ), aggExCluster.Matrix)
+setMethod("aggExCluster", signature("Matrix", "ExClust" ), aggExCluster.Matrix)
+
+
 aggExCluster.Clust <- function(s, x, includeSim=TRUE)
 {
-    if (identical(dim(x@sim), as.integer(c(1, 1))))
+    if (all(dim(x@sim) <= 1))
         stop("similarity matrix not included in object")
 
     AggResultObj <- aggExCluster(x@sim, x)

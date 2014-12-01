@@ -270,7 +270,7 @@ apclusterL.function <- function(s, x, frac, sweeps, p=NA, q=NA,
             if (includeSim)
                 apresultObj@sim <- sim
             else
-                apresultObj@sim <- matrix(NA, 1, 1)
+                apresultObj@sim <- matrix(nrow=0, ncol=0)
         }
 
         sel <- sort(unique(apresultObj@idx)) ## CHECK!!!
