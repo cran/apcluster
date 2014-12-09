@@ -2,3 +2,5 @@
 - adapt aggExCluster() to sparse matrices
 - shift refinement of exemplars to C++ side (for dense similarity
   matrices)
+- change biological example in vignette such that it uses the kebabs package
+  instead of kernlab

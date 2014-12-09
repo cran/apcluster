@@ -109,7 +109,7 @@ RcppExport SEXP apclusterSparseC(SEXP iR, SEXP jR, SEXP valuesR, SEXP maxitsR,
         for (ii = 0; ii < N; ii++)
         {
             double max1 = -DBL_MAX, max2 = -DBL_MAX, avsim;
-            int yMax=0;
+            int yMax = 0;
             
             for (j = ind1s[ii]; j <= ind1e[ii]; j++)
             {
@@ -162,8 +162,9 @@ RcppExport SEXP apclusterSparseC(SEXP iR, SEXP jR, SEXP valuesR, SEXP maxitsR,
 	    for (j = ind2s[ii]; j <= ind2e[ii]; j++)
             {
                 temp1 = ind2[j];
+
                 double oldVal = A(temp1);
-                double newVal = auxsum - rp[j];;
+                double newVal = auxsum - rp[j];
                 
                 if (newVal > 0 && j != temp2)
                     newVal = 0;
@@ -206,16 +207,16 @@ RcppExport SEXP apclusterSparseC(SEXP iR, SEXP jR, SEXP valuesR, SEXP maxitsR,
 		tmpexpref = R_NaN;
 		
 		for (ii = 0; ii < N; ii++)
-		    tmpidx(ii) = R_NaN;
+		    tmpidx(ii) = R_NaInt;
 	    }
 	    else
 	    {
 		length = 0;
-		int discon = 0;
 		tmpnetsim = 0;
 		tmpdpsim  = 0;
 		tmpexpref = 0;
 		double maxSim = 0;
+		int discon = 0;
 
 		IntegerVector I_temp(N); 
 
@@ -229,11 +230,14 @@ RcppExport SEXP apclusterSparseC(SEXP iR, SEXP jR, SEXP valuesR, SEXP maxitsR,
 		    }
 		    else // non-exemplar points
 		    { 
-			tmpidx[ii] = R_NaN;  
-			temp1 = 0, temp2 = 0, length = 0;
+			tmpidx[ii] = R_NaInt;  
+			temp1 = 0;
+			temp2 = 0;
+			length = 0;
+			IntegerVector ee(N);
+
 			NumericVector temp_ss(N);
 			NumericVector temp_j(N);
-			IntegerVector ee(N);
 
 			for(j = ind1s[ii]; j <= ind1e[ii]; j++)
 			{
@@ -260,6 +264,7 @@ RcppExport SEXP apclusterSparseC(SEXP iR, SEXP jR, SEXP valuesR, SEXP maxitsR,
 			    for (int jj = 1; jj < length; jj++)
 			    {
 				temp1 = ee[jj];
+
 				if (temp_ss(temp1) > maxSim)
                                 {
                                     maxSim = temp_ss[temp1];
@@ -271,14 +276,18 @@ RcppExport SEXP apclusterSparseC(SEXP iR, SEXP jR, SEXP valuesR, SEXP maxitsR,
 			}
 		    }
 		}
+
 		I=I_temp;
+
 		// preference sum             
 		if (discon == 1)
 		{
-		    tmpnetsim = R_NaN, tmpdpsim  = R_NaN, tmpexpref = R_NaN;
+		    tmpnetsim = R_NaN;
+		    tmpdpsim  = R_NaN;
+		    tmpexpref = R_NaN;
 		    
 		    for (int jj = 0; jj < N; jj++)
-			tmpidx[jj] = R_NaN;
+			tmpidx[jj] = R_NaInt;
 		}
 		else
 		{
@@ -329,10 +338,15 @@ RcppExport SEXP apclusterSparseC(SEXP iR, SEXP jR, SEXP valuesR, SEXP maxitsR,
     
     if (K > 0)
     {
-        tmpnetsim = 0, tmpdpsim  = 0, tmpexpref = 0;
+        tmpnetsim = 0;
+	tmpdpsim  = 0;
+	tmpexpref = 0;
+
         double maxSim = 0;
 
-        for (ii = 0; ii < N; ii++) // first loop finds the tmpidx if the user ask for details we can skip this step and take the last tmpidx which already is computed
+	// first loop finds the tmpidx if the user ask for details we can
+	// skip this step and take the last tmpidx which already is computed
+        for (ii = 0; ii < N; ii++)
 	{
 	    if (E[ii])
 	    {            
@@ -340,7 +354,7 @@ RcppExport SEXP apclusterSparseC(SEXP iR, SEXP jR, SEXP valuesR, SEXP maxitsR,
 	    }
 	    else
 	    {
-                tmpidx[ii] = R_NaN;  
+                tmpidx[ii] = R_NaInt;  
                 NumericVector temp_ss(N);
                 NumericVector temp_j(N);
                 IntegerVector ee(N);
@@ -476,7 +490,7 @@ RcppExport SEXP apclusterSparseC(SEXP iR, SEXP jR, SEXP valuesR, SEXP maxitsR,
             }
 	    else
 	    {
-		tmpidx[ii] = R_NaN;  
+		tmpidx[ii] = R_NaInt;  
 		NumericVector temp_ss(N);
 		NumericVector temp_j(N);
 		IntegerVector ee(N);
@@ -540,7 +554,7 @@ RcppExport SEXP apclusterSparseC(SEXP iR, SEXP jR, SEXP valuesR, SEXP maxitsR,
 	tmpexpref = R_NaN;
 	
 	for (ii = 0; ii < N; ii++)
-            tmpidx(ii) = R_NaN;
+            tmpidx(ii) = R_NaInt;
     }
 
     if (details)

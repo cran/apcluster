@@ -1,6 +1,6 @@
-7429e5973858d70f78ca2aa140feca05 *DESCRIPTION
+28f88ad91b852a77173c0db0a7d2a622 *DESCRIPTION
 1715e726c9f9426ce67fb21d80abb3e0 *NAMESPACE
-5c509832f897bffdf7355c372f180aff *NEWS
+9eab79d95f2da854ef7f500535b0ece3 *NEWS
 15e2a8926029069370cbddc7689e1933 *R/AllClasses.R
 9368032ea24b762d440ea7e2dd4904fb *R/AllGenerics.R
 79fcb30e6202da02176b775ed1a66b4b *R/access-methods.R
@@ -22,13 +22,13 @@ adde0ebd660c4c8bfa73c70b833c688b *R/show-methods.R
 644a0a66aa2dbee14aa41cc1008ed659 *R/similarity.R
 6700d15bf361e677b77d52eb1a829980 *R/simpleDist.R
 4bf4b98618b2bfe598cc640c35bae301 *R/sort-methods.R
-68e7aa380aa9fe13700f4348371a9bac *TODO
+b38104ceb5899a36a33570df868917fb *TODO
 65fc4683d4c21a125c1cc2b50736aaed *build/vignette.rds
 ff829303cea815ba1ce1b843e7884f91 *data/ch22Promoters.RData
 af577c272e9b2fe46a3c3769d763b1ff *inst/CITATION
 25d6cd9909c7c5546b9c39c3633e2267 *inst/doc/apcluster.R
 bad7f02b9ef78f58d835b51118745d3b *inst/doc/apcluster.Rnw
-213d17660480eccca39aa9706f1e207e *inst/doc/apcluster.pdf
+851b895dc8d1ba5445aa65267b61ff8c *inst/doc/apcluster.pdf
 e0751ed26a7408cf3f0eceaddfd999a5 *man/APResult-class.Rd
 dee2106a80d7d5b1007cc4fae7036de0 *man/AggExResult-class.Rd
 45ad889ce2dcd8013651b52ae5f37c62 *man/ExClust-class.Rd
@@ -52,7 +52,7 @@ a8a4307db0bfb756227256bef31149e1 *man/similarities.Rd
 36ffe0c52b7ed46de04b935fbc5385e2 *man/sort-methods.Rd
 9609c476e7d6b962ec7bf1a019169a6b *src/apclusterC.cpp
 516506b768a1a4011bd94715b0014442 *src/apclusterLeveragedC.cpp
-774c6b3b6ce5571c3222107c4eec07c5 *src/apclusterSparseC.cpp
+f290de12f8f10fef631898bfb732a548 *src/apclusterSparseC.cpp
 2fd662b8329568e942b30c6a53b78f71 *src/distanceL.c
 b01f1fa9919a68f005f61b3c45243731 *src/preferenceRangeC.cpp
 0a378e070f40a6d233a04c2cb2dbcd80 *src/preferenceRangeSparseC.cpp

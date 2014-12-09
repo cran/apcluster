@@ -1,6 +1,9 @@
 Change history of package apcluster:
 ====================================
 
+Version 1.4.1.:
+- fixes in C++ code of sparse affinity propagation
+
 Version 1.4.0:
 - added apcluster() method for sparse similarity matrices;
   as a consequence, the package now imports the 'Matrix' package

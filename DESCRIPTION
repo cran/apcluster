@@ -1,8 +1,8 @@
 Package: apcluster
 Type: Package
 Title: Affinity Propagation Clustering
-Version: 1.4.0
-Date: 2014-12-01
+Version: 1.4.1
+Date: 2014-12-09
 Depends: R (>= 3.0.0)
 Imports: Rcpp (>= 0.11.1), methods, Matrix, stats, graphics
 Suggests: kernlab
@@ -28,6 +28,6 @@ URL: http://www.bioinf.jku.at/software/apcluster/
 LinkingTo: Rcpp
 LazyLoad: yes
 Repository: CRAN
-Packaged: 2014-12-01 17:30:01 UTC; bodenhof
+Packaged: 2014-12-09 09:01:53 UTC; bodenhof
 NeedsCompilation: yes
-Date/Publication: 2014-12-01 20:38:41
+Date/Publication: 2014-12-09 12:55:52
