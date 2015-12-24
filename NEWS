@@ -1,6 +1,16 @@
 Change history of package apcluster:
 ====================================
 
+Version 1.4.2:
+- switched sequence kernel example in vignette from 'kernlab' to 'kebabs'
+  package
+- workaround to ensure that all apcluster*() methods are able to process
+  'KernelMatrix' objects (cf. 'kebabs' package)
+- replaced data set 'ch22Promoters' by plain text file (FASTA format)
+  in inst/examples
+- bug fix in the heatmap() method
+- vignette engine changed from Sweave to knitr
+
 Version 1.4.1.:
 - fixes in C++ code of sparse affinity propagation
 

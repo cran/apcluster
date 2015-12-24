@@ -1,6 +1,5 @@
 \documentclass[article]{bioinf}
 
-\usepackage[noae]{Sweave}
 \usepackage{amsmath,amssymb}
 \usepackage{hyperref}
 
@@ -17,23 +16,23 @@ Linz\\Altenberger Str. 69, 4040 Linz, Austria\\
 \email{apcluster@bioinf.jku.at}}
 
 \newcommand{\APCluster}{\texttt{apcluster}}
+\newcommand{\KeBABS}{\texttt{kebabs}}
 \newcommand{\R}{R}
 \newcommand{\Real}{\mathbb{R}}
 
 \renewcommand{\vec}[1]{\mathbf{#1}}
 
-\setkeys{Gin}{width=0.55\textwidth}
-
-% \VignetteIndexEntry{An R Package for Affinity Propagation Clustering}
-% \VignetteDepends{methods, stats, graphics, utils}
-
-\SweaveOpts{eps=FALSE}
+%\VignetteIndexEntry{An R Package for Affinity Propagation Clustering}
+%\VignetteDepends{methods, stats, graphics, utils}
+%\VignetteEngine{knitr::knitr}
 
 \begin{document}
-<<Init,echo=FALSE>>=
-options(width=75)
+<<Init,echo=FALSE,message=FALSE,results='hide'>>=
+options(width=72)
+knitr::opts_knit$set(width=72)
 set.seed(0)
-library(apcluster)
+library(kebabs, quietly=TRUE)
+library(apcluster, quietly=TRUE)
 apclusterVersion <- packageDescription("apcluster")$Version
 apclusterDateRaw <- packageDescription("apcluster")$Date
 apclusterDateYear <- as.numeric(substr(apclusterDateRaw, 1, 4))
@@ -202,7 +201,7 @@ are considered.
 To get a first impression, let us create a random data set in
 $\Real^2$ as the union of two ``Gaussian clouds'':
 \begin{center}
-<<CreateDataSet1,fig=TRUE,echo=TRUE,width=5,height=5>>=
+<<CreateDataSet1,fig.width=5,fig.height=5.5,out.width='0.5\\textwidth'>>=
 cl1 <- cbind(rnorm(30, 0.3, 0.05), rnorm(30, 0.7, 0.04))
 cl2 <- cbind(rnorm(30, 0.7, 0.04), rnorm(30, 0.4, .05))
 x1 <- rbind(cl1, cl2)
@@ -243,7 +242,7 @@ apres1a
 The \APCluster\ package allows for plotting the
 original data set along with a clustering result:
 \begin{center}
-<<PlotResultAPClusterDataSet1,fig=TRUE,echo=TRUE,width=5,height=5>>=
+<<PlotResultAPClusterDataSet1,fig.width=5,fig.height=5.5,out.width='0.5\\textwidth'>>=
 plot(apres1a, x1)
 @
 \end{center}
@@ -253,7 +252,7 @@ exemplars with lines.
 
 A heatmap is plotted with \verb+heatmap()+:
 \begin{center}
-<<HeatmapResultAPClusterDataSet1,fig=TRUE,echo=TRUE,width=5,height=5>>=
+<<HeatmapResultAPClusterDataSet1,fig.width=7,fig.height=7,out.width='0.6\\textwidth'>>=
 heatmap(apres1a)
 @
 \end{center}
@@ -267,7 +266,7 @@ included (which is the default if \verb+apcluster()+ has been called on a
 similarity matrix directly), \verb+heatmap()+ must be called with the
 similarity matrix as second argument:
 \begin{center}
-<<HeatmapResultAPClusterDataSet1b,fig=TRUE,echo=TRUE,width=5,height=5>>=
+<<HeatmapResultAPClusterDataSet1b,fig.width=7,fig.height=7,out.width='0.6\\textwidth'>>=
 heatmap(apres1b, s1)
 @
 \end{center}
@@ -282,7 +281,7 @@ This option tells the algorithm to keep a detailed log about its progress.
 For example, this allows for plotting the three performance measures that AP
 uses internally for each iteration:
 \begin{center}
-<<PlotAPClusterDataSet1Details,fig=TRUE,echo=TRUE,width=6,height=4>>=
+<<PlotAPClusterDataSet1Details,fig.width=6,fig.height=4,out.width='0.5\\textwidth'>>=
 plot(apres1c)
 @
 \end{center}
@@ -332,7 +331,7 @@ preference to a certain quantile of the input similarities: resulting in the
 median for \verb+q=0.5+ and in the minimum for \verb+q=0+. As an example, let
 us add two more ``clouds'' to the data set from above:
 \begin{center}
-<<CreateDataSet2,fig=TRUE,echo=TRUE,width=5,height=5>>=
+<<CreateDataSet2,fig.width=5,fig.height=5.5,out.width='0.5\\textwidth'>>=
 cl3 <- cbind(rnorm(20, 0.50, 0.03), rnorm(20, 0.72, 0.03))
 cl4 <- cbind(rnorm(25, 0.50, 0.03), rnorm(25, 0.42, 0.04))
 x2 <- rbind(x1, cl3, cl4)
@@ -341,14 +340,14 @@ plot(x2, xlab="", ylab="", pch=19, cex=0.8)
 \end{center}
 For the default setting, we obtain the following result:
 \begin{center}
-<<APClusterDataSet2,fig=TRUE,echo=TRUE,width=5,height=5>>=
+<<APClusterDataSet2,fig.width=5,fig.height=5.5,out.width='0.5\\textwidth'>>=
 apres2a <- apcluster(negDistMat(r=2), x2)
 plot(apres2a, x2)
 @
 \end{center}
 For the minimum of input similarities, we obtain the following result:
 \begin{center}
-<<APClusterDataSet2q0,fig=TRUE,echo=TRUE,width=5,height=5>>=
+<<APClusterDataSet2q0,fig.width=5,fig.height=5.5,out.width='0.5\\textwidth'>>=
 apres2b <- apcluster(negDistMat(r=2), x2, q=0)
 plot(apres2b, x2)
 @
@@ -358,7 +357,7 @@ in this example which may be caused by the clear separation of the four
 clusters. If we increase input preferences, however, we can force AP to
 split the four clusters into smaller sub-clusters:
 \begin{center}
-<<PlotAPClusterDataSet2q08,fig=TRUE,echo=TRUE,width=5,height=5>>=
+<<PlotAPClusterDataSet2q08,fig.width=5,fig.height=5.5,out.width='0.5\\textwidth'>>=
 apres2c <- apcluster(negDistMat(r=2), x2, q=0.8)
 plot(apres2c, x2)
 @
@@ -376,7 +375,7 @@ apres2c@p
 As noted above already, we can produce a heatmap by calling \verb+heatmap()+
 for an \verb+APResult+ object:
 \begin{center}
-<<HeatmapResultAPClusterDataSet2q08,fig=TRUE,echo=TRUE,width=5,height=5>>=
+<<HeatmapResultAPClusterDataSet2q08,fig.width=7,fig.height=7,out.width='0.6\\textwidth'>>=
 heatmap(apres2c)
 @
 \end{center}
@@ -424,7 +423,7 @@ clouds into one cluster each). Analogously to \verb+apcluster()+,
 \verb+apclusterK()+ supports two variants --- it can either be called
 for a similarity measure and data or on a similarity matrix directly.
 \begin{center}
-<<APClusterKDataSet2,fig=TRUE,echo=TRUE,width=5,height=5>>=
+<<APClusterKDataSet2,fig.width=5,fig.height=5.5,out.width='0.5\\textwidth'>>=
 apres2d <- apclusterK(negDistMat(r=2), x2, K=2, verbose=TRUE)
 plot(apres2d, x2)
 @
@@ -432,7 +431,6 @@ plot(apres2d, x2)
 
 Now let us quickly consider a simple data set with more than two features. The
 notorious example is Fisher's iris data set:
-\setkeys{Gin}{width=\textwidth}
 <<IrisData1>>=
 data(iris)
 apIris1 <- apcluster(negDistMat(r=2), iris)
@@ -441,14 +439,13 @@ apIris1
 AP has identified \Sexpr{length(apIris1)} clusters. Since Version 1.3.2, the
 package also allows for superimposing clustering results in scatter plot matrices:
 \begin{center}
-<<IrisDataPlot1,fig=TRUE,echo=TRUE,width=10,height=10>>=
+<<IrisDataPlot1,fig.width=10,fig.height=10,out.width='\\textwidth'>>=
 plot(apIris1, iris)
 @
 \end{center}
 The heatmap looks as follows:
-\setkeys{Gin}{width=0.55\textwidth}
 \begin{center}
-<<IrisDataHeatmap1,fig=TRUE,echo=TRUE,width=5,height=5>>=
+<<IrisDataHeatmap1,fig.width=7,fig.height=7,out.width='0.6\\textwidth'>>=
 heatmap(apIris1)
 @
 \end{center}
@@ -461,16 +458,15 @@ apIris2
 @
 AP has identified \Sexpr{length(apIris2)} clusters. If we again superimpose them in
 the scatter plot matrix, we obtain the following:
-\setkeys{Gin}{width=\textwidth}
 \begin{center}
-<<IrisDataPlot,fig=TRUE,echo=TRUE,width=10,height=10>>=
+<<IrisDataPlot,fig.width=10,fig.height=10,out.width='\\textwidth'>>=
 plot(apIris2, iris)
 @
 \end{center}
 Finally, the heatmap looks as follows:
-\setkeys{Gin}{width=0.55\textwidth}
+
 \begin{center}
-<<IrisDataHeatmap2,fig=TRUE,echo=TRUE,width=5,height=5>>=
+<<IrisDataHeatmap2,fig.width=7,fig.height=7,out.width='0.6\\textwidth'>>=
 heatmap(apIris2)
 @
 \end{center}
@@ -503,7 +499,7 @@ the most basic information. Calling \verb+plot()+ on an object that
 was the result of \verb+aggExCluster()+ (an object of class
 \verb+AggExResult+), a dendrogram is plotted:
 \begin{center}
-<<DendrogramAggExClusterDataSet1,fig=TRUE,echo=TRUE,width=5,height=5>>=
+<<DendrogramAggExClusterDataSet1,fig.width=5,fig.height=5,out.width='0.5\\textwidth'>>=
 plot(aggres1a)
 @
 \end{center}
@@ -514,7 +510,7 @@ two clusters.
 Heatmaps can be produced analogously as for \verb+APResult+ objects with the
 additional property that dendrograms are displayed on the top and on the left:
 \begin{center}
-<<HeatmapAggExClusterDataSet1,fig=TRUE,echo=TRUE,width=5,height=5>>=
+<<HeatmapAggExClusterDataSet1,fig.width=7,fig.height=7,out.width='0.6\\textwidth'>>=
 heatmap(aggres1a, s1)
 @
 \end{center}
@@ -524,7 +520,7 @@ to the dendrogram and the heatmap above, we can extract the level with
 two clusters from the cluster hierarchy. In concordance with standard
 \R\ terminology, the function for doing this is called \verb+cutree()+:
 \begin{center}
-<<ExtractAggExClustersDataSet1,fig=TRUE,echo=TRUE,width=5,height=5>>=
+<<ExtractAggExClustersDataSet1,fig.width=5,fig.height=5.5,out.width='0.5\\textwidth'>>=
 cl1a <- cutree(aggres1a, k=2)
 cl1a
 plot(cl1a, x1)
@@ -555,7 +551,7 @@ The result \verb+apres2c+ had \Sexpr{length(apres2c)} clusters.
 cluster is left. The dendrogram of this cluster hierarchy is given as
 follows:
 \begin{center}
-<<DendrogramAggExAPDataSet2,fig=TRUE,echo=TRUE,width=5,height=5>>=
+<<DendrogramAggExAPDataSet2,fig.width=5,fig.height=5,out.width='0.5\\textwidth'>>=
 plot(aggres2a)
 @
 \end{center}
@@ -565,7 +561,7 @@ reduce the font size of
 the labels via the \verb+nodePar+ parameter (see \verb+?plot.dendrogram+ and the examples
 therein):
 \begin{center}
-<<DendrogramAggExAPDataSet2b,fig=TRUE,echo=TRUE,width=5,height=5>>=
+<<DendrogramAggExAPDataSet2b,fig.width=5,fig.height=5,out.width='0.5\\textwidth'>>=
 plot(aggres2a, showSamples=TRUE, nodePar=list(pch=NA, lab.cex=0.4))
 @
 \end{center}
@@ -575,7 +571,7 @@ above. This is not surprising, since the heatmap plot for an affinity
 propagation result uses \verb+aggExCluster()+ internally to arrange
 the clusters:
 \begin{center}
-<<HeatmapAggExAPDataSet2,fig=TRUE,echo=TRUE,width=5,height=5>>=
+<<HeatmapAggExAPDataSet2,fig.width=7,fig.height=7,out.width='0.6\\textwidth'>>=
 heatmap(aggres2a)
 @
 \end{center}
@@ -583,9 +579,8 @@ heatmap(aggres2a)
 Once we are more or less sure about the number of clusters, we extract
 the right clustering level from the hierarchy. For demonstation purposes,
 we do this for $k=5,\dots,2$ in the following plots:
-\setkeys{Gin}{width=1.0\textwidth}
 \begin{center}
-<<PlotAggExAPDataSet2k25,fig=TRUE,echo=TRUE,width=8,height=8>>=
+<<PlotAggExAPDataSet2k25,fig.width=8,fig.height=8,out.width='\\textwidth'>>=
 par(mfrow=c(2,2))
 for (k in 5:2)
     plot(aggres2a, x2, k=k, main=paste(k, "clusters"))
@@ -688,9 +683,8 @@ arguments of \verb+apclusterL()+ and arguments of the similarity function.
 
 Here is an example that makes use of a closure for defining the similarity
 measure:
-\setkeys{Gin}{width=0.55\textwidth}
 \begin{center}
-<<APClusterLevDataSet3,fig=TRUE,echo=TRUE,width=5,height=5>>=
+<<APClusterLevDataSet3,fig.width=5,fig.height=5.5,out.width='0.5\\textwidth'>>=
 cl5 <- cbind(rnorm(100, 0.3, 0.05), rnorm(100, 0.7, 0.04))
 cl6 <- cbind(rnorm(100, 0.70, 0.04), rnorm(100, 0.4, 0.05))
 x3 <- rbind(cl5, cl6)
@@ -723,9 +717,8 @@ leveraged AP looks slightly different compared to the heatmap for
 affinity propagation because the number of samples is different in both
 dimensions.
 
-\setkeys{Gin}{width=0.55\textwidth}
 \begin{center}
-<<APClusterLevDataSet3Heat,fig=TRUE,echo=TRUE,width=5,height=5>>=
+<<APClusterLevDataSet3Heat,fig.width=7,fig.height=7,out.width='0.6\\textwidth'>>=
 heatmap(apres3)
 @
 \end{center}
@@ -772,7 +765,7 @@ are -0.2 or lower. Note that this is only for demonstration purposes. If the siz
 data permits that, it is advisable to use the entire dense similarity matrix. Anyway,
 let us run sparse AP on this similarity matrix:
 \begin{center}
-<<SparseEx1Run,fig=TRUE,echo=TRUE,width=5,height=5>>=
+<<SparseEx1Run,fig.width=5,fig.height=5.5,out.width='0.5\\textwidth'>>=
 sapres <- apcluster(ssim, q=0)
 plot(sapres, x2)
 @
@@ -790,7 +783,7 @@ to handle sparse matrices. Note, however, that these functions are not yet explo
 sparsity properly. Instead, they convert all inputs to dense matrices before processing
 them, which may lead to memory and/or performance issues for large data sets.
 \begin{center}
-<<SparseEx1RunHeatmap,fig=TRUE,echo=TRUE,width=5,height=5>>=
+<<SparseEx1RunHeatmap,fig.width=7,fig.height=7,out.width='0.6\\textwidth'>>=
 heatmap(sapres, ssim)
 @
 \end{center}
@@ -821,9 +814,11 @@ gene. Suppose we want to cluster these sequences in order to find out whether
 groups of promoters can be identified on the basis of the sequence only and,
 if so, to identify exemplars that are most typical for these groups.
 <<LoadCh22Promoters>>=
-data(ch22Promoters)
-names(ch22Promoters)[1:5]
-substr(ch22Promoters[1:5], 951, 1000)
+library(Biostrings)
+filepath <- system.file("examples", "ch22Promoters.fasta",
+                        package="apcluster")
+ch22Promoters <- readDNAStringSet(filepath)
+ch22Promoters
 @
 Obviously, these are classical nucleotide sequences, each of which is identified
 by the RefSeq identifier of the gene the promoter sequence stems from.
@@ -831,16 +826,16 @@ by the RefSeq identifier of the gene the promoter sequence stems from.
 In order to compute a similarity matrix for this data set, we choose
 (without further justification, just for demonstration purposes) the
 simple {\em spectrum kernel} \cite{LeslieEskinNoble02} with a sub-sequence
-length of $k=6$. We use the implementation from the \verb+kernlab+ package
-\cite{KaratzoglouSmolaHornikZeileis04} to
+length of $k=6$. We use the implementation from the \KeBABS\ package
+\cite{PalmeHochreiterBodenhofer15} to
 compute the similarity matrix in a convenient way:
 <<SimCh22Promoters>>=
-library(kernlab)
-promSim <- kernelMatrix(stringdot(length=6, type="spectrum"), ch22Promoters)
-rownames(promSim) <- names(ch22Promoters)
-colnames(promSim) <- names(ch22Promoters)
+library(kebabs)
+specK6 <- spectrumKernel(k=6)
+promSim <- getKernelMatrix(specK6, ch22Promoters)
+promSim[1:4, 1:4]
 @
-Now we run affinity propagation on this similarity matrix:
+Now we run affinity propagation on the similarity matrix:
 <<APCh22Promoters>>=
 promAP <- apcluster(promSim, q=0)
 promAP
@@ -851,9 +846,8 @@ similarity matrix, as it is not included by default if \verb+apcluster()+
 is called with the similarity matrix; the reason is that, for large
 data sets, it is more memory-efficient not to make multiple copies of the
 similarity matrix; see also \ref{ssec:memeff}):
-\setkeys{Gin}{width=0.55\textwidth}
 \begin{center}
-<<HeatMapAPCh22Promoters,fig=TRUE,echo=TRUE,width=5,height=5>>=
+<<HeatMapAPCh22Promoters,fig.width=7,fig.height=7,out.width='0.6\\textwidth'>>=
 heatmap(promAP, promSim, Rowv=FALSE, Colv=FALSE)
 @
 \end{center}
@@ -863,7 +857,7 @@ promAgg <- aggExCluster(promSim, promAP)
 @
 The resulting dendrogram is given as follows:
 \begin{center}
-<<DendrogramAPCh22Promoters,fig=TRUE,echo=TRUE,width=5,height=5>>=
+<<DendrogramAPCh22Promoters,fig.width=5,fig.height=5,out.width='0.5\\textwidth'>>=
 plot(promAgg)
 @
 \end{center}
@@ -876,7 +870,7 @@ prom5
 @
 The final heatmap looks as follows:
 \begin{center}
-<<HeatMap5Ch22Promoters,fig=TRUE,echo=TRUE,width=5,height=5>>=
+<<HeatMap5Ch22Promoters,fig.width=7,fig.height=7,out.width='0.6\\textwidth'>>=
 heatmap(prom5, promSim, Rowv=FALSE, Colv=FALSE)
 @
 \end{center}
@@ -1143,26 +1137,18 @@ the similarity measure:
 spectrumK6 <- function(x, sel=NA)
 {
     if (any(is.na(sel)))
-    {
-        s <- kernelMatrix(stringdot(length=6, type="spectrum"), x)
-        rownames(s) <- names(x)
-        colnames(s) <- names(x)
-    }
+        s <- getKernelMatrix(specK6, x)
     else
-    {
-        s <- kernelMatrix(stringdot(length=6, type="spectrum"), x, x[sel])
-        rownames(s) <- names(x)
-        colnames(s) <- names(x)[sel]
-    }
+        s <- getKernelMatrix(specK6, x, x[sel])
 
-    s
+    as(s, "matrix")
 }
 @
 Now we run leveraged affinity propagation on the \verb+ch22Promoters+
 data set using this similarity measure
-<<APCh22Promoters>>=
+<<APCh22Promoters2>>=
 promAPL <- apclusterL(s=spectrumK6, ch22Promoters, frac=0.1, sweeps=10,
-                        p=promAP@p)
+                      p=promAP@p)
 promAPL
 @
 So we obtain \Sexpr{length(promAPL@exemplars)} clusters in total.
@@ -1294,16 +1280,16 @@ of the method has changed as follows:
 
 An example with vertical dendrogram switched off and an alternating color scheme:
 \begin{center}
-<<HeatmapResultAPClusterDataSetq08b,fig=TRUE,echo=TRUE,width=5,height=5>>=
+<<HeatmapResultAPClusterDataSetq08b,fig.width=7,fig.height=7,out.width='0.6\\textwidth'>>=
 heatmap(apres2c, sideColors=c("darkgreen", "yellowgreen"),
-        col=terrain.colors(12), Rowv=FALSE, dendScale=0.6)
+        col=terrain.colors(12), Rowv=FALSE, dendScale=0.5)
 @
 \end{center}
 
 The following example reverts to the default behavior prior to Version 1.3.1: consecutive
 rainbow colors, no dendrograms, and traditional sizing of row/column labels:
 \begin{center}
-<<HeatmapResultAPClusterDataSet2q08c,fig=TRUE,echo=TRUE,width=5,height=5>>=
+<<HeatmapResultAPClusterDataSet2q08c,fig.width=7,fig.height=7,out.width='0.6\\textwidth'>>=
 heatmap(apres2c, sideColors=rainbow(length(apres2c)), Rowv=FALSE, Colv=FALSE,
         cexRow=(0.2 + 1 / log10(nrow(apres2c@sim))),
         cexCol=(0.2 + 1 / log10(nrow(apres2c@sim))))
@@ -1326,7 +1312,7 @@ number of clusters in the \verb+APResult+ object. The following example shows ho
 plot a legend manually (with the clusters enumerated in the same way as in the \verb+APResult+
 object):
 \begin{center}
-<<PlotAddLegend,fig=TRUE>>=
+<<PlotAddLegend,fig.width=5,fig.height=5.5,out.width='0.5\\textwidth'>>=
 plot(apres2a, x2)
 legend("bottomleft", legend=paste("Cluster", 1:length(apres2a)),
        col=rainbow(length(apres2a)), pch=19)
@@ -1338,7 +1324,7 @@ In such a case, the user is rather recommended to create a legend separately
 (in a separate graphics device/file) and to display it along with the scatter plot matrix.
 To create only the legend, code like the following could be used:
 \begin{center}
-<<PlotOnlyLegend,fig=TRUE>>=
+<<PlotOnlyLegend,fig.width=5,fig.height=2.5,out.width='0.5\\textwidth'>>=
 plot.new()
 par(oma=rep(0, 4), mar=rep(0, 4))
 legend("center", legend=paste("Cluster", 1:length(apres2c)),
@@ -1365,6 +1351,20 @@ without using affinity propagation first.
 For real-world data sets, in particular,
 if they are large, we recommend to use affinity propagation first and then,
 if necessary, to use \verb+aggExCluster()+ to create a cluster hierarchy.
+
+\subsection{Using APCluster in Conjunction with KeBABS}
+
+The example in Section~\ref{sec:bioseq} makes use of the  \KeBABS\ package
+\cite{PalmeHochreiterBodenhofer15}. The two packages have been designed
+to work well with each other, but since they are covering quite different
+domains and are available from different repositories (\KeBABS\ is in
+Bioconductor, while \APCluster\ is in CRAN), we deliberately tried to
+avoid any hard dependencies. This trade-off between dependendence and independences
+could not be resolved perfectly. So, it is necessary to make sure that \KeBABS\
+is loaded before \APCluster\ to make sure that, for instance, the
+\verb+heatmap()+ function from the \APCluster\ package is not
+overridden by the \KeBABS\ package. In any case, we will try to
+eliminate these difficulties in future releases.
 
 \section{Special Notes for Users Upgrading from Previous Versions}
 
@@ -1401,6 +1401,20 @@ and extends \verb+sparseToFull()+.
 \section{Change Log}
 
 \begin{description}
+\item[Version 1.4.2:] \hfill
+\begin{itemize}
+\item switched sequence kernel example in vignette from \verb+kernlab+ to \KeBABS\ package
+\item workaround to ensure that all \verb+apcluster*()+ methods are able to process
+  \verb+KernelMatrix+ objects (cf. \KeBABS\ package)
+\item replaced data set \verb+ch22Promoters+ by plain text file (FASTA format)
+  in \verb+inst/examples+
+\item bug fix in the \verb+heatmap()+ method
+\item vignette engine changed from Sweave to knitr
+\end{itemize}
+\item[Version 1.4.1:] \hfill
+\begin{itemize}
+\item fixes in C++ code of sparse affinity propagation
+\end{itemize}
 \item[Version 1.4.0:] \hfill
 \begin{itemize}
 \item added \verb+apcluster()+ method for sparse similarity matrices;
@@ -1495,7 +1509,7 @@ and extends \verb+sparseToFull()+.
     \verb+AggExResult+, and \verb+ExClust+
   \item added accessor function to extract clustering levels from
     \verb+AggExResult+ objects
-  \item correction of exemplars returned by \verb+apcluster+ for
+  \item correction of exemplars returned by \APCluster\ for
     \verb+details=TRUE+ in slot \verb+idxAll+ of returned \verb+APResult+ object
   \item when using data stored in a data frame, categorical
     columns are now explicitly omitted, thereby, avoiding warnings
@@ -1530,7 +1544,7 @@ and extends \verb+sparseToFull()+.
 \item[Version 1.0.3:] \hfill
   \begin{itemize}
   \item Makefile in \verb+inst/doc+ eliminated to avoid installation problems
-  \item renamed vignette to ``\verb+apcluster+''
+  \item renamed vignette to ``\verb+apcluster.Rnw+''
   \end{itemize}
 \item[Version 1.0.2:] \hfill
   \begin{itemize}
@@ -1625,6 +1639,11 @@ R.\ S. Michalski and R.\ E. Stepp.
 \newblock Clustering.
 \newblock In S.\ C. Shapiro, editor, {\em Encyclopedia of artificial
   intelligence}, pages 168--176. John Wiley \& Sons, Chichester, 1992.
+
+\bibitem{PalmeHochreiterBodenhofer15}
+J.\ Palme, S.\ Hochreiter, and U.\ Bodenhofer.
+\newblock {KeBABS:} an R package for kernel-based analysis of biological sequences.
+\newblock {\em Bioinformatics}, 31(15):2574--2576, 2015.
 
 \bibitem{SchoelkopfSmola02}
 B.\ Sch\"olkopf and A.\ J. Smola.

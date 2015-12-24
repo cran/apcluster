@@ -3,10 +3,15 @@ useDynLib(apcluster)
 import("methods")
 
 importFrom("graphics",
-           "plot")
+           "plot", "axis", "frame", "layout", "legend", "lines",
+           "pairs", "par", "points", "segments", "title")
+
+importFrom("grDevices", "dev.flush", "dev.hold", "rainbow")
 
 importFrom("stats",
-           "cutree", "heatmap", "as.hclust", "as.dendrogram")
+           "cutree", "heatmap", "as.hclust", "as.dendrogram",
+           "cor", "median", "order.dendrogram", "quantile",
+           "rnorm", "runif")
 
 importFrom("Rcpp", "evalCpp")
 

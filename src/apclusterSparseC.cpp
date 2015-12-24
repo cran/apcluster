@@ -254,7 +254,7 @@ RcppExport SEXP apclusterSparseC(SEXP iR, SEXP jR, SEXP valuesR, SEXP maxitsR,
 			    temp2++;
 			}
                      
-			if (length==0)
+			if (length == 0)
 			    discon = 1;
 			else
 			{

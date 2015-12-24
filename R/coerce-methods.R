@@ -140,7 +140,7 @@ setMethod("as.dendrogram", signature("AggExResult"),
 setMethod("as.dendrogram", signature("ExClust"),
           function(object, base=0.05, useNames=TRUE, ...)
           {
-              if (all(dim(x@sim) <= 1))
+              if (all(dim(object@sim) <= 1))
                   stop("similarity matrix not included in object")
 
               as.dendrogram(aggExCluster(object@sim, object, ...), base=base,

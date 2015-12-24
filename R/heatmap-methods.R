@@ -246,7 +246,7 @@ heatmap.AggExResult.matrix <- function(x, y, Rowv=TRUE, Colv=TRUE,
              cex.axis=cexRow)
 
     if (!missing(add.expr))
-        eval(substitute(add.expr))
+        eval.parent(substitute(add.expr))
 
     par(mar=c(margins[1], 0, 0, 0))
 

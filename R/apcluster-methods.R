@@ -39,10 +39,24 @@ apcluster.matrix <- function(s, x, p=NA, q=NA, maxits=1000, convits=100,
     # If argument p is not given, p is set to median of s
     if (any(is.na(p)))
     {
-        if (is.na(q))
-            p <- median(s[setdiff(which(s > -Inf), 0:(N - 1) * N + 1:N)])
+        if (is(s, "KernelMatrix"))
+        {
+            if (is.na(q))
+                p <- median(as.vector(s)[setdiff(which(s > -Inf),
+                                                 0:(N - 1) * N + 1:N)])
+            else
+                p <- quantile(as.vector(s)[setdiff(which(s > -Inf),
+                                                   0:(N - 1) * N + 1:N)], q)
+        }
         else
-            p <- quantile(s[setdiff(which(s > -Inf), 0:(N - 1) * N + 1:N)], q)
+        {
+            if (is.na(q))
+                p <- median(s[setdiff(which(s > -Inf),
+                                      0:(N - 1) * N + 1:N)])
+            else
+                p <- quantile(s[setdiff(which(s > -Inf),
+                                        0:(N - 1) * N + 1:N)], q)
+        }
     }
 
     apresultObj@l <- N
