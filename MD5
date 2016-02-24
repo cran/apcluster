@@ -1,6 +1,6 @@
-e8ee4c0c3edb1d27a9fbd313baa858b7 *DESCRIPTION
-3bbc1cfed7b084d400a37c776867d051 *NAMESPACE
-f97c0471f05c0fb3bc83307892f6860e *NEWS
+75644893bd903d134673760cc617f8ec *DESCRIPTION
+fbb73aa11f70a7de92cd2ae5b1099ccf *NAMESPACE
+59392a3379efa8dc31eab37580e7777d *NEWS
 15e2a8926029069370cbddc7689e1933 *R/AllClasses.R
 9368032ea24b762d440ea7e2dd4904fb *R/AllGenerics.R
 79fcb30e6202da02176b775ed1a66b4b *R/access-methods.R
@@ -12,7 +12,7 @@ ef7914bb90339624026825dd1ccdee7c *R/apclusterK-methods.R
 440d26e730c2e5f67cade347e36389c3 *R/coerce-methods.R
 a4adfdf2bff89534d31d3af6680199b9 *R/conversions.R
 1abcdec975db5aaa2d63ffe7768c3406 *R/cutree-methods.R
-500908775d1090218064c1b263b73c7f *R/heatmap-methods.R
+4701c406bb53eec612a2e09c9aff481d *R/heatmap-methods.R
 b542abbc42500368b45f26b98c064abe *R/labels-methods.R
 a33e8f5c04f5862182e08f97abf29875 *R/length-methods.R
 24d9e15ff4844e4748336a6f3c2373c7 *R/plot-methods.R
@@ -25,9 +25,9 @@ adde0ebd660c4c8bfa73c70b833c688b *R/show-methods.R
 b38104ceb5899a36a33570df868917fb *TODO
 27ba7a61bc716fef06fa9f0d89c2a832 *build/vignette.rds
 af577c272e9b2fe46a3c3769d763b1ff *inst/CITATION
-40f9274fcfce5f115953c3026c30a40b *inst/doc/apcluster.R
-3e6d322e6fa6277bb897876dbf039b3f *inst/doc/apcluster.Rnw
-e53a7380d55ee6a5b4ffbf7f50c4a7ac *inst/doc/apcluster.pdf
+40087c9edf5002ca96d9409bcaea483b *inst/doc/apcluster.R
+d310575fde1b47ef2345c3f80beea653 *inst/doc/apcluster.Rnw
+aa03ca9f8ad197a04cf9fce3d5a3522c *inst/doc/apcluster.pdf
 474a3b90926f3863e5447f805f7f5436 *inst/examples/ch22Promoters.fasta
 e0751ed26a7408cf3f0eceaddfd999a5 *man/APResult-class.Rd
 dee2106a80d7d5b1007cc4fae7036de0 *man/AggExResult-class.Rd
@@ -43,7 +43,7 @@ cd6e18f24ca365bb27003daf3030c6f0 *man/ch22Promoters.Rd
 6e011c3e4dfaddf521f6e4629724ccc8 *man/coerce-methods.Rd
 2a8d9814d388afa34fddda122287ed27 *man/conversions.Rd
 a77bb2f6cb951cf1a34a30a0299760ed *man/cutree-methods.Rd
-24b661c79a2390db3b67ccbe0e392b4f *man/heatmap-methods.Rd
+2748d00a485a57022cad3801b17dea3c *man/heatmap-methods.Rd
 26b9d1b73803ad918db6f444791e1180 *man/labels-methods.Rd
 23d01685c365994884d01b34f992a797 *man/plot-methods.Rd
 d48bcb8e5f0996292018a4df9691556e *man/preferenceRange-methods.Rd
@@ -56,7 +56,7 @@ a8a4307db0bfb756227256bef31149e1 *man/similarities.Rd
 2fd662b8329568e942b30c6a53b78f71 *src/distanceL.c
 b01f1fa9919a68f005f61b3c45243731 *src/preferenceRangeC.cpp
 0a378e070f40a6d233a04c2cb2dbcd80 *src/preferenceRangeSparseC.cpp
-3e6d322e6fa6277bb897876dbf039b3f *vignettes/apcluster.Rnw
+d310575fde1b47ef2345c3f80beea653 *vignettes/apcluster.Rnw
 0ee0d701f61a0631126fa8837ef470cc *vignettes/bioinf-article.txi
 796c822a42721e608226ad8b86954533 *vignettes/bioinf-bar.png
 77293f75be8adbccf75cdcaaac9c3e99 *vignettes/bioinf.cls

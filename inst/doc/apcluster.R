@@ -322,7 +322,8 @@ labels(apres3a, type="enum")
 
 ## ----HeatmapResultAPClusterDataSetq08b,fig.width=7,fig.height=7,out.width='0.6\\textwidth'----
 heatmap(apres2c, sideColors=c("darkgreen", "yellowgreen"),
-        col=terrain.colors(12), Rowv=FALSE, dendScale=0.5)
+        col=terrain.colors(12), Rowv=FALSE, dendScale=0.5,
+        margins=c(3, 3, 2), legend="col")
 
 ## ----HeatmapResultAPClusterDataSet2q08c,fig.width=7,fig.height=7,out.width='0.6\\textwidth'----
 heatmap(apres2c, sideColors=rainbow(length(apres2c)), Rowv=FALSE, Colv=FALSE,

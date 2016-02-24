@@ -1,6 +1,11 @@
 Change history of package apcluster:
 ====================================
 
+Version 1.4.3:
+- added optional color legend to heatmap plotting; in line with this
+  change, some minor changes to the interface of the heatmap() function
+- corresponding updates of help pages and vignette
+
 Version 1.4.2:
 - switched sequence kernel example in vignette from 'kernlab' to 'kebabs'
   package

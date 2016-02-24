@@ -21,10 +21,11 @@
 \S4method{heatmap}{ExClust,sparseMatrix}(x, y, ...)
 \S4method{heatmap}{AggExResult,missing}(x, y, ...)
 \S4method{heatmap}{AggExResult,matrix}(x, y, Rowv=TRUE, Colv=TRUE,
-    sideColors=NULL, base=0.05,  add.expr, margins=c(5, 5),
+    sideColors=NULL, col=heat.colors(12),
+    base=0.05,  add.expr, margins=c(5, 5, 2),
     cexRow=max(min(35 / nrow(y), 1), 0.1),
     cexCol=max(min(35 / ncol(y), 1), 0.1), main=NULL, dendScale=1,
-    barScale=1, ...)
+    barScale=1, legend=c("none", "col"), ...)
 \S4method{heatmap}{matrix,missing}(x, y, ...)
 \S4method{heatmap}{missing,matrix}(x, y, ...)
 }
@@ -51,6 +52,8 @@
      In this case, the \code{\link{rainbow}} function is used to
      compute the vector of colors which is shuffled such that dissimilar
      colors are placed next to each other in the color bar.}
+   \item{col}{color ramp used for the heatmap image; see
+     \code{\link[graphics:image]{image}}}
    \item{Rowv}{determines whether or not a row dendrogram should be
      plotted. If \code{FALSE} or \code{NA}, no row dendrogram is
      plotted. In any other
@@ -68,7 +71,11 @@
     dendrograms; see \code{\link[apcluster:coerce-methods]{coerce-methods}}.}
   \item{add.expr,margins,cexRow,cexCol,main}{largely analogous to the standard
     \code{\link[stats:heatmap]{heatmap}} function; to omit row/column
-    labeling, set \code{cexRow}/\code{cexCol} to \code{0}.}
+    labeling, set \code{cexRow}/\code{cexCol} to \code{0}.
+    The default for \code{margins} is a vector of length 3, where the
+    third element is the right-hand side margin for the color legend
+    (see \code{legend} argument). It remains unused (and can also be
+    omitted) if no color legend is plotted.}
   \item{dendScale}{factor scaling the width of vertical and height of
     horizontal dendrograms; values have to be larger than 0 and no
     larger than 2. The default is 1 which corresponds to the same size
@@ -78,6 +85,10 @@
     be larger than 0 and no larger than 4. The default is 1 which
     corresponds to half the width of the color bars plot by the standard
     \code{\link[stats:heatmap]{heatmap}} function}
+  \item{legend}{if \code{"col"}, then a color legend similar to 
+    \code{\link[graphics:filled.contour]{filled.contour}} is added on
+    the right-hand side of the heatmap plot; if \code{"none"} (default),
+    no such legend is added.}
   \item{...}{see details below}
 }
 \details{

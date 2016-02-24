@@ -1277,12 +1277,15 @@ of the method has changed as follows:
     labels can even be switched off
     entirely by setting \verb+cexRow+ and \verb+cexCol+ to 0, respectively.
 \end{itemize}
+Moreover, with Version~1.4.3, the possibility to add a color legend has been integrated.
 
-An example with vertical dendrogram switched off and an alternating color scheme:
+Here is an example with the vertical dendrogram switched off, an alternate color scheme,
+custom margins, and a color legend:
 \begin{center}
 <<HeatmapResultAPClusterDataSetq08b,fig.width=7,fig.height=7,out.width='0.6\\textwidth'>>=
 heatmap(apres2c, sideColors=c("darkgreen", "yellowgreen"),
-        col=terrain.colors(12), Rowv=FALSE, dendScale=0.5)
+        col=terrain.colors(12), Rowv=FALSE, dendScale=0.5,
+        margins=c(3, 3, 2), legend="col")
 @
 \end{center}
 
@@ -1401,6 +1404,12 @@ and extends \verb+sparseToFull()+.
 \section{Change Log}
 
 \begin{description}
+\item[Version 1.4.3:] \hfill
+\begin{itemize}
+\item added optional color legend to heatmap plotting; in line with this
+  change, some minor changes to the interface of the \verb+heatmap()+ function
+\item corresponding updates of help pages and vignette
+\end{itemize}
 \item[Version 1.4.2:] \hfill
 \begin{itemize}
 \item switched sequence kernel example in vignette from \verb+kernlab+ to \KeBABS\ package

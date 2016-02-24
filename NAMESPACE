@@ -6,7 +6,7 @@ importFrom("graphics",
            "plot", "axis", "frame", "layout", "legend", "lines",
            "pairs", "par", "points", "segments", "title")
 
-importFrom("grDevices", "dev.flush", "dev.hold", "rainbow")
+importFrom("grDevices", "dev.flush", "dev.hold", "rainbow", "heat.colors")
 
 importFrom("stats",
            "cutree", "heatmap", "as.hclust", "as.dendrogram",

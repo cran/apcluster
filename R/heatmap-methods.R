@@ -83,11 +83,13 @@ setMethod("heatmap", signature(x="AggExResult", y="missing"),
 
 
 heatmap.AggExResult.matrix <- function(x, y, Rowv=TRUE, Colv=TRUE,
-                                       sideColors=NULL,
-                                       base=0.05, add.expr, margins=c(5, 5),
+                                       sideColors=NULL, col=heat.colors(12),
+                                       base=0.05, add.expr, margins=c(5, 5, 2),
                                        cexRow=max(min(35 / nrow(y), 1), 0.1),
                                        cexCol=max(min(35 / ncol(y), 1), 0.1),
-                                       main=NULL, dendScale=1, barScale=1, ...)
+                                       main=NULL, dendScale=1, barScale=1,
+                                       legend=c("none", "col"),
+                                       ...)
 {
     if (all(dim(y) <= 1))
         stop("'y' must be a non-empty matrix")
@@ -98,6 +100,8 @@ heatmap.AggExResult.matrix <- function(x, y, Rowv=TRUE, Colv=TRUE,
     else if (length(x@sel) > 0 && ncol(y) != length(x@sel))
         stop("no. of columns in 'y' and no. of selected samples in 'x' ",
              "do not match")
+
+    legend <- match.arg(legend)
 
     rowInd <- unlist(x@clusters[[x@maxNoClusters]][x@order])
 
@@ -217,6 +221,12 @@ heatmap.AggExResult.matrix <- function(x, y, Rowv=TRUE, Colv=TRUE,
 
     lmat[is.na(lmat)] <- 0
 
+    if (legend != "none")
+    {
+        lmat <- cbind(lmat, c(rep(0, nrow(lmat) - 1), max(lmat) + 1))
+        lwid <- c(lwid, 0.25)
+    }
+
     dev.hold()
     on.exit(dev.flush())
     op <- par(no.readonly=TRUE)
@@ -235,7 +245,7 @@ heatmap.AggExResult.matrix <- function(x, y, Rowv=TRUE, Colv=TRUE,
 
     image(1:ncol(y), 1:nrow(y), t(y[rev(rowInd), colInd]),
           xlim=(0.5 + c(0, ncol(y))), ylim=(0.5 + c(0, nrow(y))),
-          axes=FALSE, xlab="", ylab="", ...)
+          axes=FALSE, xlab="", ylab="", col=col, ...)
 
     if (cexCol > 0)
         axis(1, 1:ncol(y), labels=labCol, las=2, line=-0.5, tick=0,
@@ -260,13 +270,25 @@ heatmap.AggExResult.matrix <- function(x, y, Rowv=TRUE, Colv=TRUE,
 
     if (doCdend)
         plot(dend, axes=FALSE, xaxs="i", leaflab="none")
-    else if (!is.null(main))
+    else
         frame()
 
     if (!is.null(main))
     {
         par(xpd=NA)
         title(main, cex.main=(1.5 * op[["cex.main"]]))
+    }
+
+    if (legend != "none")
+    {
+        par(mar=c(margins[1], 0, 0, margins[3]))
+
+        rng <- range(y)
+        colvals <- seq(rng[1], rng[2], length.out=length(col))
+
+        image(y=colvals, z=rbind(colvals),
+              col=col, axes=FALSE, xlab="", ylab="")
+        axis(4)
     }
 
     return(invisible(dend))
