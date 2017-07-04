@@ -32,7 +32,7 @@ setMethod("as.dendrogram", signature("AggExResult"),
           function(object, base=0.05, useNames=TRUE)
           {
               if (object@maxNoClusters < 2)
-                  stop("cannot create 'hclust' object with less than 2 objects")
+                  stop("cannot create 'dendrogram' object with less than 2 objects")
 
               if (base < 0 || base >= 1)
                   stop("'base' must be at least 0 and smaller than 1")
@@ -46,7 +46,8 @@ setMethod("as.dendrogram", signature("AggExResult"),
 
               topLevel <- object@clusters[[object@maxNoClusters]]
 
-              if (length(names(object@exemplars)) == 0 || !useNames)
+              if (length(names(object@exemplars[[object@maxNoClusters]])) == 0
+                  || !useNames)
                   topLevel <- lapply(object@clusters[[object@maxNoClusters]],
                                      as.character)
               else

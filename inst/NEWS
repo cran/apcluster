@@ -1,6 +1,17 @@
 Change history of package apcluster:
 ====================================
 
+Version 1.4.4:
+- changed dependency to suggested package 'kebabs' to version of
+  at least 1.5.4 for improved interoperability
+- bug fix in as.dendrogram() method with signature 'AggExResult'
+- added discrepancy metric to distance computations and updated
+  src/distanceL.c to new version
+- registered C/C++ subroutines
+- minor change in the vignette template
+- moved NEWS to inst/NEWS
+- added inst/COPYRIGHT
+
 Version 1.4.3:
 - added optional color legend to heatmap plotting; in line with this
   change, some minor changes to the interface of the heatmap() function

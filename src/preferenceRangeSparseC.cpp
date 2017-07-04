@@ -2,6 +2,9 @@
 #include <float.h>
 #include <Rcpp.h>
 
+#include "apclusterCppHeaders.h"
+
+
 using namespace Rcpp;
 
 

@@ -3,6 +3,8 @@
 #include <Rcpp.h>
 #include <R_ext/Utils.h>
 
+#include "apclusterCppHeaders.h"
+
 using namespace Rcpp;
 
 

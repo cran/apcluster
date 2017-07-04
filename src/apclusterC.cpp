@@ -2,6 +2,8 @@
 #include <float.h>
 #include <Rcpp.h>
 
+#include "apclusterCppHeaders.h"
+
 using namespace Rcpp;
 
 RcppExport SEXP apclusterC(SEXP sR, SEXP maxitsR, SEXP convitsR,

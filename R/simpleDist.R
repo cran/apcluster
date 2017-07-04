@@ -12,8 +12,8 @@ simpleDist <- function(x, sel, method="euclidean", p=2)
     if(!is.na(pmatch(method, "euclidian")))
 	method <- "euclidean"
 
-    METHODS <- c("euclidean", "maximum",
-		 "manhattan", "canberra", "binary", "minkowski")
+    METHODS <- c("euclidean", "maximum", "manhattan", "canberra", "binary",
+                 "minkowski", "discrepancy")
     method <- pmatch(method, METHODS)
     if(is.na(method))
 	stop("invalid distance method")

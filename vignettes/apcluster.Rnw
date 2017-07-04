@@ -939,6 +939,11 @@ d(\vec{x},\vec{y})=\left(\sum\limits_{i=1}^n (x_i-y_i)^p\right)^{\frac{1}{p}}
 use \verb+method="minkowski"+ and specify $p$ using the additional argument
 $\verb+p+$ (default is \verb+p=2+, resulting in the standard Euclidean
 distance);
+\item[Discrepancy:]
+\[
+d(\vec{x},\vec{y})=\max\limits_{1\leq\alpha\leq\beta\leq n}\left|\sum\limits_{i=\alpha}^{\beta} (y_i-x_i)\right|
+\]
+use \verb+method="discrepancy"+ \cite{Weyl16}.
 \end{description}
 
 The function \verb+negDistMat()+ then takes the distances computed with one of the
@@ -953,7 +958,7 @@ obtain negative squared distances as in the examples in previous sections.
 Here are some examples:
 <<CreateToyData>>=
 ex <- matrix(c(0, 0.5, 0.8, 1, 0, 0.2, 0.5, 0.7,
-               0.1, 0, 1, 0.3, 1, 0.8, 0.2), 5, 3,byrow=TRUE)
+               0.1, 0, 1, 0.3, 1, 0.8, 0.2), 5, 3, byrow=TRUE)
 ex
 @
 Standard Euclidean distance:
@@ -988,6 +993,33 @@ examples:
 sim <- negDistMat(r=2)
 is.function(sim)
 apcluster(sim, x1)
+@
+
+Depending on the application, it might be advisable to center and/or scale the
+data in order to equalize the influence of all features/columns. This makes
+sense for standard vector space distances like the Euclidean distance and can
+easily be accomplished by the \verb+scale()+ method. The discrepancy distance,
+in contrast, is strongly dependent on the order to feature/columns and is rather
+aimed at comparing signals. For this measure, therefore, row-wise centering can
+be advisable \cite{BauerBodenhoferKlement96c}. This is easily done with the
+\verb+sweep()+ function:
+<<DiscrepancyDistToyData,fig.width=6,fig.height=4.5,out.width='0.6\\textwidth'>>=
+ex2 <- matrix(c(0, 0, 1, 1, 1, 0, 0, 0,
+                0, 0, 0, 0, 0, 1, 1, 0,
+                0, 1, 0, 1, 0, 1, 0, 1), 3, 8, byrow=TRUE)
+
+matplot(t(ex2), ylab="")
+matlines(t(ex2), type="s")
+
+negDistMat(ex2, method="discrepancy")
+
+ex2Scaled <- sweep(ex2, 1, rowMeans(ex2))
+ex2Scaled
+
+matplot(t(ex2Scaled), ylab="")
+matlines(t(ex2Scaled), type="s")
+
+negDistMat(ex2Scaled, method="discrepancy")
 @
 
 \subsection{Other similarity measures}
@@ -1358,16 +1390,13 @@ if necessary, to use \verb+aggExCluster()+ to create a cluster hierarchy.
 \subsection{Using APCluster in Conjunction with KeBABS}
 
 The example in Section~\ref{sec:bioseq} makes use of the  \KeBABS\ package
-\cite{PalmeHochreiterBodenhofer15}. The two packages have been designed
-to work well with each other, but since they are covering quite different
-domains and are available from different repositories (\KeBABS\ is in
-Bioconductor, while \APCluster\ is in CRAN), we deliberately tried to
-avoid any hard dependencies. This trade-off between dependendence and independences
-could not be resolved perfectly. So, it is necessary to make sure that \KeBABS\
-is loaded before \APCluster\ to make sure that, for instance, the
-\verb+heatmap()+ function from the \APCluster\ package is not
-overridden by the \KeBABS\ package. In any case, we will try to
-eliminate these difficulties in future releases.
+\cite{PalmeHochreiterBodenhofer15}. In previous versions, the two packages
+defined the \verb+heatmap()+ methods as S4 generics in conflicting ways.
+For this reason, the order in which the two packages were loaded mattered,
+and the \verb+heatmap()+ methods of the package that was loaded first
+was no longer available. This conflict has been resolved with \KeBABS\
+development version 1.5.4. The first official release solving this issue was
+1.6.0, which was released as part of Bioconductor 3.3 on May 4, 2016.
 
 \section{Special Notes for Users Upgrading from Previous Versions}
 
@@ -1404,6 +1433,18 @@ and extends \verb+sparseToFull()+.
 \section{Change Log}
 
 \begin{description}
+\item[Version 1.4.4:] \hfill
+\begin{itemize}
+\item changed dependency to suggested package \verb+kebabs+ to version of
+  at least 1.5.4 for improved interoperability
+\item bug fix in \verb+as.dendrogram()+ method with signature `\verb+AggExResult+'
+\item added discrepancy metric to distance computations and updated
+  \verb+src/distanceL.c+ to new version
+\item registered C/C++ subroutines
+\item minor change in the vignette template
+\item moved \verb+NEWS+ to \verb+inst/NEWS+
+\item added \verb+inst/COPYRIGHT+
+\end{itemize}
 \item[Version 1.4.3:] \hfill
 \begin{itemize}
 \item added optional color legend to heatmap plotting; in line with this
@@ -1588,84 +1629,8 @@ into your R session:
 toBibtex(citation("apcluster"))
 @
 
-%\bibliographystyle{plain}
-%\bibliography{BodenhoferPub,Bioinformatics,MachineLearningClassical,%
-%MathematicsMisc,FuzzySetsRelations,ComputerScienceMisc}
-
-\begin{thebibliography}{10}
-
-\bibitem{BodenhoferKothmeierHochreiter11}
-U.\ Bodenhofer, A.\ Kothmeier, and S.\ Hochreiter.
-\newblock {APCluster:} an {R} package for affinity propagation clustering.
-\newblock {\em Bioinformatics}, 27(17):2463--2464, 2011.
-
-\bibitem{DeBaetsMesiar02}
-B.\ {De Baets} and R.\ Mesiar.
-\newblock Metrics and {$T$}-equalities.
-\newblock {\em J. Math. Anal. Appl.}, 267:531--547, 2002.
-
-\bibitem{EddelbuettelFrancois11}
-D.\ Eddelbuettel and R.\ Fran\c{c}ois.
-\newblock Rcpp: seamless {R} and {C++} integration.
-\newblock {\em J. Stat. Softw.}, 40(8):1--18, 2011.
-
-\bibitem{FitzGeraldMicchelliPinkus95}
-C.\ H. FitzGerald, C.\ A. Micchelli, and A.\ Pinkus.
-\newblock Functions that preserve families of positive semidefinite matrices.
-\newblock {\em Linear Alg. Appl.}, 221:83--102, 1995.
-
-\bibitem{FreyDueck07}
-B.\ J. Frey and D.\ Dueck.
-\newblock Clustering by passing messages between data points.
-\newblock {\em Science}, 315(5814):972--976, 2007.
-
-\bibitem{JainMurtyFlynn99}
-A.\ K. Jain, M.\ N. Murty, and P.\ J. Flynn.
-\newblock Data clustering: a review.
-\newblock {\em ACM Comput. Surv.}, 31(3):264--323, 1999.
-
-\bibitem{KaratzoglouSmolaHornikZeileis04}
-A.\ Karatzoglou, A.\ Smola, K.\ Hornik, and A.\ Zeileis.
-\newblock kernlab -- an {S4} package for kernel methods in {R}.
-\newblock {\em J. Stat. Softw.}, 11(9):1--20, 2004.
-
-\bibitem{LeslieEskinNoble02}
-C.\ Leslie, E.\ Eskin, and W.\ S. Noble.
-\newblock The spectrum kernel: a string kernel for {SVM} protein
-  classification.
-\newblock In R.\ B. Altman, A.\ K. Dunker, L.\ Hunter, K.\ Lauderdale, and T.\ E.\ D.
-  Klein, editors, {\em Pacific Symposium on Biocomputing 2002}, pages 566--575.
-  World Scientific, 2002.
-
-\bibitem{Micchelli86}
-C.\ A. Micchelli.
-\newblock Interpolation of scattered data: Distance matrices and conditionally
-  positive definite functions.
-\newblock {\em Constr. Approx.}, 2:11--22, 1986.
-
-\bibitem{MichalskiStepp92}
-R.\ S. Michalski and R.\ E. Stepp.
-\newblock Clustering.
-\newblock In S.\ C. Shapiro, editor, {\em Encyclopedia of artificial
-  intelligence}, pages 168--176. John Wiley \& Sons, Chichester, 1992.
-
-\bibitem{PalmeHochreiterBodenhofer15}
-J.\ Palme, S.\ Hochreiter, and U.\ Bodenhofer.
-\newblock {KeBABS:} an R package for kernel-based analysis of biological sequences.
-\newblock {\em Bioinformatics}, 31(15):2574--2576, 2015.
-
-\bibitem{SchoelkopfSmola02}
-B.\ Sch\"olkopf and A.\ J. Smola.
-\newblock {\em Learning with Kernels}.
-\newblock Adaptive Computation and Machine Learning. MIT Press, Cambridge, MA,
-  2002.
-
-\bibitem{Ward63}
-J.\ H. {Ward Jr.}
-\newblock Hierarchical grouping to optimize an objective function.
-\newblock {\em J. Amer. Statist. Assoc.}, 58:236--244, 1963.
-
-\end{thebibliography}
+\bibliographystyle{plain}
+\bibliography{apcluster}
 
 
 \end{document}

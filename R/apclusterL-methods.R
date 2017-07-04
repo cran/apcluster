@@ -43,7 +43,8 @@ apclusterL.matrix <- function(s, x, sel, p=NA, q=NA, maxits=1000, convits=100,
             if (is.na(q))
                 p <- median(s[setdiff(which(s > -Inf), (1:M - 1) * N + sel)])
             else
-                p <- quantile(s[setdiff(which(s > -Inf), (1:M - 1) * N + sel)], q)
+                p <- quantile(s[setdiff(which(s > -Inf), (1:M - 1) * N + sel)],
+                              q)
         }
     }
 

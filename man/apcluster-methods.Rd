@@ -142,9 +142,9 @@ DOI: \href{http://dx.doi.org/10.1093/bioinformatics/btr406}{10.1093/bioinformati
   \code{\link{apclusterK}}}
 \examples{
 ## create two Gaussian clouds
-cl1 <- cbind(rnorm(100,0.2,0.05),rnorm(100,0.8,0.06))
-cl2 <- cbind(rnorm(50,0.7,0.08),rnorm(50,0.3,0.05))
-x <- rbind(cl1,cl2)
+cl1 <- cbind(rnorm(100, 0.2, 0.05), rnorm(100, 0.8, 0.06))
+cl2 <- cbind(rnorm(50, 0.7, 0.08), rnorm(50, 0.3, 0.05))
+x <- rbind(cl1, cl2)
 
 ## compute similarity matrix and run affinity propagation 
 ## (p defaults to median of similarity)
@@ -176,6 +176,7 @@ plot(apres, x)
 cl1 <- cbind(rnorm(20, 0.2, 0.05), rnorm(20, 0.8, 0.06))
 cl2 <- cbind(rnorm(20, 0.7, 0.08), rnorm(20, 0.3, 0.05))
 x <- rbind(cl1, cl2)
+
 sim <- negDistMat(x, r=2)
 ssim <- as.SparseSimilarityMatrix(sim, lower=-0.2)
 

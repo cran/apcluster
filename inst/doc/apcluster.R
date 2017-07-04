@@ -219,7 +219,7 @@ s <- negDistMat(x2)
 
 ## ----CreateToyData----------------------------------------------------
 ex <- matrix(c(0, 0.5, 0.8, 1, 0, 0.2, 0.5, 0.7,
-               0.1, 0, 1, 0.3, 1, 0.8, 0.2), 5, 3,byrow=TRUE)
+               0.1, 0, 1, 0.3, 1, 0.8, 0.2), 5, 3, byrow=TRUE)
 ex
 
 ## ----NegEuclDistMatToyData--------------------------------------------
@@ -244,6 +244,24 @@ negDistMat(ex, method="minkowski", p=3)
 sim <- negDistMat(r=2)
 is.function(sim)
 apcluster(sim, x1)
+
+## ----DiscrepancyDistToyData,fig.width=6,fig.height=4.5,out.width='0.6\\textwidth'----
+ex2 <- matrix(c(0, 0, 1, 1, 1, 0, 0, 0,
+                0, 0, 0, 0, 0, 1, 1, 0,
+                0, 1, 0, 1, 0, 1, 0, 1), 3, 8, byrow=TRUE)
+
+matplot(t(ex2), ylab="")
+matlines(t(ex2), type="s")
+
+negDistMat(ex2, method="discrepancy")
+
+ex2Scaled <- sweep(ex2, 1, rowMeans(ex2))
+ex2Scaled
+
+matplot(t(ex2Scaled), ylab="")
+matlines(t(ex2Scaled), type="s")
+
+negDistMat(ex2Scaled, method="discrepancy")
 
 ## ----RBFKernelToyData-------------------------------------------------
 expSimMat(ex)

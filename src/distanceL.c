@@ -1,7 +1,7 @@
 /*
  *  R : A Computer Language for Statistical Data Analysis
  *  Copyright (C) 1995, 1996  Robert Gentleman and Ross Ihaka
- *  Copyright (C) 1998-2012  The R Core Team
+ *  Copyright (C) 1998-2016   The R Core Team
  *  Copyright (C) 2002, 2004  The R Foundation
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -16,10 +16,8 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, a copy is available at
- *  http://www.r-project.org/Licenses/
+ *  https://www.R-project.org/Licenses/
  */
-
-/* As from R 2.16.0 this might need long vectors for result. */
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
@@ -27,13 +25,12 @@
 /* do this first to get the right options for math.h */
 #include <R_ext/Arith.h>
 
+#include <float.h>
+
 #include <R.h>
 #include <Rmath.h>
-#include <float.h>
-#include <R_ext/Utils.h> 
-//#include "mva.h"
 //#include "stats.h"
-#ifdef HAVE_OPENMP
+#ifdef _OPENMP
 # include <R_ext/MathThreads.h>
 #endif
 
@@ -43,6 +40,7 @@
 #else
 #define both_non_NA(a,b) (!ISNAN(a) && !ISNAN(b))
 #endif
+
 
 static double R_euclidean(double *x, int nr, int nc, int i1, int i2)
 {
@@ -197,7 +195,41 @@ static double R_minkowski(double *x, int nr, int nc, int i1, int i2, double p)
     return R_pow(dist, 1.0/p);
 }
 
-enum { EUCLIDEAN=1, MAXIMUM, MANHATTAN, CANBERRA, BINARY, MINKOWSKI };
+static double R_discrepancy(double *x, int nr, int nc, int i1, int i2)
+{
+    double dev, dist, psum, mini, maxi;
+    int count, j;
+
+    count = 0;
+    psum = 0;
+    maxi = -DBL_MAX;
+    mini = DBL_MAX;
+
+    for(j = 0 ; j < nc ; j++) {
+        if(both_non_NA(x[i1], x[i2])) {
+            dev = x[i1] - x[i2];
+            if(!ISNAN(dev)) {
+		psum += dev;
+                if (psum > maxi)
+		    maxi = psum;
+		else if (psum < mini)
+		    mini = psum;
+                count++;
+            }
+        }
+        i1 += nr;
+        i2 += nr;
+    }
+    
+    if(count == 0) return NA_REAL;
+
+    dist = maxi - mini;
+    
+    if(count != nc) dist /= ((double)count/nc);
+    return dist;
+}
+
+enum { EUCLIDEAN=1, MAXIMUM, MANHATTAN, CANBERRA, BINARY, MINKOWSKI, DISCREPANCY };
 /* == 1,2,..., defined by order in the R function dist */
 
 void R_distance(double x[], int sel[], int *nr, int *nc, int *nsel,
@@ -206,7 +238,7 @@ void R_distance(double x[], int sel[], int *nr, int *nc, int *nsel,
     int dc, i, j;
     size_t  ij;  /* can exceed 2^31 - 1 */
     double (*distfun)(double*, int, int, int, int) = NULL;
-#ifdef HAVE_OPENMP
+#ifdef _OPENMP
     int nthreads;
 #endif
 
@@ -230,11 +262,14 @@ void R_distance(double x[], int sel[], int *nr, int *nc, int *nsel,
             if(!R_FINITE(*p) || *p <= 0)
                 error("distance(): invalid p");
             break;
+        case DISCREPANCY:
+	    distfun = R_discrepancy;
+	    break;
         default:
             error("distance(): invalid distance");
     }
     dc = (*diag) ? 0 : 1; /* diag=1:  we do the diagonal */
-#ifdef HAVE_OPENMP
+#ifdef _OPENMP
     if (R_num_math_threads > 0)
         nthreads = R_num_math_threads;
     else
@@ -244,11 +279,10 @@ void R_distance(double x[], int sel[], int *nr, int *nc, int *nsel,
          if it matters on some platforms */
         ij = 0;
         for(j = 0 ; j < *nr ; j++)
-            //R_CheckUserInterrupt();
             for(i = j+dc ; i < *nr ; i++)
                 d[ij++] = (*method != MINKOWSKI) ?
-                distfun(x, *nr, *nc, i, j) :
-                R_minkowski(x, *nr, *nc, i, j, *p);
+                    distfun(x, *nr, *nc, i, j) :
+                    R_minkowski(x, *nr, *nc, i, j, *p);
     }
     else
 	/* This produces uneven thread workloads since the outer loop
@@ -262,18 +296,18 @@ void R_distance(double x[], int sel[], int *nr, int *nc, int *nsel,
             ij = j * (*nr - dc) + j - ((1 + j) * j) / 2;
             for(i = j+dc ; i < *nr ; i++)
                 d[ij++] = (*method != MINKOWSKI) ?
-                distfun(x, *nr, *nc, i, j) :
-                R_minkowski(x, *nr, *nc, i, j, *p);
+                    distfun(x, *nr, *nc, i, j) :
+                    R_minkowski(x, *nr, *nc, i, j, *p);
         }
 #else
     if (*nsel==NA_INTEGER) 
     {
         ij = 0;
         for(j = 0 ; j < *nr ; j++)
-            //R_CheckUserInterrupt();
             for(i = j+dc ; i < *nr ; i++)
                 d[ij++] = (*method != MINKOWSKI) ?
-                distfun(x, *nr, *nc, i, j) : R_minkowski(x, *nr, *nc, i, j, *p);
+                    distfun(x, *nr, *nc, i, j) :
+		    R_minkowski(x, *nr, *nc, i, j, *p);
     }
     else 
     {
@@ -284,7 +318,6 @@ void R_distance(double x[], int sel[], int *nr, int *nc, int *nsel,
 
         for (j = 0 ; j < *nr ; j++)
         {
-            //R_CheckUserInterrupt();
             for (i = j ; i < *nr ; i++)
             {
                 if (imap[j] != -1) 
@@ -312,6 +345,8 @@ void R_distance(double x[], int sel[], int *nr, int *nc, int *nsel,
 }
 
 #include <Rinternals.h>
+#include "distanceL.h"
+
 
 /* all attribute handling has been removed */
 

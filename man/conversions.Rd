@@ -94,6 +94,7 @@ as.SparseSimilarityMatrix(sp)
 cl1 <- cbind(rnorm(20, 0.2, 0.05), rnorm(20, 0.8, 0.06))
 cl2 <- cbind(rnorm(20, 0.7, 0.08), rnorm(20, 0.3, 0.05))
 x <- rbind(cl1, cl2)
+
 sim <- negDistMat(x, r=2)
 ssim <- as.SparseSimilarityMatrix(sim, lower=-0.2)
 

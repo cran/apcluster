@@ -52,10 +52,12 @@ can be specified for distance calculation. In this case not the
 full distance matrix is computed but a rectangular similarity matrix
 of all samples (rows) against the subset (cols) as needed for 
 leveraged clustering. Internally, the computation of distances is 
-done using the internal method distr derived from 
+done using an internal method derived from 
 \code{\link[stats:dist]{dist}}. All options of this function except 
 \code{diag} and \code{upper} can be used, especially \code{method} 
 which allows for selecting different distance measures.
+Note that, since version 1.4.4. of the package, there is an additional
+method \code{"discrepancy"} that implements Weyl's discrepancy measure.
 
 \code{expSimMat} computes similarities in a way similar to
 \code{negDistMat}, but the transformation of distances to similarities
@@ -129,14 +131,21 @@ matrices and conditionally positive definite functions.
 
 De Baets, B. and Mesiar, R. (1997) Pseudo-metrics and T-equivalences.
 \emph{J. Fuzzy Math.} \bold{5}, 471-481.
+
+Bauer, P., Bodenhofer, U., and Klement, E. P. (1996)
+A fuzzy algorithm for pixel classification based on the discrepancy
+norm.
+In \emph{Proc. 5th IEEE Int. Conf. on Fuzzy Systems}, volume III, pages
+2007--2012, New Orleans, LA.
+DOI: \href{http://dx.doi.org/10.1109/FUZZY.1996.552744}{10.1109/FUZZY.1996.552744}.
 }
 \seealso{\code{\link[stats:dist]{dist}},
 \code{\link{apcluster}}, \code{\link{apclusterL}}}
 \examples{
 ## create two Gaussian clouds
-cl1 <- cbind(rnorm(100,0.2,0.05),rnorm(100,0.8,0.06))
-cl2 <- cbind(rnorm(100,0.7,0.08),rnorm(100,0.3,0.05))
-x <- rbind(cl1,cl2)
+cl1 <- cbind(rnorm(100, 0.2, 0.05), rnorm(100, 0.8, 0.06))
+cl2 <- cbind(rnorm(100, 0.7, 0.08), rnorm(100, 0.3, 0.05))
+x <- rbind(cl1, cl2)
 
 ## create negative distance matrix (default Euclidean)
 sim1 <- negDistMat(x)
@@ -157,9 +166,9 @@ sim4 <- negDistMat(x, sel, r=2)
 
 ## example of leveraged AP using Minkowski distance with non-default
 ## parameter p
-cl1 <- cbind(rnorm(150,0.2,0.05),rnorm(150,0.8,0.06))
-cl2 <- cbind(rnorm(100,0.7,0.08),rnorm(100,0.3,0.05))
-x <- rbind(cl1,cl2)
+cl1 <- cbind(rnorm(150, 0.2, 0.05), rnorm(150, 0.8, 0.06))
+cl2 <- cbind(rnorm(100, 0.7, 0.08), rnorm(100, 0.3, 0.05))
+x <- rbind(cl1, cl2)
 
 apres <- apclusterL(s=negDistMat(method="minkowski", p=2.5, r=2),
                        x, frac=0.2, sweeps=3, p=-0.2)
