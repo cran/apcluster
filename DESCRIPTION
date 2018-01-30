@@ -1,8 +1,8 @@
 Package: apcluster
 Type: Package
 Title: Affinity Propagation Clustering
-Version: 1.4.4
-Date: 2017-07-01
+Version: 1.4.5
+Date: 2018-01-31
 Depends: R (>= 3.0.0)
 Imports: Rcpp (>= 0.11.1), methods, Matrix, stats, graphics, grDevices
 Suggests: Biostrings, kebabs (>= 1.5.4), knitr
@@ -29,5 +29,5 @@ LinkingTo: Rcpp
 LazyLoad: yes
 Repository: CRAN
 NeedsCompilation: yes
-Packaged: 2017-07-04 06:07:07 UTC; bodenhof
-Date/Publication: 2017-07-04 07:11:55 UTC
+Packaged: 2018-01-30 17:57:17 UTC; bodenhof
+Date/Publication: 2018-01-30 20:44:12 UTC

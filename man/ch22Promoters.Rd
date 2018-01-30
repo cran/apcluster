@@ -20,16 +20,17 @@
   that can be loaded from \code{inst/examples} (see examples below).
 }
 \examples{
-## load Biostrings package
-library(Biostrings)
+## if Biostrings package is available
+if (requireNamespace("Biostrings", quietly=TRUE))
+{
+    ## load data set
+    filepath <- system.file("examples", "ch22Promoters.fasta",
+                            package="apcluster")
+    ch22Promoters <- Biostrings::readDNAStringSet(filepath)
 
-## load data set
-filepath <- system.file("examples", "ch22Promoters.fasta",
-                        package="apcluster")
-ch22Promoters <- readDNAStringSet(filepath)
-
-## display sequences
-ch22Promoters
+    ## display sequences
+    ch22Promoters
+}
 }
 \keyword{datasets}
 

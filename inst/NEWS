@@ -1,6 +1,11 @@
 Change history of package apcluster:
 ====================================
 
+Version 1.4.5:
+- loading of suggested Bioconductor packages now performed conditionally
+  to avoid problems when building the package on some platforms that do not
+  have the Bioconductor packages installed
+
 Version 1.4.4:
 - changed dependency to suggested package 'kebabs' to version of
   at least 1.5.4 for improved interoperability

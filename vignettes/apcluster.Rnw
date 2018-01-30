@@ -31,7 +31,12 @@ Linz\\Altenberger Str. 69, 4040 Linz, Austria\\
 options(width=72)
 knitr::opts_knit$set(width=72)
 set.seed(0)
-library(kebabs, quietly=TRUE)
+suggestedPackages <- c("Biostrings", "kebabs")
+if (all(sapply(suggestedPackages, requireNamespace, quietly=TRUE))) {
+    library(kebabs, quietly=TRUE)
+} else {
+    knitr::opts_chunk$set(eval=FALSE)
+}
 library(apcluster, quietly=TRUE)
 apclusterVersion <- packageDescription("apcluster")$Version
 apclusterDateRaw <- packageDescription("apcluster")$Date
@@ -1433,6 +1438,12 @@ and extends \verb+sparseToFull()+.
 \section{Change Log}
 
 \begin{description}
+\item[Version 1.4.5:] \hfill
+\begin{itemize}
+\item loading of suggested Bioconductor packages now performed conditionally
+  to avoid problems when building the package on some platforms that do not
+  have the Bioconductor packages installed
+\end{itemize}
 \item[Version 1.4.4:] \hfill
 \begin{itemize}
 \item changed dependency to suggested package \verb+kebabs+ to version of

@@ -1,4 +1,4 @@
-538ed9b051cdd172592ca7abfa4c8305 *DESCRIPTION
+a8d5653bffc1dbed70502fbb8a5e11b9 *DESCRIPTION
 fbb73aa11f70a7de92cd2ae5b1099ccf *NAMESPACE
 15e2a8926029069370cbddc7689e1933 *R/AllClasses.R
 9368032ea24b762d440ea7e2dd4904fb *R/AllGenerics.R
@@ -22,13 +22,13 @@ adde0ebd660c4c8bfa73c70b833c688b *R/show-methods.R
 95f1e04b6d448b91abb309ee25977cf2 *R/simpleDist.R
 4bf4b98618b2bfe598cc640c35bae301 *R/sort-methods.R
 89f7a8ce20d93ce938f8ec775f4c34f5 *TODO
-10dc30841b0b9e2deabc5c619296f93f *build/vignette.rds
+982941fb405c1eecf858a586420d76a0 *build/vignette.rds
 af577c272e9b2fe46a3c3769d763b1ff *inst/CITATION
 199b737b3945550d6e9ef53245cf1701 *inst/COPYRIGHT
-e37a7cbeeb87f19cf12e87afa6866bf3 *inst/NEWS
-66c4ef59a55b1c96f6cf1406cb16c8dd *inst/doc/apcluster.R
-2a2cd0de6c27e6c31cb221fa96ee7269 *inst/doc/apcluster.Rnw
-e3993589fde7224e3767e82cdadd3d35 *inst/doc/apcluster.pdf
+1fb397350876a8d0d05fcdd00af748dd *inst/NEWS
+dcc98db904fb98c6ac8cd586d36e86f0 *inst/doc/apcluster.R
+dec8d599b062ad323663c88867e6fa61 *inst/doc/apcluster.Rnw
+f68dfcbba99dd7467d82697a7dc9e3c5 *inst/doc/apcluster.pdf
 474a3b90926f3863e5447f805f7f5436 *inst/examples/ch22Promoters.fasta
 c23a403e6e7f2d6c05b9375f9592fa3d *man/APResult-class.Rd
 40d6c25d38c3943936e07a9dfb1817f4 *man/AggExResult-class.Rd
@@ -40,7 +40,7 @@ e6fd379440a66d90d10ca2331645f1d3 *man/apcluster-package.Rd
 5595cf55e82443130bf3bccdcb34c885 *man/apclusterDemo.Rd
 b63635a2f6b5fd8a6d4c79247300ae70 *man/apclusterK-methods.Rd
 834a55bd512b1c828dd763bb9faf1d27 *man/apclusterL-methods.Rd
-cd6e18f24ca365bb27003daf3030c6f0 *man/ch22Promoters.Rd
+413f40a3a214454f3610c2aff3ed2aeb *man/ch22Promoters.Rd
 5d3f6ebac2b3bdb2873350a918faa690 *man/coerce-methods.Rd
 e9016429b697aa6871bed2bc7d43c8bd *man/conversions.Rd
 a77bb2f6cb951cf1a34a30a0299760ed *man/cutree-methods.Rd
@@ -61,7 +61,7 @@ fd4e674b808035893f83978576394df6 *src/distanceL.c
 7cbf1c2e2a8a86822374af2c57d5d10c *src/preferenceRangeC.cpp
 0b207f0cd197c40182fb856e13f4ee42 *src/preferenceRangeSparseC.cpp
 98029656a3cfe00e846f3d93b6bc4525 *vignettes/JKU_EN_noName.pdf
-2a2cd0de6c27e6c31cb221fa96ee7269 *vignettes/apcluster.Rnw
+dec8d599b062ad323663c88867e6fa61 *vignettes/apcluster.Rnw
 e844d32c372914997a1c569bae4a23ba *vignettes/apcluster.bib
 0ee0d701f61a0631126fa8837ef470cc *vignettes/bioinf-article.txi
 796c822a42721e608226ad8b86954533 *vignettes/bioinf-bar.png

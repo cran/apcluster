@@ -2,7 +2,12 @@
 options(width=72)
 knitr::opts_knit$set(width=72)
 set.seed(0)
-library(kebabs, quietly=TRUE)
+suggestedPackages <- c("Biostrings", "kebabs")
+if (all(sapply(suggestedPackages, requireNamespace, quietly=TRUE))) {
+    library(kebabs, quietly=TRUE)
+} else {
+    knitr::opts_chunk$set(eval=FALSE)
+}
 library(apcluster, quietly=TRUE)
 apclusterVersion <- packageDescription("apcluster")$Version
 apclusterDateRaw <- packageDescription("apcluster")$Date
