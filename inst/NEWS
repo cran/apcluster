@@ -1,6 +1,11 @@
 Change history of package apcluster:
 ====================================
 
+Version 1.4.6:
+- aggExCluster() now implemented in C++ instead of R in order to improve
+  speed
+- further correction of conditional loading of package suggested by vignette
+
 Version 1.4.5:
 - loading of suggested Bioconductor packages now performed conditionally
   to avoid problems when building the package on some platforms that do not

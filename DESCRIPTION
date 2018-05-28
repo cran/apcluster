@@ -1,12 +1,13 @@
 Package: apcluster
 Type: Package
 Title: Affinity Propagation Clustering
-Version: 1.4.5
-Date: 2018-01-31
+Version: 1.4.6
+Date: 2018-05-28
 Depends: R (>= 3.0.0)
 Imports: Rcpp (>= 0.11.1), methods, Matrix, stats, graphics, grDevices
 Suggests: Biostrings, kebabs (>= 1.5.4), knitr
-Author: Ulrich Bodenhofer, Johannes Palme, Chrats Melkonian, Andreas Kothmeier
+Author: Ulrich Bodenhofer, Johannes Palme, Chrats Melkonian, Andreas Kothmeier,
+	Nikola Kostic
 Maintainer: Ulrich Bodenhofer <bodenhofer@bioinf.jku.at>
 Description: Implements Affinity Propagation clustering introduced by Frey and
 	Dueck (2007) <DOI:10.1126/science.1136800>. The algorithms are largely
@@ -24,10 +25,11 @@ Collate: AllClasses.R AllGenerics.R access-methods.R coerce-methods.R
         preferenceRange-methods.R similarity.R simpleDist.R
         conversions.R
 URL: http://www.bioinf.jku.at/software/apcluster/
+        https://github.com/UBod/apcluster
 VignetteBuilder: knitr
 LinkingTo: Rcpp
 LazyLoad: yes
 Repository: CRAN
 NeedsCompilation: yes
-Packaged: 2018-01-30 17:57:17 UTC; bodenhof
-Date/Publication: 2018-01-30 20:44:12 UTC
+Packaged: 2018-05-28 07:54:19 UTC; bodenhof
+Date/Publication: 2018-05-28 18:35:49 UTC

@@ -145,7 +145,7 @@ Under special circumstances, e.g. if you want to compile
 the C++ code included in the package with some custom options,
 you may prefer to install the package manually from source.
 To this end, open the package's page at CRAN%
-\footnote{\url{http://cran.r-project.org/web/packages/apcluster/index.html}} and
+\footnote{\url{https://CRAN.R-project.org/package=apcluster}} and
 then proceed as follows:
 \begin{enumerate}
 \item Download \texttt{apcluster\_\APClusterVer.tar.gz}
@@ -300,8 +300,8 @@ For details, the user is referred to the original affinity propagation
 paper \cite{FreyDueck07} and the supplementary material published on the
 affinity propagation Web page.\footnotemark[1] We see
 from the above plot that the algorithm has not made any change for the last 100
-(of \Sexpr{apres1b@it}!) iterations. AP, through its parameter
-\verb+convits+, allows to
+iterations. AP,
+through its parameter \verb+convits+, allows to
 control for how long AP waits for a change until it terminates (the default is
 \verb+convits=100+). If the user has the feeling that AP will probably
 converge quicker on his/her data set, a lower value can be used:
@@ -1438,6 +1438,12 @@ and extends \verb+sparseToFull()+.
 \section{Change Log}
 
 \begin{description}
+\item[Version 1.4.6:] \hfill
+\begin{itemize}
+\item  \verb+aggExCluster()+ now implemented in C++ instead of R in order to improve
+  speed
+\item further correction of conditional loading of package suggested by vignette
+\end{itemize}
 \item[Version 1.4.5:] \hfill
 \begin{itemize}
 \item loading of suggested Bioconductor packages now performed conditionally

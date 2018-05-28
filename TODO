@@ -1,4 +1,3 @@
-- write aggExCluster() in C++
 - adapt aggExCluster() to sparse matrices
 - shift refinement of exemplars to C++ side (for dense similarity matrices)
 - predict() function
