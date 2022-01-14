@@ -2,12 +2,6 @@
 options(width=72)
 knitr::opts_knit$set(width=72)
 set.seed(0)
-suggestedPackages <- c("Biostrings", "kebabs")
-if (all(sapply(suggestedPackages, requireNamespace, quietly=TRUE))) {
-    library(kebabs, quietly=TRUE)
-} else {
-    knitr::opts_chunk$set(eval=FALSE)
-}
 library(apcluster, quietly=TRUE)
 apclusterVersion <- packageDescription("apcluster")$Version
 apclusterDateRaw <- packageDescription("apcluster")$Date
@@ -186,39 +180,6 @@ apclusterK(ssim, K=2)
 ## ----SparseEx1RunHeatmap,fig.width=7,fig.height=7,out.width='0.6\\textwidth'----
 heatmap(sapres, ssim)
 
-## ----LoadCh22Promoters------------------------------------------------
-library(Biostrings)
-filepath <- system.file("examples", "ch22Promoters.fasta",
-                        package="apcluster")
-ch22Promoters <- readDNAStringSet(filepath)
-ch22Promoters
-
-## ----SimCh22Promoters-------------------------------------------------
-library(kebabs)
-specK6 <- spectrumKernel(k=6)
-promSim <- getKernelMatrix(specK6, ch22Promoters)
-promSim[1:4, 1:4]
-
-## ----APCh22Promoters--------------------------------------------------
-promAP <- apcluster(promSim, q=0)
-promAP
-
-## ----HeatMapAPCh22Promoters,fig.width=7,fig.height=7,out.width='0.6\\textwidth'----
-heatmap(promAP, promSim, Rowv=FALSE, Colv=FALSE)
-
-## ----aggExCh22Promoters-----------------------------------------------
-promAgg <- aggExCluster(promSim, promAP)
-
-## ----DendrogramAPCh22Promoters,fig.width=5,fig.height=5,out.width='0.5\\textwidth'----
-plot(promAgg)
-
-## ----ExtractAggCh22Promoters------------------------------------------
-prom5 <- cutree(promAgg, k=5)
-prom5
-
-## ----HeatMap5Ch22Promoters,fig.width=7,fig.height=7,out.width='0.6\\textwidth'----
-heatmap(prom5, promSim, Rowv=FALSE, Colv=FALSE)
-
 ## ----NegDistMatDataSet2-----------------------------------------------
 s <- negDistMat(x2)
 
@@ -295,22 +256,6 @@ sel
 s1r <- negDistMat(x1, sel, r=2)
 dim(s1r)
 s1r[1:7,]
-
-## ----SimFunCh22Promoters----------------------------------------------
-spectrumK6 <- function(x, sel=NA)
-{
-    if (any(is.na(sel)))
-        s <- getKernelMatrix(specK6, x)
-    else
-        s <- getKernelMatrix(specK6, x, x[sel])
-
-    as(s, "matrix")
-}
-
-## ----APCh22Promoters2-------------------------------------------------
-promAPL <- apclusterL(s=spectrumK6, ch22Promoters, frac=0.1, sweeps=10,
-                      p=promAP@p)
-promAPL
 
 ## ----CustomSimSparse--------------------------------------------------
 sparseSim <- function(x)
